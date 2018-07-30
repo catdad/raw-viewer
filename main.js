@@ -1,25 +1,50 @@
+try {
+//  require('electron-reloader')(module);
+  require('electron-debug')({
+    showDevTools: false,
+    devToolsMode: 'right'
+  });
+} catch (err) {}
+
 const path = require('path');
 const url = require('url');
+
+const config = require('./tools/config.js');
 
 const { app, BrowserWindow, ipcMain } = require('electron');
 
 let mainWindow;
 
 function createWindow () {
-  // Create the browser window.
-  mainWindow = new BrowserWindow({width: 800, height: 600});
+  config.read().then(function () {
+    // Create the browser window.
+    mainWindow = new BrowserWindow({
+      width: config.getProp('window.width') || 800,
+      height: config.getProp('window.height') || 600
+    });
 
-  mainWindow.loadURL(url.format({
-    pathname: path.join(__dirname, 'public', 'index.html'),
-    protocol: 'file:',
-    slashes: true
-  }));
+    mainWindow.loadURL(url.format({
+      pathname: path.join(__dirname, 'public', 'index.html'),
+      protocol: 'file:',
+      slashes: true
+    }));
 
-  // Open the DevTools.
-  // mainWindow.webContents.openDevTools()
+    mainWindow.on('closed', function () {
+      mainWindow = null;
+    });
 
-  mainWindow.on('closed', function () {
-    mainWindow = null;
+    mainWindow.on('resize', function () {
+      var size = mainWindow.getSize();
+
+      config.setProp('window.width', size[0]);
+      config.setProp('window.height', size[1]);
+    });
+
+    if (config.getProp('devToolsOpen')) {
+      mainWindow.webContents.openDevTools();
+    }
+  }).catch(function (err) {
+    throw err;
   });
 }
 

@@ -22,7 +22,7 @@ module.exports = function ({ events }) {
     const dir = e.dataTransfer.files[0];
 
     if (dir) {
-      events.emit('load:directory', { dir });
+      events.emit('load:directory', { dir: dir.path });
 
       elem.style.display = 'none';
     }

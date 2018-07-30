@@ -29,8 +29,6 @@ module.exports = function (elem) {
   const image = render('image');
   const dropzone = render('dropzone');
 
-  console.log(filmstrip);
-
   elem.appendChild(filmstrip);
   elem.appendChild(image);
   elem.appendChild(dropzone);

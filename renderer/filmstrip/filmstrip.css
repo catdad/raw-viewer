@@ -1,3 +1,31 @@
+.filmstrip {
+  padding: 4px;
+}
+
+.filmstrip .thumbnail {
+  position: relative;
+  width: 200px;
+  height: 200px;
+
+  border-radius: 3px;
+  border: 1px solid gray;
+  padding: 6px;
+
+  float: left;
+  margin: 0 5px;
+}
+
+.filmstrip .thumbnail::after {
+  content: attr(data-filename);
+  position: absolute;
+  width: 100%;
+  left: 0;
+  bottom: 0;
+  text-align: center;
+}
+
 .filmstrip img {
-  height: 100%;
+  position: relative;
+  max-width: 100%;
+  max-height: 100%;
 }

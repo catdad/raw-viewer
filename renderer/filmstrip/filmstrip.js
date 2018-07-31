@@ -11,13 +11,17 @@ module.exports = function ({ events }) {
   elem.className = name;
 
   async function loadThumbnails(dir) {
-    console.log('reading', dir);
     var files = await fs.readdir(dir);
 
     var fragment = document.createDocumentFragment();
 
     for (let file of files) {
-      fragment.appendChild(imageElem(path.resolve(dir, file)));
+      let thumb = document.createElement('div');
+      thumb.className = 'thumbnail';
+      thumb.setAttribute('data-filename', file);
+
+      thumb.appendChild(await imageElem(path.resolve(dir, file)));
+      fragment.appendChild(thumb);
     }
 
     elem.innerHTML = '';

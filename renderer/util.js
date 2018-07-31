@@ -1,31 +1,58 @@
-const fs = require('fs');
+/* eslint-disable no-console */
+const fs = require('fs-extra');
 
 const dcraw = require('dcraw');
 
-function imageElem(filepath) {
+async function readFileBuffer(filepath) {
+  if (Buffer.isBuffer(filepath)) {
+    return filepath;
+  }
+
   console.time('read');
-  const file = fs.readFileSync(filepath);
+  const file = await fs.readFile(filepath);
   console.timeEnd('read');
+
+  return file;
+}
+
+async function imageUrl(filepath) {
+  const file = await readFileBuffer(filepath);
+
+  // read image from raw data
+  // var tiff = dcraw(file, { exportAsTiff: true });
+
+  console.time('preview');
+  const preview = dcraw(file, { extractThumbnail: true });
+  console.timeEnd('preview');
+
+  return 'data:image/jpeg;base64,' + Buffer.from(preview).toString('base64');
+}
+
+async function imageMeta(filepath) {
+  const file = await readFileBuffer(filepath);
 
   console.time('meta');
   var meta = dcraw(file, { verbose: true, identify: true });
   console.timeEnd('meta');
 
+  return meta;
+}
+
+async function imageElem(filepath) {
+  const file = await readFileBuffer(filepath);
+
+  const meta = await imageMeta(file);
+
   console.log(meta);
 
-  console.time('tiff');
-  var tiff = dcraw(file, { extractThumbnail: true });
-//  var tiff = dcraw(file, { exportAsTiff: true });
-  console.timeEnd('tiff');
-
-  console.log(tiff.length);
-
-  var img = document.createElement('img');
-  img.src = 'data:image/jpeg;base64,' + Buffer.from(tiff).toString('base64');
+  const img = document.createElement('img');
+  img.src = await imageUrl(file);
 
   return img;
 }
 
 module.exports = {
-  imageElem
+  imageElem,
+  imageUrl,
+  imageMeta
 };

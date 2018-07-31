@@ -10,7 +10,7 @@ function applyStyle(css) {
   var elem = document.createElement('style');
   elem.type = 'text/css';
 
-  elem.appendChild(document.createTextNode(css))
+  elem.appendChild(document.createTextNode(css));
   document.head.appendChild(elem);
 }
 

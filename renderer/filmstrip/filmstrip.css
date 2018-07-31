@@ -2,6 +2,17 @@
   padding: 4px;
 }
 
+.filmstrip-wrapper {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: scroll;
+  overflow-y: visible;
+}
+
+.filmstrip-wrapper::-webkit-scrollbar {
+  display: none;
+}
+
 .filmstrip .thumbnail {
   position: relative;
   width: 200px;
@@ -11,8 +22,15 @@
   border: 1px solid gray;
   padding: 6px;
 
-  float: left;
+  flex: 0 0 auto;
   margin: 0 5px;
+
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-origin: content-box;
+  background-position: center;
+
+  cursor: pointer;
 }
 
 .filmstrip .thumbnail::after {

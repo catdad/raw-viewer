@@ -9,15 +9,17 @@ module.exports = function ({ events }) {
   var elem = document.createElement('div');
   elem.className = 'image';
 
-  function loadImage(filepath) {
-    var img = imageElem(filepath);
+  function loadImage(imageUrl) {
+    var img = document.createElement('img');
+    img.src = imageUrl;
 
     elem.innerHTML = '';
     elem.appendChild(img);
   }
 
-  events.on('load:image', function ({ filepath }) {
-    loadImage(filepath);
+  events.on('load:image', function ({ filepath, imageUrl }) {
+    console.log('image event', arguments);
+    loadImage(imageUrl);
   });
 
   return { elem, style };

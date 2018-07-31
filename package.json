@@ -5,7 +5,9 @@
   "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "electron ."
+    "start": "electron .",
+    "dev": "gulp dev",
+    "gulp": "gulp"
   },
   "repository": {
     "type": "git",
@@ -24,8 +26,10 @@
     "lodash": "^4.17.10"
   },
   "devDependencies": {
+    "chokidar": "^2.0.4",
     "electron-debug": "^2.0.0",
-    "electron-reloader": "^0.2.0",
-    "eslint": "^4.19.1"
+    "eslint": "^4.19.1",
+    "gulp": "^3.9.1",
+    "run-sequence": "^2.2.1"
   }
 }

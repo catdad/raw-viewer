@@ -22,8 +22,6 @@ module.exports = function ({ events }) {
 
   function handleDisplay(thumb) {
     thumb.addEventListener('click', function () {
-      console.log('loading', thumb.getAttribute('data-filename'));
-
       events.emit('load:image', {
         filepath: thumb.getAttribute('data-filepath'),
         imageUrl: thumb['data-imageurl']

@@ -9,7 +9,7 @@ module.exports = function ({ events }) {
   var elem = document.createElement('div');
   elem.className = 'image';
 
-  function loadImage(imageUrl) {
+  function loadImage({ filepath, imageUrl }) {
     var img = document.createElement('img');
     img.src = imageUrl;
 
@@ -17,10 +17,7 @@ module.exports = function ({ events }) {
     elem.appendChild(img);
   }
 
-  events.on('load:image', function ({ filepath, imageUrl }) {
-    console.log('image event', arguments);
-    loadImage(imageUrl);
-  });
+  events.on('load:image', loadImage);
 
   return { elem, style };
 };

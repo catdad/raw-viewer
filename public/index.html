@@ -12,11 +12,11 @@
       height: 100%;
     }
 
-    #dropzone {
+    #main {
       width: 100%;
       height: 100%;
 
-      background: pink;
+      background: yellow;
     }
 
     #image {
@@ -28,11 +28,11 @@
   </style>
 </head>
 <body>
-  <div id="dropzone"></div>
-  <div id="image"></div>
+  <div id="main"></div>
 
   <script>
-    require('./dropzone.js');
+    var main = document.querySelector('#main');
+    require('../renderer/index.js')(main);
   </script>
 </body>
 </html>

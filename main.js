@@ -35,7 +35,10 @@ function createWindow () {
     // Create the browser window.
     mainWindow = new BrowserWindow({
       width: config.getProp('window.width') || 800,
-      height: config.getProp('window.height') || 600
+      height: config.getProp('window.height') || 600,
+      webPreferences: {
+        nodeIntegrationInWorker: true
+      }
     });
 
     mainWindow.loadURL(url.format({

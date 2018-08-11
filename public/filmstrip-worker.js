@@ -1,4 +1,4 @@
-/* global postMessage, onmessage */
+/* global postMessage */
 
 const { imageUrl } = require('../renderer/util.js');
 const log = require('../tools/log.js')('worker');
@@ -30,6 +30,7 @@ function exec(data) {
   onDone(new Error(`${data.name} is an unknown worker command`));
 }
 
+// eslint-disable-next-line no-undef
 onmessage = function (ev) {
   const data = ev.data;
 

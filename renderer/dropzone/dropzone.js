@@ -23,12 +23,14 @@ module.exports = function ({ events }) {
 
     if (dir) {
       events.emit('load:directory', { dir: dir.path });
-
-      elem.style.display = 'none';
     }
 
     return false;
   };
+
+  events.on('load:directory', () => {
+    elem.style.display = 'none';
+  });
 
   return { elem, style };
 };

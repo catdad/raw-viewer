@@ -23,6 +23,7 @@ module.exports = function ({ events }) {
 
     if (dir) {
       events.emit('load:directory', { dir: dir.path });
+      events.emit('config:directory', { value: dir.path });
     }
 
     return false;

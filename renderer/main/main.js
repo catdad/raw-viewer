@@ -2,9 +2,23 @@ const path = require('path');
 const fs = require('fs');
 const EventEmitter = require('events');
 
+const ipc = require('electron').ipcRenderer;
+
 const events = new EventEmitter();
 
 let style = fs.readFileSync(path.resolve(__dirname, 'main.css'), 'utf8');
+
+ipc.on('message', function (ev, data) {
+  switch (true) {
+    case data.type === 'config-read':
+      events.emit('config', data);
+      break;
+  }
+});
+
+events.on('ipc:send', function (data) {
+  ipc.send('message', data);
+});
 
 function applyStyle(css) {
   var elem = document.createElement('style');
@@ -32,4 +46,23 @@ module.exports = function (elem) {
   elem.appendChild(filmstrip);
   elem.appendChild(image);
   elem.appendChild(dropzone);
+
+  events.on('config', function (data) {
+    if (data.key === 'client.lastDirectory') {
+      events.emit('load:directory', { dir: data.value });
+    }
+  });
+
+  events.emit('ipc:send', {
+    type: 'config-get',
+    key: 'client.lastDirectory'
+  });
+
+  events.on('config:directory', function (data) {
+    events.emit('ipc:send', {
+      type: 'config-set',
+      key: 'client.lastDirectory',
+      value: data.value
+    });
+  });
 };

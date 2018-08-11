@@ -15,6 +15,21 @@ const { app, BrowserWindow, ipcMain } = require('electron');
 
 let mainWindow;
 
+function onIpc(ev, data) {
+  switch (true) {
+    case data.type === 'config-set':
+      config.setProp(data.key, data.value);
+      break;
+    case data.type === 'config-get':
+      mainWindow.webContents.send('message', {
+        type: 'config-read',
+        key: data.key,
+        value: config.getProp(data.key)
+      });
+      break;
+  }
+}
+
 function createWindow () {
   config.read().then(function () {
     // Create the browser window.
@@ -39,6 +54,8 @@ function createWindow () {
       config.setProp('window.width', size[0]);
       config.setProp('window.height', size[1]);
     });
+
+    ipcMain.on('message', onIpc);
 
     if (config.getProp('devToolsOpen')) {
       mainWindow.webContents.openDevTools();

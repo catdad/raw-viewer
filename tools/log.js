@@ -3,16 +3,16 @@
 module.exports = function createLog(name) {
   const header = '[' + name + ']';
 
-  function info() {
-    console.log(header, ...arguments);
+  function info(msg, ...args) {
+    console.log(`${header} ${msg}`, ...args);
   }
 
-  function error() {
-    console.error(header, ...arguments);
+  function error(msg, ...args) {
+    console.error(`${header} ${msg}`, ...args);
   }
 
-  function trace() {
-    console.trace(header, ...arguments);
+  function trace(msg, ...args) {
+    console.trace(`${header} ${msg}`, ...args);
   }
 
   function time(timer) {

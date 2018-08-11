@@ -33,6 +33,8 @@
   background-position: center;
 
   cursor: pointer;
+
+  will-change: transform;
 }
 
 .filmstrip .thumbnail::after {

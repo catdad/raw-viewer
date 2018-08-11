@@ -1,17 +1,27 @@
+/* eslint-disable no-console */
+
 module.exports = function createLog(name) {
   const header = '[' + name + ']';
 
-  function log() {
-    console.log(header, ...arguments);
+  function info(msg, ...args) {
+    console.log(`${header} ${msg}`, ...args);
   }
 
-  function error() {
-    console.error(header, ...arguments);
+  function error(msg, ...args) {
+    console.error(`${header} ${msg}`, ...args);
   }
 
-  function trace() {
-    console.trace(header, ...arguments);
+  function trace(msg, ...args) {
+    console.trace(`${header} ${msg}`, ...args);
   }
 
-  return { log, error, trace };
+  function time(timer) {
+    console.time(`${header} ${timer}`);
+  }
+
+  function timeEnd(timer) {
+    console.timeEnd(`${header} ${timer}`);
+  }
+
+  return { info, error, trace, time, timeEnd };
 };

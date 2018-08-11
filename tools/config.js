@@ -3,7 +3,7 @@ const fs = require('fs-extra');
 const _ = require('lodash');
 
 const root = require('./root.js');
-const { log, error } = require('./log.js')('config');
+const { info, error } = require('./log.js')('config');
 
 const location = path.resolve(root, 'config.json');
 
@@ -53,10 +53,10 @@ function write() {
 }
 
 const autoSave = _.debounce(function () {
-  log('auto saving');
+  info('auto saving');
 
   write().then(function () {
-    log('auto save done');
+    info('auto save done');
   }).catch(function (err) {
     error('auto save error', err);
   });

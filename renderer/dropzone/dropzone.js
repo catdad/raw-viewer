@@ -7,14 +7,22 @@ const style = fs.readFileSync(path.resolve(__dirname, `${name}.css`), 'utf8');
 module.exports = function ({ events }) {
   var elem = document.createElement('div');
   elem.className = name;
+  let hasDir = false;
 
   function stop() {
     return false;
   }
 
-  elem.ondragover = stop;
-  elem.ondragleave = stop;
-  elem.ondragend = stop;
+  elem.ondragover = stop.bind('enter');
+  elem.ondragend = stop.bind('end');
+
+  elem.ondragleave = () => {
+    if (hasDir) {
+      elem.style.display = 'none';
+    }
+
+    return false;
+  };
 
   elem.ondrop = (e) => {
     e.preventDefault();
@@ -29,7 +37,13 @@ module.exports = function ({ events }) {
     return false;
   };
 
+  window.addEventListener('dragenter', (ev) => {
+    ev.preventDefault();
+    elem.style.display = 'block';
+  });
+
   events.on('load:directory', () => {
+    hasDir = true;
     elem.style.display = 'none';
   });
 

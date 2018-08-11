@@ -1,6 +1,7 @@
 /* global postMessage, onmessage */
 
 const { imageUrl } = require('../renderer/util.js');
+const log = require('../tools/log.js')('worker');
 
 function exec(data) {
   function onDone(err, res) {
@@ -36,7 +37,7 @@ onmessage = function (ev) {
     return exec(data);
   }
 
-  console.log('worker received message', ev);
+  log.info('worker received message', ev);
 };
 
 postMessage({ type: 'ready' });

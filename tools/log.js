@@ -3,7 +3,7 @@
 module.exports = function createLog(name) {
   const header = '[' + name + ']';
 
-  function log() {
+  function info() {
     console.log(header, ...arguments);
   }
 
@@ -23,5 +23,5 @@ module.exports = function createLog(name) {
     console.timeEnd(`${header} ${timer}`);
   }
 
-  return { log, error, trace, time, timeEnd };
+  return { info, error, trace, time, timeEnd };
 };

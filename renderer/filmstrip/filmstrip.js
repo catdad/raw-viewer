@@ -52,7 +52,7 @@ const workers = (function (count) {
       arr.push(await createWorker(arr.length));
     }
 
-    flushQueue();
+    setImmediate(flushQueue);
   }
 
   log.time('worker init');
@@ -72,7 +72,7 @@ const workers = (function (count) {
           log.info('post message overhead', Date.now() - res.epoch, 'ms');
           arr.push(worker);
 
-          flushQueue();
+          setImmediate(flushQueue);
 
           if (res.err) {
             return reject(res.err);

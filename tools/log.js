@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+
 module.exports = function createLog(name) {
   const header = '[' + name + ']';
 
@@ -13,5 +15,13 @@ module.exports = function createLog(name) {
     console.trace(header, ...arguments);
   }
 
-  return { log, error, trace };
+  function time(timer) {
+    console.time(`${header} ${timer}`);
+  }
+
+  function timeEnd(timer) {
+    console.timeEnd(`${header} ${timer}`);
+  }
+
+  return { log, error, trace, time, timeEnd };
 };

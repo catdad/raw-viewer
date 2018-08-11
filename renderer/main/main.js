@@ -48,7 +48,7 @@ module.exports = function (elem) {
   elem.appendChild(dropzone);
 
   events.on('config', function (data) {
-    if (data.key === 'client.lastDirectory') {
+    if (data.key === 'client.lastDirectory' && data.value) {
       events.emit('load:directory', { dir: data.value });
     }
   });

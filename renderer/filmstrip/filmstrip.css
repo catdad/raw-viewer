@@ -1,5 +1,6 @@
 .filmstrip {
-  padding: 4px;
+  padding: 0;
+  background: #464646;
 }
 
 .filmstrip-wrapper {
@@ -15,8 +16,8 @@
 
 .filmstrip .thumbnail {
   position: relative;
-  width: 200px;
-  height: 200px;
+  width: 180px;
+  height: 180px;
 
   border-radius: 3px;
   border: 1px solid gray;
@@ -25,6 +26,7 @@
   flex: 0 0 auto;
   margin: 0 5px;
 
+  background-color: #535353;
   background-size: contain;
   background-repeat: no-repeat;
   background-origin: content-box;
@@ -38,12 +40,8 @@
   position: absolute;
   width: 100%;
   left: 0;
-  bottom: 0;
+  bottom: 5px;
   text-align: center;
-}
 
-.filmstrip img {
-  position: relative;
-  max-width: 100%;
-  max-height: 100%;
+  pointer-events: none;
 }

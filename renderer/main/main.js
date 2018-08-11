@@ -39,6 +39,8 @@ function render(name) {
 module.exports = function (elem) {
   applyStyle(style);
 
+  elem.classList.add('main');
+
   const filmstrip = render('filmstrip');
   const sidebar = render('sidebar');
   const image = render('image');

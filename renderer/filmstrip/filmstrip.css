@@ -19,13 +19,12 @@
   width: 180px;
   height: 180px;
 
-  border-radius: 3px;
-  border: 1px solid gray;
-  padding: 6px;
-
   flex: 0 0 auto;
   margin: 0 5px;
+  padding: 6px;
 
+  border-radius: 3px;
+  border: 1px solid #787878;
   background-color: #535353;
   background-size: contain;
   background-repeat: no-repeat;

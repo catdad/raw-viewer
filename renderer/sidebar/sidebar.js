@@ -15,17 +15,15 @@ module.exports = function ({ events }) {
 
     const fragment = document.createDocumentFragment();
 
-    Object.keys(meta).filter(key => {
-      return [
-        'Timestamp',
-        'Camera',
-        'ISO speed',
-        'Shutter',
-        'Aperture',
-        'Focal length',
-        'Thumb size'
-      ].includes(key);
-    }).map(key => {
+    [
+      'Camera',
+      'Focal length',
+      'Aperture',
+      'Shutter',
+      'ISO speed',
+      'Thumb size',
+      'Timestamp',
+    ].map(key => {
       const p = document.createElement('p');
       p.appendChild(document.createTextNode(`${key}: ${meta[key]}`));
 

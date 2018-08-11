@@ -119,6 +119,10 @@ module.exports = function ({ events }) {
         filepath: thumb.getAttribute('data-filepath'),
         imageUrl: thumb['data-imageurl']
       });
+
+      events.emit('load:meta', {
+        filepath: thumb.getAttribute('data-filepath')
+      });
     });
   }
 

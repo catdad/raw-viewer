@@ -35,7 +35,13 @@ async function imageMeta(filepath) {
   var meta = dcraw(file, { verbose: true, identify: true });
   console.timeEnd('meta');
 
-  return meta;
+  return meta.trim().split('\n').reduce((memo, str) => {
+    const [ name, ...val ] = str.split(':');
+
+    memo[name.trim()] = val.join(':').trim();
+
+    return memo;
+  }, {});
 }
 
 async function imageElem(filepath) {

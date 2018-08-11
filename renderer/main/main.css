@@ -11,9 +11,19 @@ body {
   top: 0;
   left: 0;
   bottom: 200px;
-  width: 100%;
+  right: 300px;
 
   backgorund: red;
+}
+
+.sidebar {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 300px;
+  bottom: 200px;
+
+  background: red;
 }
 
 .filmstrip {

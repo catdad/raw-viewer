@@ -40,10 +40,12 @@ module.exports = function (elem) {
   applyStyle(style);
 
   const filmstrip = render('filmstrip');
+  const sidebar = render('sidebar');
   const image = render('image');
   const dropzone = render('dropzone');
 
   elem.appendChild(filmstrip);
+  elem.appendChild(sidebar);
   elem.appendChild(image);
   elem.appendChild(dropzone);
 

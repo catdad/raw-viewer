@@ -3,6 +3,10 @@ const fs = require('fs-extra');
 
 const dcraw = require('dcraw');
 
+function bufferToUrl(buff) {
+  return 'data:image/jpeg;base64,' + Buffer.from(buff).toString('base64');
+}
+
 async function readFileBuffer(filepath) {
   if (Buffer.isBuffer(filepath)) {
     return filepath;
@@ -15,7 +19,7 @@ async function readFileBuffer(filepath) {
   return file;
 }
 
-async function imageUrl(filepath) {
+async function imageBuffer(filepath) {
   const file = await readFileBuffer(filepath);
 
   // read image from raw data
@@ -25,7 +29,13 @@ async function imageUrl(filepath) {
   const preview = dcraw(file, { extractThumbnail: true });
   console.timeEnd('preview');
 
-  return 'data:image/jpeg;base64,' + Buffer.from(preview).toString('base64');
+  return preview;
+}
+
+async function imageUrl(filepath) {
+  const preview = await imageBuffer(filepath);
+
+  return bufferToUrl(preview);
 }
 
 async function imageMeta(filepath) {

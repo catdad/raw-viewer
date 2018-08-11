@@ -54,21 +54,7 @@ async function imageMeta(filepath) {
   }, {});
 }
 
-async function imageElem(filepath) {
-  const file = await readFileBuffer(filepath);
-
-  const meta = await imageMeta(file);
-
-  console.log(meta);
-
-  const img = document.createElement('img');
-  img.src = await imageUrl(file);
-
-  return img;
-}
-
 module.exports = {
-  imageElem,
   imageUrl,
   imageMeta
 };

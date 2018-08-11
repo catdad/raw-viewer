@@ -2,7 +2,7 @@ const fs = require('fs-extra');
 const path = require('path');
 const EventEmitter = require('events');
 
-const { imageUrl } = require('../util.js');
+const log = require('../../tools/log.js')('filmstrip');
 
 const name = 'filmstrip';
 const style = fs.readFileSync(path.resolve(__dirname, `${name}.css`), 'utf8');
@@ -17,7 +17,7 @@ const workers = (function (count) {
       return;
     }
 
-    console.log('flushing %s queued tasks with %s workers', queue.length, arr.length);
+    log.info('flushing %s queued tasks with %s workers', queue.length, arr.length);
 
     while (arr.length && queue.length) {
       queue.shift()();
@@ -39,7 +39,7 @@ const workers = (function (count) {
             return events.emit(`done:${idx}`, ev.data);
           }
 
-          console.log('worker message', ev);
+          log.info('worker message', ev);
         };
 
         worker.idx = idx;
@@ -55,21 +55,21 @@ const workers = (function (count) {
     flushQueue();
   }
 
-  console.time('worker init');
+  log.time('worker init');
 
   spawnWorkers().then(() => {
-    console.timeEnd('worker init');
+    log.timeEnd('worker init');
   }).catch(err => {
-    console.error('failed to create workers', err);
+    log.error('failed to create workers', err);
   });
 
   function exec(name, args) {
     return new Promise((resolve, reject) => {
       function doWork() {
-        const worker = arr.pop();
+        const worker = arr.shift();
 
         events.once(`done:${worker.idx}`, res => {
-          console.log('post message overhead', Date.now() - res.epoch, 'ms');
+          log.info('post message overhead', Date.now() - res.epoch, 'ms');
           arr.push(worker);
 
           flushQueue();
@@ -123,7 +123,7 @@ module.exports = function ({ events }) {
   }
 
   async function loadThumbnails(dir) {
-    console.time('loadThumbs');
+    log.time('loadThumbs');
 
     var files = await fs.readdir(dir);
 
@@ -154,7 +154,7 @@ module.exports = function ({ events }) {
 
     await Promise.all(promises);
 
-    console.timeEnd('loadThumbs');
+    log.timeEnd('loadThumbs');
   }
 
   events.on('load:directory', function ({ dir }) {

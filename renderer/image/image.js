@@ -6,9 +6,9 @@ let style = fs.readFileSync(path.resolve(__dirname, 'image.css'), 'utf8');
 
 const keys = (() => {
   const SPACE = ' ';
-  const ALT = 'Alt';
-  const CTRL = 'Control';
-  const SHIFT = 'Shift';
+  const ALT = 'alt';
+  const CTRL = 'control';
+  const SHIFT = 'shift';
 
   const ev = new EventEmitter();
 
@@ -24,8 +24,10 @@ const keys = (() => {
   window.addEventListener('keydown', (e) => {
     e.preventDefault();
 
-    if (track[(e.key)]) {
-      down[e.key] = true;
+    const key = e.key.toLowerCase();
+
+    if (track[(key)]) {
+      down[key] = true;
 
       ev.emit('change', {
         down: Object.keys(down)
@@ -38,8 +40,10 @@ const keys = (() => {
   window.addEventListener('keyup', (e) => {
     e.preventDefault();
 
-    if (track[(e.key)]) {
-      delete down[e.key];
+    const key = e.key.toLowerCase();
+
+    if (track[(key)]) {
+      delete down[key];
 
       ev.emit('change', {
         down: Object.keys(down)

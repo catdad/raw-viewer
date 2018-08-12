@@ -5,6 +5,8 @@ const name = 'sidebar';
 const style = fs.readFileSync(path.resolve(__dirname, `${name}.css`), 'utf8');
 
 const { imageMeta } = require('../util.js');
+const exiftool = require('../exiftool-child.js');
+const log = require('../../tools/log.js')(name);
 
 module.exports = function ({ events }) {
   var elem = document.createElement('div');
@@ -12,6 +14,12 @@ module.exports = function ({ events }) {
 
   async function loadInfo({ filepath }) {
     const meta = await imageMeta(filepath);
+
+    log.time('client exif');
+    const exif = await exiftool.readExif(filepath);
+    log.timeEnd('client exif');
+
+    log.info(JSON.stringify(exif, null, 2));
 
     const fragment = document.createDocumentFragment();
 

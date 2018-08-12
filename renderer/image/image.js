@@ -49,17 +49,24 @@ const keys = (() => {
     return false;
   });
 
-  return {
+  return Object.defineProperties({
     SPACE,
     ALT,
     CTRL,
     SHIFT,
     includes: (key) => !!down[key],
-    count: () => Object.keys(down).length,
-    list: () => Object.keys(down),
     on: ev.addListener.bind(ev),
     off: ev.removeListener.bind(ev)
-  };
+  }, {
+    count: {
+      configurable: false,
+      get: () => Object.keys(down).length
+    },
+    list: {
+      configurable: false,
+      get: () => Object.keys(down)
+    }
+  });
 })();
 
 function registerMouse(elem) {

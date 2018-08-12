@@ -3,8 +3,6 @@ const path = require('path');
 
 let style = fs.readFileSync(path.resolve(__dirname, 'image.css'), 'utf8');
 
-const scales = [1, 0.8, 0.6, 0.4, 0.2];
-
 module.exports = function ({ events }) {
   let elem = document.createElement('div');
   elem.className = 'image';
@@ -26,18 +24,14 @@ module.exports = function ({ events }) {
       // JavaScript math sucks
       scale = Number(toScale.toFixed(1));
 
-      console.log('zoom to', scale);
-
       const targetWidth = width * scale;
       const targetHeight = height * scale;
 
       const transformWidth = targetWidth > box.width ?
-        (targetWidth / 2) - (box.width / 2) :
-        0;
+        (targetWidth / 2) - (box.width / 2) : 0;
 
       const transformHeight = targetHeight > box.height ?
-        (targetHeight / 2) - (box.height / 2) :
-        0;
+        (targetHeight / 2) - (box.height / 2) : 0;
 
       img.style.width = `${targetWidth}px`;
       img.style.height = `${targetHeight}px`;

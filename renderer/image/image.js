@@ -72,7 +72,7 @@ function registerMouse(elem) {
       elem.scrollLeft += x - e.x;
       elem.scrollTop += y - e.y;
     } else if (keys.includes('z')) {
-
+      // TODO see #19
     }
 
     x = e.x;

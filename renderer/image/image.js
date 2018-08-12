@@ -94,26 +94,25 @@ function registerMouse(elem) {
 }
 
 module.exports = function ({ events }) {
-  let elem = document.createElement('div');
+  const elem = document.createElement('div');
   elem.className = 'image';
+
+  const img = document.createElement('img');
+  elem.appendChild(img);
+
+  let box = elem.getBoundingClientRect();
+
+  window.addEventListener('resize', () => {
+    // TODO don't do this on every single event
+    box = elem.getBoundingClientRect();
+  });
 
   function loadImage({ imageUrl }) {
     let scale = 1;
-    let img = document.createElement('img');
-    img.src = imageUrl;
-
-    elem.innerHTML = '';
-    elem.appendChild(img);
-
-    let box = elem.getBoundingClientRect();
-
-    window.addEventListener('resize', () => {
-      // TODO don't do this on every single event
-      box = elem.getBoundingClientRect();
-    });
-
     let width = img.width;
     let height = img.height;
+
+    box = elem.getBoundingClientRect();
 
     function zoom(toScale) {
       // JavaScript math sucks
@@ -155,8 +154,10 @@ module.exports = function ({ events }) {
       }
     };
 
-    registerMouse(elem);
+    img.src = imageUrl;
   }
+
+  registerMouse(elem);
 
   events.on('load:image', loadImage);
 

@@ -27,6 +27,7 @@ module.exports = function ({ events }) {
       { key: 'FNumber', gui: 'Aperture' },
       { key: 'ExposureTime', gui: 'Shutter' }, // also ExposureCompensation
       { key: 'ISO', gui: 'ISO' },
+      { key: 'ExposureMode', gui: 'Mode' },
       { key: 'ImageSize', gui: 'Dimensions' }, // this is sensor size, pre-crop, maybe use DefaultCropSize
       { key: 'DateTimeOriginal', gui: 'Timestamp' },
       { key: 'Z-FileSize', gui: 'Size' },

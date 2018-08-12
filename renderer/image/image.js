@@ -11,7 +11,7 @@ const keys = (() => {
   const CTRL = 'control';
   const SHIFT = 'shift';
 
-  const ev = new EventEmitter();
+  const events = new EventEmitter();
 
   const down = {};
   const track = {
@@ -34,7 +34,7 @@ const keys = (() => {
     if (track[(key)]) {
       down[key] = true;
 
-      ev.emit('change', {
+      events.emit('change', {
         down: Object.keys(down)
       });
     }
@@ -50,7 +50,7 @@ const keys = (() => {
     if (track[(key)]) {
       delete down[key];
 
-      ev.emit('change', {
+      events.emit('change', {
         down: Object.keys(down)
       });
     }
@@ -64,8 +64,8 @@ const keys = (() => {
     CTRL,
     SHIFT,
     includes: (key) => !!down[key],
-    on: ev.addListener.bind(ev),
-    off: ev.removeListener.bind(ev)
+    on: events.addListener.bind(events),
+    off: events.removeListener.bind(events)
   }, {
     count: {
       configurable: false,

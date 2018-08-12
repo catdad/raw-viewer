@@ -1,7 +1,7 @@
-/* eslint-disable no-console */
 const fs = require('fs-extra');
 
 const dcraw = require('dcraw');
+const log = require('../tools/log.js')('util');
 
 function bufferToUrl(buff) {
   return `data:image/jpeg;base64,${Buffer.from(buff).toString('base64')}`;
@@ -12,22 +12,23 @@ async function readFileBuffer(filepath) {
     return filepath;
   }
 
-  console.time('read');
+  log.time('read');
   const file = await fs.readFile(filepath);
-  console.timeEnd('read');
+  log.timeEnd('read');
 
   return file;
 }
 
 async function imageUint8Array(filepath) {
+  log.info('imageUint8Array');
   const file = await readFileBuffer(filepath);
 
   // read image from raw data
   // var tiff = dcraw(file, { exportAsTiff: true });
 
-  console.time('preview');
+  log.time('preview');
   const preview = dcraw(file, { extractThumbnail: true });
-  console.timeEnd('preview');
+  log.timeEnd('preview');
 
   return preview;
 }
@@ -41,9 +42,9 @@ async function imageUrl(filepath) {
 async function imageMeta(filepath) {
   const file = await readFileBuffer(filepath);
 
-  console.time('meta');
+  log.time('meta');
   var meta = dcraw(file, { verbose: true, identify: true });
-  console.timeEnd('meta');
+  log.timeEnd('meta');
 
   return meta.trim().split('\n').reduce((memo, str) => {
     const [ name, ...val ] = str.split(':');

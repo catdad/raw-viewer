@@ -26,6 +26,10 @@ const keys = (() => {
 
     const key = e.key.toLowerCase();
 
+    if (down[key]) {
+      return false;
+    }
+
     if (track[(key)]) {
       down[key] = true;
 

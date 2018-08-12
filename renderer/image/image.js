@@ -28,12 +28,25 @@ module.exports = function ({ events }) {
 
       console.log('zoom to', scale);
 
-      img.style.width = `${width * scale}px`;
-      img.style.height = `${height * scale}px`;
+      const targetWidth = width * scale;
+      const targetHeight = height * scale;
+
+      const transformWidth = targetWidth > box.width ?
+        (targetWidth / 2) - (box.width / 2) :
+        0;
+
+      const transformHeight = targetHeight > box.height ?
+        (targetHeight / 2) - (box.height / 2) :
+        0;
+
+      img.style.width = `${targetWidth}px`;
+      img.style.height = `${targetHeight}px`;
+
+      img.style.transform = `translate(${transformWidth}px, ${transformHeight}px)`;
 
       // scroll to center by default
-      elem.scrollTop = (height * scale / 2) - (box.height / 2);
-      elem.scrollLeft = (width * scale / 2) - (box.width / 2);
+      elem.scrollTop = (targetHeight / 2) - (box.height / 2);
+      elem.scrollLeft = (targetWidth / 2) - (box.width / 2);
     }
 
     img.onload = function () {

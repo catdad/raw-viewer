@@ -40,6 +40,7 @@ async function imageUrl(filepath) {
   return bufferToUrl(preview);
 }
 
+// TODO dead code, use exiftools instead
 async function imageMeta(filepath) {
   const file = await readFileBuffer(filepath);
 

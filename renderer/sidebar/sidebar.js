@@ -4,29 +4,35 @@ const fs = require('fs');
 const name = 'sidebar';
 const style = fs.readFileSync(path.resolve(__dirname, `${name}.css`), 'utf8');
 
-const { imageMeta } = require('../util.js');
+const exiftool = require('../exiftool-child.js');
+const log = require('../../tools/log.js')(name);
 
 module.exports = function ({ events }) {
   var elem = document.createElement('div');
   elem.className = name;
 
   async function loadInfo({ filepath }) {
-    const meta = await imageMeta(filepath);
+    log.time('client exif');
+    const exif = await exiftool.readExif(filepath);
+    log.timeEnd('client exif');
+
+    const meta = exif.data[0];
 
     const fragment = document.createDocumentFragment();
 
     [
-      'Camera',
-      'Focal length',
-      'Aperture',
-      'Shutter',
-      'ISO speed',
-      'Thumb size',
-      'Timestamp',
-      'Size',
-    ].filter(key => !!meta[key]).map(key => {
+      { key: 'Model', gui: 'Camera' },
+      { key: 'LensID', gui: 'Lens' },
+      { key: 'FocalLength', gui: 'Focal length' }, // or FocalLength35efl
+      { key: 'FNumber', gui: 'Aperture' },
+      { key: 'ExposureTime', gui: 'Shutter' }, // also ExposureCompensation
+      { key: 'ISO', gui: 'ISO' },
+      { key: 'ImageSize', gui: 'Dimensions' }, // this is sensor size, pre-crop, maybe use DefaultCropSize
+      { key: 'DateTimeOriginal', gui: 'Timestamp' },
+      { key: 'Z-FileSize', gui: 'Size' },
+    ].filter(({ key }) => !!meta[key]).map(({ key, gui }) => {
       const p = document.createElement('p');
-      p.appendChild(document.createTextNode(`${key}: ${meta[key]}`));
+      p.appendChild(document.createTextNode(`${gui}: ${meta[key]}`));
 
       return p;
     }).forEach(elem => fragment.appendChild(elem));

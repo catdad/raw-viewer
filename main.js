@@ -10,6 +10,7 @@ const path = require('path');
 const url = require('url');
 
 const config = require('./tools/config.js');
+const exiftool = require('./tools/exiftool.js');
 
 const { app, BrowserWindow, ipcMain } = require('electron');
 
@@ -71,6 +72,11 @@ function createWindow () {
     if (config.getProp('devToolsOpen')) {
       mainWindow.webContents.openDevTools();
     }
+
+    exiftool(
+      ipcMain.on.bind(ipcMain),
+      mainWindow.webContents.send.bind(mainWindow.webContents)
+    );
   }).catch(function (err) {
     throw err;
   });

@@ -6,7 +6,8 @@ const ipc = require('electron').ipcRenderer;
 
 const events = new EventEmitter();
 
-let style = fs.readFileSync(path.resolve(__dirname, 'main.css'), 'utf8');
+const name = 'main';
+const style = fs.readFileSync(path.resolve(__dirname, `${name}.css`), 'utf8');
 
 ipc.on('message', function (ev, data) {
   switch (true) {
@@ -39,7 +40,7 @@ function render(name) {
 module.exports = function (elem) {
   applyStyle(style);
 
-  elem.classList.add('main');
+  elem.classList.add(name);
 
   const filmstrip = render('filmstrip');
   const sidebar = render('sidebar');

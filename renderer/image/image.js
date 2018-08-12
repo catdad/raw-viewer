@@ -2,7 +2,8 @@ const fs = require('fs');
 const path = require('path');
 const EventEmitter = require('events');
 
-let style = fs.readFileSync(path.resolve(__dirname, 'image.css'), 'utf8');
+const name = 'image';
+const style = fs.readFileSync(path.resolve(__dirname, `${name}.css`), 'utf8');
 
 const keys = (() => {
   const SPACE = ' ';
@@ -129,7 +130,7 @@ function registerMouse(elem) {
 
 module.exports = function ({ events }) {
   const elem = document.createElement('div');
-  elem.className = 'image';
+  elem.className = name;
 
   const img = document.createElement('img');
   elem.appendChild(img);

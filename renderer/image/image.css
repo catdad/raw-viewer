@@ -2,9 +2,29 @@
   display: flex;
   align-items: center;
   justify-content: center;
+
+  overflow: scroll;
+}
+
+.image::-webkit-scrollbar {
+  width: 8px;
+}
+.image::-webkit-scrollbar:horizontal {
+  height: 8px;
+}
+.image::-webkit-scrollbar-track {
+  background: #535353;
+}
+.image::-webkit-scrollbar-thumb {
+  background: #535353;
+  box-shadow: 0 0 12px #262626 inset;
+  border-radius: 8px;
+}
+.image::-webkit-scrollbar-corner {
+  background: #535353;
 }
 
 .image img {
-  max-height: 100%;
-  max-width: 100%;
+  transform-origin: 0% 0%;
+  will-change: transform;
 }

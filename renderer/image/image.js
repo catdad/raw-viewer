@@ -1,7 +1,45 @@
 const fs = require('fs');
 const path = require('path');
+const EventEmitter = require('events');
 
 let style = fs.readFileSync(path.resolve(__dirname, 'image.css'), 'utf8');
+
+const keys = (() => {
+  const SPACE = ' ';
+
+  const ev = new EventEmitter();
+
+  const down = {};
+  const track = { [`${SPACE}`]: true, z: true };
+
+  window.addEventListener('keydown', (e) => {
+    if (track[(e.key)]) {
+      down[e.key] = true;
+
+      ev.emit('change', {
+        down: Object.keys(down)
+      });
+    }
+  });
+
+  window.addEventListener('keyup', (e) => {
+    if (track[(e.key)]) {
+      delete down[e.key];
+
+      ev.emit('change', {
+        down: Object.keys(down)
+      });
+    }
+  });
+
+  return {
+    SPACE,
+    includes: (key) => !!down[key],
+    count: () => Object.keys(down).length,
+    on: ev.addListener.bind(ev),
+    off: ev.removeListener.bind(ev)
+  };
+})();
 
 module.exports = function ({ events }) {
   let elem = document.createElement('div');

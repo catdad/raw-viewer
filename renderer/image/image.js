@@ -126,6 +126,22 @@ module.exports = function ({ events }) {
     box = elem.getBoundingClientRect();
   });
 
+  keys.on('change', ({ down }) => {
+    if (down.includes(keys.SPACE)) {
+      return elem.style.cursor = '-webkit-grab';
+    }
+
+    if (down.includes(keys.ALT) && down.includes('z')) {
+      return elem.style.cursor = 'zoom-out';
+    }
+
+    if (down.includes('z')) {
+      return elem.style.cursor = 'zoom-in';
+    }
+
+    return elem.style.cursor = 'auto';
+  });
+
   function loadImage({ imageUrl }) {
     let scale = 1;
     let width = img.width;

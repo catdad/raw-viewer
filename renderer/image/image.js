@@ -54,17 +54,18 @@ function registerMouse(elem) {
 
   const onMouseMove = (e) => {
     if (keys.includes(keys.SPACE)) {
+      // panning
       elem.scrollLeft += x - e.x;
       elem.scrollTop += y - e.y;
-
-      x = e.x;
-      y = e.y;
     }
+
+    x = e.x;
+    y = e.y;
 
     return false;
   };
 
-  const onMouseUp = (e) => {
+  const onMouseUp = () => {
     elem.removeEventListener('mousemove', onMouseMove);
     elem.removeEventListener('mouseup', onMouseUp);
 
@@ -76,10 +77,10 @@ function registerMouse(elem) {
   const onMouseDown = (e) => {
     e.preventDefault();
 
-    if (keys.includes(keys.SPACE)) {
-      x = e.x;
-      y = e.y;
+    x = e.x;
+    y = e.y;
 
+    if (keys.includes(keys.SPACE)) {
       // panning
       elem.addEventListener('mousemove', onMouseMove);
       elem.addEventListener('mouseup', onMouseUp);

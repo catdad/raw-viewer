@@ -4,7 +4,7 @@ const fs = require('fs-extra');
 const dcraw = require('dcraw');
 
 function bufferToUrl(buff) {
-  return 'data:image/jpeg;base64,' + Buffer.from(buff).toString('base64');
+  return `data:image/jpeg;base64,${Buffer.from(buff).toString('base64')}`;
 }
 
 async function readFileBuffer(filepath) {

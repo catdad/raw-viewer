@@ -6,11 +6,20 @@ let style = fs.readFileSync(path.resolve(__dirname, 'image.css'), 'utf8');
 
 const keys = (() => {
   const SPACE = ' ';
+  const ALT = 'Alt';
+  const CTRL = 'Control';
+  const SHIFT = 'Shift';
 
   const ev = new EventEmitter();
 
   const down = {};
-  const track = { [`${SPACE}`]: true, z: true };
+  const track = {
+    [`${SPACE}`]: true,
+    [`${ALT}`]: true,
+    [`${CTRL}`]: true,
+    [`${SHIFT}`]: true,
+    z: true
+  };
 
   window.addEventListener('keydown', (e) => {
     e.preventDefault();
@@ -42,8 +51,12 @@ const keys = (() => {
 
   return {
     SPACE,
+    ALT,
+    CTRL,
+    SHIFT,
     includes: (key) => !!down[key],
     count: () => Object.keys(down).length,
+    list: () => Object.keys(down),
     on: ev.addListener.bind(ev),
     off: ev.removeListener.bind(ev)
   };
@@ -58,6 +71,8 @@ function registerMouse(elem) {
       // panning
       elem.scrollLeft += x - e.x;
       elem.scrollTop += y - e.y;
+    } else if (keys.includes('z')) {
+
     }
 
     x = e.x;
@@ -81,8 +96,12 @@ function registerMouse(elem) {
     x = e.x;
     y = e.y;
 
-    if (keys.includes(keys.SPACE)) {
-      // panning
+    // panning
+    const start = keys.includes(keys.SPACE) ||
+      // zooming
+      keys.includes('z');
+
+    if (start) {
       elem.addEventListener('mousemove', onMouseMove);
       elem.addEventListener('mouseup', onMouseUp);
     }
@@ -94,26 +113,25 @@ function registerMouse(elem) {
 }
 
 module.exports = function ({ events }) {
-  let elem = document.createElement('div');
+  const elem = document.createElement('div');
   elem.className = 'image';
+
+  const img = document.createElement('img');
+  elem.appendChild(img);
+
+  let box = elem.getBoundingClientRect();
+
+  window.addEventListener('resize', () => {
+    // TODO don't do this on every single event
+    box = elem.getBoundingClientRect();
+  });
 
   function loadImage({ imageUrl }) {
     let scale = 1;
-    let img = document.createElement('img');
-    img.src = imageUrl;
-
-    elem.innerHTML = '';
-    elem.appendChild(img);
-
-    let box = elem.getBoundingClientRect();
-
-    window.addEventListener('resize', () => {
-      // TODO don't do this on every single event
-      box = elem.getBoundingClientRect();
-    });
-
     let width = img.width;
     let height = img.height;
+
+    box = elem.getBoundingClientRect();
 
     function zoom(toScale) {
       // JavaScript math sucks
@@ -145,18 +163,25 @@ module.exports = function ({ events }) {
       zoom(1);
     };
 
-    elem.onclick = function (ev) {
-      if (ev.ctrlKey && scale > 0.1) {
+    elem.onclick = function () {
+      const zout = keys.includes(keys.ALT) && keys.includes('z');
+      const zin = keys.includes('z') && !zout;
+
+      if (scale > 0.1 && zout) {
+        // zooming out
         scale -= 0.1;
         zoom(scale);
-      } else if (ev.shiftKey && scale < 1) {
+      } else if (scale < 1 && zin) {
+        // zooming in
         scale += 0.1;
         zoom(scale);
       }
     };
 
-    registerMouse(elem);
+    img.src = imageUrl;
   }
+
+  registerMouse(elem);
 
   events.on('load:image', loadImage);
 

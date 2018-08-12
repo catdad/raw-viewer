@@ -18,8 +18,6 @@ module.exports = function ({ events }) {
 
     const meta = exif.data[0];
 
-    log.info(JSON.stringify(exif, null, 2));
-
     const fragment = document.createDocumentFragment();
 
     [

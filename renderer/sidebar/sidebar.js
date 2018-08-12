@@ -23,6 +23,7 @@ module.exports = function ({ events }) {
       'ISO speed',
       'Thumb size',
       'Timestamp',
+      'Size',
     ].filter(key => !!meta[key]).map(key => {
       const p = document.createElement('p');
       p.appendChild(document.createTextNode(`${key}: ${meta[key]}`));

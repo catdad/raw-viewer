@@ -1,4 +1,5 @@
 const fs = require('fs-extra');
+const prettyBytes = require('pretty-bytes');
 
 const dcraw = require('dcraw');
 const log = require('../tools/log.js')('util');
@@ -52,7 +53,9 @@ async function imageMeta(filepath) {
     memo[name.trim()] = val.join(':').trim();
 
     return memo;
-  }, {});
+  }, {
+    Size: prettyBytes(file.length)
+  });
 }
 
 module.exports = {

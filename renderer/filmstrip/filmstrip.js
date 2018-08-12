@@ -150,12 +150,18 @@ module.exports = function ({ events }) {
         thumb.style.backgroundImage = `url("${data}")`;
 
         handleDisplay(thumb, data);
+
+        return thumb;
       })());
 
       fragment.appendChild(thumb);
     }
 
     wrapper.appendChild(fragment);
+
+    promises[0].then((thumb) => {
+      thumb.click();
+    });
 
     await Promise.all(promises);
 

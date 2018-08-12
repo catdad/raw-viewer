@@ -13,6 +13,8 @@ const keys = (() => {
   const track = { [`${SPACE}`]: true, z: true };
 
   window.addEventListener('keydown', (e) => {
+    e.preventDefault();
+
     if (track[(e.key)]) {
       down[e.key] = true;
 
@@ -20,9 +22,13 @@ const keys = (() => {
         down: Object.keys(down)
       });
     }
+
+    return false;
   });
 
   window.addEventListener('keyup', (e) => {
+    e.preventDefault();
+
     if (track[(e.key)]) {
       delete down[e.key];
 
@@ -30,6 +36,8 @@ const keys = (() => {
         down: Object.keys(down)
       });
     }
+
+    return false;
   });
 
   return {
@@ -40,6 +48,50 @@ const keys = (() => {
     off: ev.removeListener.bind(ev)
   };
 })();
+
+function registerMouse(elem) {
+  let x, y;
+
+  const onMouseMove = (e) => {
+    // TODO don't do this on every single move
+    if (keys.includes(keys.SPACE)) {
+      // panning
+      elem.scrollLeft += x - e.x;
+      elem.scrollTop += y - e.y;
+    }
+
+    x = e.x;
+    y = e.y;
+
+    return false;
+  };
+
+  const onMouseUp = () => {
+    elem.removeEventListener('mousemove', onMouseMove);
+    elem.removeEventListener('mouseup', onMouseUp);
+
+    x = y = null;
+
+    return false;
+  };
+
+  const onMouseDown = (e) => {
+    e.preventDefault();
+
+    x = e.x;
+    y = e.y;
+
+    if (keys.includes(keys.SPACE)) {
+      // panning
+      elem.addEventListener('mousemove', onMouseMove);
+      elem.addEventListener('mouseup', onMouseUp);
+    }
+
+    return false;
+  };
+
+  elem.addEventListener('mousedown', onMouseDown);
+}
 
 module.exports = function ({ events }) {
   let elem = document.createElement('div');
@@ -54,6 +106,11 @@ module.exports = function ({ events }) {
     elem.appendChild(img);
 
     let box = elem.getBoundingClientRect();
+
+    window.addEventListener('resize', () => {
+      // TODO don't do this on every single event
+      box = elem.getBoundingClientRect();
+    });
 
     let width = img.width;
     let height = img.height;
@@ -97,6 +154,8 @@ module.exports = function ({ events }) {
         zoom(scale);
       }
     };
+
+    registerMouse(elem);
   }
 
   events.on('load:image', loadImage);

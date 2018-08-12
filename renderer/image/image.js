@@ -53,6 +53,7 @@ function registerMouse(elem) {
   let x, y;
 
   const onMouseMove = (e) => {
+    // TODO don't do this on every single move
     if (keys.includes(keys.SPACE)) {
       // panning
       elem.scrollLeft += x - e.x;

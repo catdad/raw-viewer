@@ -1,6 +1,6 @@
 /* global postMessage */
 
-const { imageUrl } = require('../renderer/util.js');
+const { imageUrl, imageUint8Array } = require('../renderer/util.js');
 const log = require('../tools/log.js')('worker');
 
 function exec(data) {
@@ -19,12 +19,20 @@ function exec(data) {
     postMessage(result);
   }
 
-  if (data.name === 'imageUrl') {
-    return imageUrl(...data.args).then(data => {
+  function execPromise(prom) {
+    prom.then(data => {
       onDone(null, data);
     }).catch(err => {
       onDone(err);
     });
+  }
+
+  if (data.name === 'imageUint8Array') {
+    return execPromise(imageUint8Array(...data.args));
+  }
+
+  if (data.name === 'imageUrl') {
+    return execPromise(imageUrl(...data.args));
   }
 
   onDone(new Error(`${data.name} is an unknown worker command`));

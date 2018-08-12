@@ -19,7 +19,7 @@ async function readFileBuffer(filepath) {
   return file;
 }
 
-async function imageBuffer(filepath) {
+async function imageUint8Array(filepath) {
   const file = await readFileBuffer(filepath);
 
   // read image from raw data
@@ -33,7 +33,7 @@ async function imageBuffer(filepath) {
 }
 
 async function imageUrl(filepath) {
-  const preview = await imageBuffer(filepath);
+  const preview = await imageUint8Array(filepath);
 
   return bufferToUrl(preview);
 }
@@ -56,5 +56,7 @@ async function imageMeta(filepath) {
 
 module.exports = {
   imageUrl,
-  imageMeta
+  imageUint8Array,
+  imageMeta,
+  bufferToUrl
 };

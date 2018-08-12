@@ -3,6 +3,7 @@ const path = require('path');
 const EventEmitter = require('events');
 
 const log = require('../../tools/log.js')('filmstrip');
+const { bufferToUrl } = require('../util.js');
 
 const name = 'filmstrip';
 const style = fs.readFileSync(path.resolve(__dirname, `${name}.css`), 'utf8');
@@ -144,7 +145,9 @@ module.exports = function ({ events }) {
       thumb.setAttribute('data-filepath', filepath);
 
       promises.push((async () => {
-        thumb['data-imageurl'] = await workers.exec('imageUrl', [filepath]);
+        let data = bufferToUrl(await workers.exec('imageUint8Array', [filepath]));
+
+        thumb['data-imageurl'] = data;
 
         thumb.style.backgroundImage = `url("${thumb['data-imageurl']}")`;
       })());

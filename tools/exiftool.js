@@ -1,3 +1,7 @@
+const fs = require('fs-extra');
+const prettyBytes = require('pretty-bytes');
+const _ = require('lodash');
+
 const exifToolLib = require('node-exiftool');
 const exifToolBin = require('dist-exiftool');
 const exifTool = new exifToolLib.ExiftoolProcess(exifToolBin);
@@ -39,12 +43,16 @@ const initExiftool = (() => {
   return initOnce;
 })();
 
+async function fileSize(filepath) {
+  return (await fs.stat(filepath)).size;
+}
+
 async function readExif(filepath) {
   log.time('exif');
 
   await initExiftool();
 
-  const data = exifTool.readMetadata(filepath, ['-File:all']);
+  const data = await exifTool.readMetadata(filepath, ['-File:all']);
 
   log.timeEnd('exif');
 
@@ -55,11 +63,19 @@ module.exports = function init(receive, send) {
   receive('exiftool:read', async (ev, { filepath, id }) => {
     log.info('read exif for', filepath, id);
 
-    let data;
+    let data, size;
     const cbName = `exiftool:callback:${id}`;
 
     try {
-      data = await readExif(filepath);
+      [ data, size ] = await Promise.all([
+        readExif(filepath),
+        fileSize(filepath)
+      ]);
+
+      // use incorrect (format-wise) tag names, to hopefully make it clear
+      // these are not property exif or maker tags
+      _.set(data, 'data[0].Z-FileBytes', size);
+      _.set(data, 'data[0].Z-FileSize', prettyBytes(size));
     } catch(e) {
       log.error(e);
 

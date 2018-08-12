@@ -30,8 +30,8 @@ module.exports = function ({ events }) {
       { key: 'ExposureTime', gui: 'Shutter' }, // also ExposureCompensation
       { key: 'ISO', gui: 'ISO' },
       { key: 'ImageSize', gui: 'Dimensions' }, // this is sensor size, pre-crop, maybe use DefaultCropSize
-      { key: '', gui: 'Size' },
       { key: 'DateTimeOriginal', gui: 'Timestamp' },
+      { key: 'Z-FileSize', gui: 'Size' },
     ].filter(({ key }) => !!meta[key]).map(({ key, gui }) => {
       const p = document.createElement('p');
       p.appendChild(document.createTextNode(`${gui}: ${meta[key]}`));

@@ -114,11 +114,11 @@ module.exports = function ({ events }) {
     ev.preventDefault();
   });
 
-  function handleDisplay(thumb) {
+  function handleDisplay(thumb, dataUrl) {
     thumb.addEventListener('click', function () {
       events.emit('load:image', {
         filepath: thumb.getAttribute('data-filepath'),
-        imageUrl: thumb['data-imageurl']
+        imageUrl: dataUrl
       });
 
       events.emit('load:meta', {
@@ -147,12 +147,10 @@ module.exports = function ({ events }) {
       promises.push((async () => {
         let data = bufferToUrl(await workers.exec('imageUint8Array', [filepath]));
 
-        thumb['data-imageurl'] = data;
+        thumb.style.backgroundImage = `url("${data}")`;
 
-        thumb.style.backgroundImage = `url("${thumb['data-imageurl']}")`;
+        handleDisplay(thumb, data);
       })());
-
-      handleDisplay(thumb);
 
       fragment.appendChild(thumb);
     }

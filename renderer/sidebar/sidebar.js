@@ -18,6 +18,13 @@ module.exports = function ({ events }) {
 
     const meta = exif.data[0];
 
+    // Canon has a lower and upper focus distance, while
+    // others have a single value
+    if (meta.FocusDistanceLower && meta.FocusDistanceUpper) {
+      meta.FocusDistance = meta.FocusDistance ||
+        `${meta.FocusDistanceLower} - ${meta.FocusDistanceUpper}`;
+    }
+
     const fragment = document.createDocumentFragment();
 
     [
@@ -28,6 +35,7 @@ module.exports = function ({ events }) {
       { key: 'ExposureTime', gui: 'Shutter' }, // also ExposureCompensation
       { key: 'ISO', gui: 'ISO' },
       { key: 'ExposureMode', gui: 'Mode' },
+      { key: 'FocusDistance', gui: 'Focus Distance' },
       { key: 'ImageSize', gui: 'Dimensions' }, // this is sensor size, pre-crop, maybe use DefaultCropSize
       { key: 'DateTimeOriginal', gui: 'Timestamp' },
       { key: 'Z-FileSize', gui: 'Size' },

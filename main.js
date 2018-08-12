@@ -60,6 +60,14 @@ function createWindow () {
 
     ipcMain.on('message', onIpc);
 
+    mainWindow.webContents.on('devtools-opened', () => {
+      config.setProp('devToolsOpen', true);
+    });
+
+    mainWindow.webContents.on('devtools-closed', () => {
+      config.setProp('devToolsOpen', false);
+    });
+
     if (config.getProp('devToolsOpen')) {
       mainWindow.webContents.openDevTools();
     }

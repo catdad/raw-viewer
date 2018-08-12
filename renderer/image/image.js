@@ -3,6 +3,31 @@ const path = require('path');
 
 let style = fs.readFileSync(path.resolve(__dirname, 'image.css'), 'utf8');
 
+//const keys = (() => {
+//  const SPACE = ' ';
+//
+//  const down = {};
+//
+//  const track = { [`${SPACE}`]: true, z: true };
+//
+//  window.addEventListener('keydown', (e) => {
+//    if (track[(e.key)]) {
+//      down[e.key] = true;
+//    }
+//  });
+//
+//  window.addEventListener('keyup', (e) => {
+//    if (track[(e.key)]) {
+//      delete down[e.key];
+//    }
+//  });
+//
+//  return {
+//    includes: (key) => !!down[key],
+//    count: () => Object.keys(down).length
+//  };
+//})();
+
 module.exports = function ({ events }) {
   let elem = document.createElement('div');
   elem.className = 'image';

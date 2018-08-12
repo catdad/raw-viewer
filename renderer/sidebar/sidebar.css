@@ -1,3 +1,9 @@
 .sidebar {
-  padding: 0 8px;
+  padding: 8px;
+}
+
+.sidebar p {
+  padding: 0;
+  margin: 0;
+  line-height: 2;
 }

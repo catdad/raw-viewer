@@ -83,13 +83,9 @@ async function readJpeg(filepath) {
   const start = JpgFromRawStart || PreviewImageStart;
   const length = JpgFromRawLength || PreviewImageLength;
 
-  const buff = Buffer.alloc(length);
-  const fd = await fs.open(filepath, 'r');
-  await fs.read(fd, buff, 0, length, start);
-
   log.timeEnd(`jpeg ${filepath}`);
 
-  return { orientation: Orientation, buffer: buff };
+  return { orientation: Orientation, start, length };
 }
 
 module.exports = function init(receive, send) {

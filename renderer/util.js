@@ -13,31 +13,30 @@ async function readFileBuffer(filepath) {
     return filepath;
   }
 
-  log.time('read');
   const file = await fs.readFile(filepath);
-  log.timeEnd('read');
 
   return file;
 }
 
 async function imageUint8Array(filepath) {
-  log.info('imageUint8Array');
+  log.time('preview');
+
   const file = await readFileBuffer(filepath);
 
   // read image from raw data
   // var tiff = dcraw(file, { exportAsTiff: true });
 
-  log.time('preview');
   const preview = dcraw(file, { extractThumbnail: true });
+
   log.timeEnd('preview');
 
   return preview;
 }
 
 async function imageUrl(filepath) {
-  const preview = await imageUint8Array(filepath);
+  const data = bufferToUrl(await imageUint8Array(filepath));
 
-  return bufferToUrl(preview);
+  return data;
 }
 
 // TODO dead code, use exiftools instead

@@ -1,104 +1,13 @@
 const fs = require('fs-extra');
 const path = require('path');
-const EventEmitter = require('events');
 
 const log = require('../../tools/log.js')('filmstrip');
 const { bufferToUrl } = require('../util.js');
+const exiftool = require('../exiftool-child.js');
+//const workers = require('./workers.js')(4);
 
 const name = 'filmstrip';
 const style = fs.readFileSync(path.resolve(__dirname, `${name}.css`), 'utf8');
-
-const workers = (function (count) {
-  const arr = [];
-  const queue = [];
-  const events = new EventEmitter();
-
-  function flushQueue() {
-    if (!queue.length) {
-      return;
-    }
-
-    log.info('flushing %s queued tasks with %s workers', queue.length, arr.length);
-
-    while (arr.length && queue.length) {
-      queue.shift()();
-    }
-  }
-
-  async function spawnWorkers() {
-    function createWorker(idx) {
-      return new Promise((resolve) => {
-        // this path is relative to index.html
-        const worker = new Worker('./filmstrip-worker.js');
-
-        worker.onmessage = function (ev) {
-          if (ev.data.type === 'ready') {
-            return resolve(worker);
-          }
-
-          if (ev.data.type === 'done') {
-            return events.emit(`done:${idx}`, ev.data);
-          }
-
-          log.info('worker message', ev);
-        };
-
-        worker.idx = idx;
-
-        return worker;
-      });
-    }
-
-    while (arr.length < count) {
-      arr.push(await createWorker(arr.length));
-    }
-
-    setImmediate(flushQueue);
-  }
-
-  log.time('worker init');
-
-  spawnWorkers().then(() => {
-    log.timeEnd('worker init');
-  }).catch(err => {
-    log.error('failed to create workers', err);
-  });
-
-  function exec(name, args) {
-    return new Promise((resolve, reject) => {
-      function doWork() {
-        const worker = arr.shift();
-
-        events.once(`done:${worker.idx}`, res => {
-          log.info('post message overhead', Date.now() - res.epoch, 'ms');
-          arr.push(worker);
-
-          setImmediate(flushQueue);
-
-          if (res.err) {
-            return reject(res.err);
-          }
-
-          return resolve(res.data);
-        });
-
-        worker.postMessage({
-          type: 'exec',
-          name, args
-        });
-      }
-
-      if (!arr.length) {
-        // there are no workers, add this exec to queue
-        return queue.push(doWork);
-      }
-
-      return doWork();
-    });
-  }
-
-  return { exec };
-}(4));
 
 module.exports = function ({ events }) {
   var elem = document.createElement('div');
@@ -145,7 +54,12 @@ module.exports = function ({ events }) {
       thumb.setAttribute('data-filepath', filepath);
 
       promises.push((async () => {
-        let data = bufferToUrl(await workers.exec('imageUint8Array', [filepath]));
+        log.time(`!!!JPEG ${file}`);
+
+//        let data = bufferToUrl(await workers.exec('imageUint8Array', [filepath]));
+        let { buffer, orientation } = await exiftool.readJpeg(filepath);
+        let data = bufferToUrl(buffer);
+        log.timeEnd(`!!!JPEG ${file}`);
 
         thumb.style.backgroundImage = `url("${data}")`;
 

@@ -59,7 +59,7 @@ async function readExif(filepath) {
   return data;
 }
 
-async function readJpeg(filepath) {
+async function readJpegMeta(filepath) {
   await initExiftool();
 
   log.time(`jpeg ${filepath}`);
@@ -129,12 +129,12 @@ module.exports = function init(receive, send) {
     return callback(null, data);
   });
 
-  receive('exiftool:read:jpeg', async (ev, { filepath, id }) => {
+  receive('exiftool:read:jpegmeta', async (ev, { filepath, id }) => {
     let data;
     const callback = createCallback(id);
 
     try {
-      data = await readJpeg(filepath);
+      data = await readJpegMeta(filepath);
     } catch (e) {
       log.error(e);
       return callback(e);

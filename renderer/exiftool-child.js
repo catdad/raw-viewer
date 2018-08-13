@@ -49,7 +49,7 @@ function readJpeg(filepath) {
       return reject(new Error(data.err));
     });
 
-    ipc.send('exiftool:read:jpeg', { filepath, id });
+    ipc.send('exiftool:read:jpegmeta', { filepath, id });
   });
 }
 

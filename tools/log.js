@@ -1,18 +1,24 @@
 /* eslint-disable no-console */
 
+const { format } = require('util');
+
 module.exports = function createLog(name) {
   const header = '[' + name + ']';
 
-  function info(msg, ...args) {
-    console.log(`${header} ${msg}`, ...args);
+  function serialize(...args) {
+    return format(...args).split('\n').map(line => `${header} ${line}`).join('\n');
   }
 
-  function error(msg, ...args) {
-    console.error(`${header} ${msg}`, ...args);
+  function info(...args) {
+    console.log(serialize(...args));
   }
 
-  function trace(msg, ...args) {
-    console.trace(`${header} ${msg}`, ...args);
+  function error(...args) {
+    console.error(serialize(...args));
+  }
+
+  function trace(msg) {
+    console.trace(`${header} ${msg}`);
   }
 
   function time(timer) {

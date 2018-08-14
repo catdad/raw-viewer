@@ -22,6 +22,10 @@
   width: 180px;
   height: 180px;
 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
   flex: 0 0 auto;
   margin: 0 5px;
   padding: 6px;
@@ -39,10 +43,15 @@
   will-change: transform;
 }
 
-.filmstrip .thumbnail.rotate-90 {
+.filmstrip .thumbnail img {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.filmstrip img.rotate-90 {
   transform: rotate(90deg);
 }
-.filmstrip .thumbnail.rotate-270 {
+.filmstrip img.rotate-270 {
   transform: rotate(270deg);
 }
 

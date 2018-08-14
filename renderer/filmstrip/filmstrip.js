@@ -36,6 +36,19 @@ module.exports = function ({ events }) {
     });
   }
 
+  function thumbnail({ file, filepath }) {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'thumbnail';
+    wrapper.setAttribute('data-filename', file);
+    wrapper.setAttribute('data-filepath', filepath);
+
+    const img = document.createElement('img');
+
+    wrapper.appendChild(img);
+
+    return { wrapper, img };
+  }
+
   async function loadThumbnails(dir) {
     log.time('load thumbs');
 
@@ -48,10 +61,7 @@ module.exports = function ({ events }) {
 
     for (let file of files) {
       let filepath = path.resolve(dir, file);
-      let thumb = document.createElement('div');
-      thumb.className = 'thumbnail';
-      thumb.setAttribute('data-filename', file);
-      thumb.setAttribute('data-filepath', filepath);
+      let { wrapper, img } = thumbnail({ file, filepath });
 
       promises.push((async () => {
         log.time(`render ${file}`);
@@ -59,17 +69,17 @@ module.exports = function ({ events }) {
         let data = bufferToUrl(buffer);
         log.timeEnd(`render ${file}`);
 
-        thumb.classList.add(`rotate-${rotation}`);
-        thumb.style.backgroundImage = `url("${data}")`;
+        img.classList.add(`rotate-${rotation}`);
+        img.src = data;
 
-        handleDisplay(thumb, data, {
+        handleDisplay(wrapper, data, {
           filepath, file, rotation
         });
 
-        return thumb;
+        return wrapper;
       })());
 
-      fragment.appendChild(thumb);
+      fragment.appendChild(wrapper);
     }
 
     wrapper.appendChild(fragment);

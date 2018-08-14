@@ -62,6 +62,9 @@
   left: 0;
   bottom: 5px;
   text-align: center;
+  text-shadow: 0 0 10px #262626;
+  font-weight: bold;
 
   pointer-events: none;
+  will-change: transform;
 }

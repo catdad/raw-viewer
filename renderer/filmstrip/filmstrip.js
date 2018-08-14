@@ -4,7 +4,6 @@ const path = require('path');
 const log = require('../../tools/log.js')('filmstrip');
 const { bufferToUrl } = require('../util.js');
 const exiftool = require('../exiftool-child.js');
-//const workers = require('./workers.js')(4);
 
 const name = 'filmstrip';
 const style = fs.readFileSync(path.resolve(__dirname, `${name}.css`), 'utf8');
@@ -55,8 +54,6 @@ module.exports = function ({ events }) {
 
       promises.push((async () => {
         log.time(`render ${file}`);
-
-//        let data = bufferToUrl(await workers.exec('imageUint8Array', [filepath]));
         let { buffer, orientation } = await exiftool.readJpeg(filepath);
         let data = bufferToUrl(buffer);
         log.timeEnd(`render ${file}`);

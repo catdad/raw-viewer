@@ -24,7 +24,18 @@
   background: #535353;
 }
 
-.image img {
+.image .image-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
   transform-origin: 0% 0%;
+  will-change: transform;
+}
+
+.image img {
+  position: relative;
+  transform-origin: center;
   will-change: transform;
 }

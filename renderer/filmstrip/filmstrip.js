@@ -22,17 +22,31 @@ module.exports = function ({ events }) {
     ev.preventDefault();
   });
 
-  function handleDisplay(thumb, dataUrl) {
+  function handleDisplay(thumb, dataUrl, { filepath, rotation }) {
     thumb.addEventListener('click', function () {
       events.emit('load:image', {
-        filepath: thumb.getAttribute('data-filepath'),
-        imageUrl: dataUrl
+        filepath: filepath,
+        imageUrl: dataUrl,
+        rotation: rotation
       });
 
       events.emit('load:meta', {
-        filepath: thumb.getAttribute('data-filepath')
+        filepath: filepath
       });
     });
+  }
+
+  function thumbnail({ file, filepath }) {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'thumbnail';
+    wrapper.setAttribute('data-filename', file);
+    wrapper.setAttribute('data-filepath', filepath);
+
+    const img = document.createElement('img');
+
+    wrapper.appendChild(img);
+
+    return { wrapper, img };
   }
 
   async function loadThumbnails(dir) {
@@ -47,29 +61,30 @@ module.exports = function ({ events }) {
 
     for (let file of files) {
       let filepath = path.resolve(dir, file);
-      let thumb = document.createElement('div');
-      thumb.className = 'thumbnail';
-      thumb.setAttribute('data-filename', file);
-      thumb.setAttribute('data-filepath', filepath);
+      let { wrapper, img } = thumbnail({ file, filepath });
 
       promises.push((async () => {
         log.time(`render ${file}`);
-        let { buffer, orientation } = await exiftool.readJpeg(filepath);
+        let { buffer, rotation } = await exiftool.readJpeg(filepath);
         let data = bufferToUrl(buffer);
         log.timeEnd(`render ${file}`);
 
-        thumb.style.backgroundImage = `url("${data}")`;
+        img.classList.add(`rotate-${rotation}`);
+        img.src = data;
 
-        handleDisplay(thumb, data);
+        handleDisplay(wrapper, data, {
+          filepath, file, rotation
+        });
 
-        return thumb;
+        return wrapper;
       })());
 
-      fragment.appendChild(thumb);
+      fragment.appendChild(wrapper);
     }
 
     wrapper.appendChild(fragment);
 
+    // render the first image as soon as we have it
     promises[0].then((thumb) => {
       thumb.click();
     });

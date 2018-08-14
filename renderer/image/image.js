@@ -132,8 +132,13 @@ module.exports = function ({ events }) {
   const elem = document.createElement('div');
   elem.className = name;
 
+  const container = document.createElement('div');
+  container.className = `${name}-container`;
+
   const img = document.createElement('img');
-  elem.appendChild(img);
+
+  container.appendChild(img);
+  elem.appendChild(container);
 
   let box = elem.getBoundingClientRect();
 
@@ -158,10 +163,12 @@ module.exports = function ({ events }) {
     return elem.style.cursor = 'auto';
   });
 
-  function loadImage({ imageUrl }) {
+  function loadImage({ imageUrl, rotation }) {
     let scale = 1;
     let width = img.width;
     let height = img.height;
+    const rotate = rotation === 0 ? '' : `rotate(${rotation}deg)`;
+    const isRotated = rotation === 90 || rotation === 270;
 
     box = elem.getBoundingClientRect();
 
@@ -178,10 +185,18 @@ module.exports = function ({ events }) {
       const transformHeight = targetHeight > box.height ?
         (targetHeight / 2) - (box.height / 2) : 0;
 
-      img.style.width = `${targetWidth}px`;
-      img.style.height = `${targetHeight}px`;
+      if (isRotated) {
+        img.style.width = `${targetHeight}px`;
+        img.style.height = `${targetWidth}px`;
+        img.style.transform = rotate;
+      }  else {
+        img.style.width = `${targetWidth}px`;
+        img.style.height = `${targetHeight}px`;
+      }
 
-      img.style.transform = `translate(${transformWidth}px, ${transformHeight}px)`;
+      container.style.width = `${targetWidth}px`;
+      container.style.height = `${targetHeight}px`;
+      container.style.transform = `translate(${transformWidth}px, ${transformHeight}px)`;
 
       // scroll to center by default
       elem.scrollTop = (targetHeight / 2) - (box.height / 2);
@@ -189,8 +204,13 @@ module.exports = function ({ events }) {
     }
 
     img.onload = function () {
-      width = img.naturalWidth;
-      height = img.naturalHeight;
+      if (isRotated) {
+        width = img.naturalHeight;
+        height = img.naturalWidth;
+      } else {
+        width = img.naturalWidth;
+        height = img.naturalHeight;
+      }
 
       zoom(1);
     };
@@ -210,6 +230,7 @@ module.exports = function ({ events }) {
       }
     };
 
+    img.style.transform = '';
     img.src = imageUrl;
   }
 

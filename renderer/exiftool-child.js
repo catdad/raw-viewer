@@ -3,6 +3,12 @@ const ipc = require('electron').ipcRenderer;
 
 const log = require('../tools/log.js')('exiftool-child');
 
+const ROTATION = {
+  'Horizontal (normal)': 0,
+  'Rotate 90 CW': 90,
+  'Rotate 270 CW': 270
+};
+
 function gid() {
   return Math.random().toString(36).substr(2);
 }
@@ -37,7 +43,9 @@ function readJpeg(filepath) {
       log.timeEnd(`read jpeg ${filepath}`);
 
       resolve({
-        orientation, buffer
+        orientation,
+        buffer,
+        rotation: ROTATION[orientation] || 0
       });
     };
 

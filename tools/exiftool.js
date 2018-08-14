@@ -24,6 +24,7 @@ const initExiftool = (() => {
 
     prom = exifTool.open();
     await prom;
+    done = true;
 
     return;
   };

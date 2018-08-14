@@ -37,6 +37,7 @@ module.exports = function ({ events }) {
       { key: 'ExposureMode', gui: 'Mode' },
       { key: 'FocusDistance', gui: 'Focus Distance' },
       { key: 'ImageSize', gui: 'Dimensions' }, // this is sensor size, pre-crop, maybe use DefaultCropSize
+      { key: 'Orientation', gui: 'Orientation' },
       { key: 'DateTimeOriginal', gui: 'Timestamp' },
       { key: 'Z-FileSize', gui: 'Size' },
     ].filter(({ key }) => !!meta[key]).map(({ key, gui }) => {

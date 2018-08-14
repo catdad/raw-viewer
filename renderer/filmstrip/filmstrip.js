@@ -22,15 +22,16 @@ module.exports = function ({ events }) {
     ev.preventDefault();
   });
 
-  function handleDisplay(thumb, dataUrl) {
+  function handleDisplay(thumb, dataUrl, { filepath, rotation }) {
     thumb.addEventListener('click', function () {
       events.emit('load:image', {
-        filepath: thumb.getAttribute('data-filepath'),
-        imageUrl: dataUrl
+        filepath: filepath,
+        imageUrl: dataUrl,
+        rotation: rotation
       });
 
       events.emit('load:meta', {
-        filepath: thumb.getAttribute('data-filepath')
+        filepath: filepath
       });
     });
   }
@@ -54,13 +55,16 @@ module.exports = function ({ events }) {
 
       promises.push((async () => {
         log.time(`render ${file}`);
-        let { buffer, orientation } = await exiftool.readJpeg(filepath);
+        let { buffer, rotation } = await exiftool.readJpeg(filepath);
         let data = bufferToUrl(buffer);
         log.timeEnd(`render ${file}`);
 
+        thumb.classList.add(`rotate-${rotation}`);
         thumb.style.backgroundImage = `url("${data}")`;
 
-        handleDisplay(thumb, data);
+        handleDisplay(thumb, data, {
+          filepath, file, rotation
+        });
 
         return thumb;
       })());
@@ -70,6 +74,7 @@ module.exports = function ({ events }) {
 
     wrapper.appendChild(fragment);
 
+    // render the first image as soon as we have it
     promises[0].then((thumb) => {
       thumb.click();
     });

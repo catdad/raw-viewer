@@ -37,7 +37,7 @@ module.exports = function ({ events }) {
   }
 
   async function loadThumbnails(dir) {
-    log.time('loadThumbs');
+    log.time('load thumbs');
 
     var files = await fs.readdir(dir);
 
@@ -54,12 +54,12 @@ module.exports = function ({ events }) {
       thumb.setAttribute('data-filepath', filepath);
 
       promises.push((async () => {
-        log.time(`!!!JPEG ${file}`);
+        log.time(`render ${file}`);
 
 //        let data = bufferToUrl(await workers.exec('imageUint8Array', [filepath]));
         let { buffer, orientation } = await exiftool.readJpeg(filepath);
         let data = bufferToUrl(buffer);
-        log.timeEnd(`!!!JPEG ${file}`);
+        log.timeEnd(`render ${file}`);
 
         thumb.style.backgroundImage = `url("${data}")`;
 
@@ -79,7 +79,7 @@ module.exports = function ({ events }) {
 
     await Promise.all(promises);
 
-    log.timeEnd('loadThumbs');
+    log.timeEnd('load thumbs');
   }
 
   events.on('load:directory', function ({ dir }) {

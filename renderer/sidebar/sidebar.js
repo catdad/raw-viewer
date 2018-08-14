@@ -12,9 +12,9 @@ module.exports = function ({ events }) {
   elem.className = name;
 
   async function loadInfo({ filepath }) {
-    log.time('client exif');
+    log.time(`exif ${filepath}`);
     const exif = await exiftool.readExif(filepath);
-    log.timeEnd('client exif');
+    log.timeEnd(`exif ${filepath}`);
 
     const meta = exif.data[0];
 

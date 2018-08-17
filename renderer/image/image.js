@@ -174,15 +174,8 @@ module.exports = function ({ events }) {
 
     box = elem.getBoundingClientRect();
 
-    function fitScale() {
-      return Math.min(
-        box.width / width,
-        box.height / height
-      );
-    }
-
     function int(num) {
-      return Math.round(num);
+      return Math.floor(num);
     }
 
     function evenInt(num) {
@@ -224,6 +217,15 @@ module.exports = function ({ events }) {
       elem.scrollLeft = (targetWidth / 2) - (box.width / 2);
     }
 
+    function zoomToBestFit() {
+      const scale = Math.min(
+        box.width / width,
+        box.height / height
+      );
+
+      zoom(scale);
+    }
+
     img.onload = function () {
       if (isRotated) {
         width = img.naturalHeight;
@@ -233,7 +235,7 @@ module.exports = function ({ events }) {
         height = img.naturalHeight;
       }
 
-      zoom(fitScale());
+      zoomToBestFit();
     };
 
     elem.onclick = function () {

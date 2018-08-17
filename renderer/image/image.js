@@ -2,6 +2,8 @@ const fs = require('fs');
 const path = require('path');
 const EventEmitter = require('events');
 
+const log = require('../../tools/log.js')('image');
+
 const name = 'image';
 const style = fs.readFileSync(path.resolve(__dirname, `${name}.css`), 'utf8');
 
@@ -172,18 +174,31 @@ module.exports = function ({ events }) {
 
     box = elem.getBoundingClientRect();
 
+    function fitScale() {
+      return Math.min(
+        box.width / width,
+        box.height / height
+      );
+    }
+
+    function int(num) {
+      return Math.round(num);
+    }
+
     function zoom(toScale) {
       // JavaScript math sucks
-      scale = Number(toScale.toFixed(1));
+      scale = Math.min(Number(toScale.toFixed(2)), 1);
 
-      const targetWidth = width * scale;
-      const targetHeight = height * scale;
+      log.info('zoom to', scale);
+
+      const targetWidth = int(width * scale);
+      const targetHeight = int(height * scale);
 
       const transformWidth = targetWidth > box.width ?
-        (targetWidth / 2) - (box.width / 2) : 0;
+        int((targetWidth / 2) - (box.width / 2)) : 0;
 
       const transformHeight = targetHeight > box.height ?
-        (targetHeight / 2) - (box.height / 2) : 0;
+        int((targetHeight / 2) - (box.height / 2)) : 0;
 
       if (isRotated) {
         img.style.width = `${targetHeight}px`;
@@ -212,7 +227,7 @@ module.exports = function ({ events }) {
         height = img.naturalHeight;
       }
 
-      zoom(1);
+      zoom(fitScale());
     };
 
     elem.onclick = function () {

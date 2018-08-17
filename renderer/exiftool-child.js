@@ -2,6 +2,7 @@ const fs = require('fs-extra');
 const ipc = require('electron').ipcRenderer;
 
 const log = require('../tools/log.js')('exiftool-child');
+const dcraw = require('./dcraw.js')(2);
 
 const ROTATION = {
   'Horizontal (normal)': 0,
@@ -34,13 +35,23 @@ function readJpeg(filepath) {
 
   return new Promise((resolve, reject) => {
     const ondata = async ({ orientation, start, length }) => {
-      log.time(`read jpeg ${filepath}`);
+      let buffer;
 
-      const buffer = Buffer.alloc(length);
-      const fd = await fs.open(filepath, 'r');
-      await fs.read(fd, buffer, 0, length, start);
+      if (start && length) {
+        // we can get a fast jpeg image
+        log.time(`read jpeg ${filepath}`);
 
-      log.timeEnd(`read jpeg ${filepath}`);
+        buffer = Buffer.alloc(length);
+        const fd = await fs.open(filepath, 'r');
+        await fs.read(fd, buffer, 0, length, start);
+
+        log.timeEnd(`read jpeg ${filepath}`);
+      } else {
+        log.time(`read dcraw ${filepath}`);
+        // we should fall back to dcraw - e.g. Canon 30D
+        buffer = Buffer.from(await dcraw.exec('imageUint8Array', [filepath]));
+        log.timeEnd(`read dcraw ${filepath}`);
+      }
 
       resolve({
         orientation,

@@ -2,6 +2,8 @@ const fs = require('fs');
 const path = require('path');
 const EventEmitter = require('events');
 
+const log = require('../../tools/log.js')('image');
+
 const name = 'image';
 const style = fs.readFileSync(path.resolve(__dirname, `${name}.css`), 'utf8');
 
@@ -140,11 +142,22 @@ module.exports = function ({ events }) {
   container.appendChild(img);
   elem.appendChild(container);
 
-  let box = elem.getBoundingClientRect();
+  let box;
+
+  function refreshBox() {
+    const rect = elem.getBoundingClientRect();
+
+    box = {
+      width: rect.width - 20,
+      height: rect.height - 20
+    };
+  }
+
+  refreshBox();
 
   window.addEventListener('resize', () => {
     // TODO don't do this on every single event
-    box = elem.getBoundingClientRect();
+    refreshBox();
   });
 
   keys.on('change', ({ down }) => {
@@ -170,20 +183,32 @@ module.exports = function ({ events }) {
     const rotate = rotation === 0 ? '' : `rotate(${rotation}deg)`;
     const isRotated = rotation === 90 || rotation === 270;
 
-    box = elem.getBoundingClientRect();
+    refreshBox();
+
+    function int(num) {
+      return Math.floor(num);
+    }
+
+    function evenInt(num) {
+      const i = int(num);
+
+      return i % 2 ? i - 1 : i;
+    }
 
     function zoom(toScale) {
       // JavaScript math sucks
-      scale = Number(toScale.toFixed(1));
+      scale = Math.min(Number(toScale.toFixed(2)), 1);
 
-      const targetWidth = width * scale;
-      const targetHeight = height * scale;
+      log.info('zoom to', scale);
+
+      const targetWidth = evenInt(width * scale);
+      const targetHeight = evenInt(height * scale);
 
       const transformWidth = targetWidth > box.width ?
-        (targetWidth / 2) - (box.width / 2) : 0;
+        int((targetWidth / 2) - (box.width / 2)) : 0;
 
       const transformHeight = targetHeight > box.height ?
-        (targetHeight / 2) - (box.height / 2) : 0;
+        int((targetHeight / 2) - (box.height / 2)) : 0;
 
       if (isRotated) {
         img.style.width = `${targetHeight}px`;
@@ -203,6 +228,15 @@ module.exports = function ({ events }) {
       elem.scrollLeft = (targetWidth / 2) - (box.width / 2);
     }
 
+    function zoomToBestFit() {
+      const scale = Math.min(
+        box.width / width,
+        box.height / height
+      );
+
+      zoom(scale);
+    }
+
     img.onload = function () {
       if (isRotated) {
         width = img.naturalHeight;
@@ -212,7 +246,7 @@ module.exports = function ({ events }) {
         height = img.naturalHeight;
       }
 
-      zoom(1);
+      zoomToBestFit();
     };
 
     elem.onclick = function () {

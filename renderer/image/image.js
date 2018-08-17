@@ -142,11 +142,22 @@ module.exports = function ({ events }) {
   container.appendChild(img);
   elem.appendChild(container);
 
-  let box = elem.getBoundingClientRect();
+  let box;
+
+  function refreshBox() {
+    const rect = elem.getBoundingClientRect();
+
+    box = {
+      width: rect.width - 20,
+      height: rect.height - 20
+    };
+  }
+
+  refreshBox();
 
   window.addEventListener('resize', () => {
     // TODO don't do this on every single event
-    box = elem.getBoundingClientRect();
+    refreshBox();
   });
 
   keys.on('change', ({ down }) => {
@@ -172,7 +183,7 @@ module.exports = function ({ events }) {
     const rotate = rotation === 0 ? '' : `rotate(${rotation}deg)`;
     const isRotated = rotation === 90 || rotation === 270;
 
-    box = elem.getBoundingClientRect();
+    refreshBox();
 
     function int(num) {
       return Math.floor(num);

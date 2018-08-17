@@ -185,14 +185,20 @@ module.exports = function ({ events }) {
       return Math.round(num);
     }
 
+    function evenInt(num) {
+      const i = int(num);
+
+      return i % 2 ? i - 1 : i;
+    }
+
     function zoom(toScale) {
       // JavaScript math sucks
       scale = Math.min(Number(toScale.toFixed(2)), 1);
 
       log.info('zoom to', scale);
 
-      const targetWidth = int(width * scale);
-      const targetHeight = int(height * scale);
+      const targetWidth = evenInt(width * scale);
+      const targetHeight = evenInt(height * scale);
 
       const transformWidth = targetWidth > box.width ?
         int((targetWidth / 2) - (box.width / 2)) : 0;

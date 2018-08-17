@@ -8,6 +8,15 @@ const exiftool = require('../exiftool-child.js');
 const name = 'filmstrip';
 const style = fs.readFileSync(path.resolve(__dirname, `${name}.css`), 'utf8');
 
+function isInView(containerBB, elBB) {
+  return (!(
+    elBB.top >= containerBB.bottom ||
+    elBB.left >= containerBB.right ||
+    elBB.bottom <= containerBB.top ||
+    elBB.right <= containerBB.left
+  ));
+}
+
 module.exports = function ({ events }) {
   var elem = document.createElement('div');
   elem.className = name;
@@ -20,6 +29,12 @@ module.exports = function ({ events }) {
   wrapper.addEventListener('mousewheel', function (ev) {
     wrapper.scrollLeft -= ev.wheelDeltaY;
     ev.preventDefault();
+  });
+
+  wrapper.addEventListener('scroll', () => {
+    loadVisible().catch(err => {
+      log.error('failed to load visible thumbnails', err);
+    });
   });
 
   function handleDisplay(thumb, dataUrl, { filepath, rotation }) {
@@ -37,16 +52,24 @@ module.exports = function ({ events }) {
   }
 
   function thumbnail({ file, filepath }) {
-    const wrapper = document.createElement('div');
-    wrapper.className = 'thumbnail';
-    wrapper.setAttribute('data-filename', file);
-    wrapper.setAttribute('data-filepath', filepath);
+    const imgWrap = document.createElement('div');
+    imgWrap.className = 'thumbnail';
+    imgWrap.setAttribute('data-filename', file);
+    imgWrap.setAttribute('data-filepath', filepath);
 
     const img = document.createElement('img');
 
-    wrapper.appendChild(img);
+    imgWrap.appendChild(img);
 
-    return { wrapper, img };
+    return { imgWrap, img };
+  }
+
+  async function loadVisible() {
+    const wrapperBox = wrapper.getBoundingClientRect();
+
+    await Promise.all([].slice.call(wrapper.querySelectorAll('.thumbnail')).filter(wrap => {
+      return wrap.load && isInView(wrapperBox, wrap.getBoundingClientRect());
+    }).map(wrap => wrap.load()));
   }
 
   async function loadThumbnails(dir) {
@@ -57,13 +80,14 @@ module.exports = function ({ events }) {
     wrapper.innerHTML = '';
 
     const fragment = document.createDocumentFragment();
-    const promises = [];
 
     for (let file of files) {
       let filepath = path.resolve(dir, file);
-      let { wrapper, img } = thumbnail({ file, filepath });
+      let { imgWrap, img } = thumbnail({ file, filepath });
 
-      promises.push((async () => {
+      imgWrap.load = async () => {
+        imgWrap.load = null;
+
         log.time(`render ${file}`);
         let { buffer, rotation } = await exiftool.readJpeg(filepath);
         let data = bufferToUrl(buffer);
@@ -72,24 +96,22 @@ module.exports = function ({ events }) {
         img.classList.add(`rotate-${rotation}`);
         img.src = data;
 
-        handleDisplay(wrapper, data, {
+        handleDisplay(imgWrap, data, {
           filepath, file, rotation
         });
 
-        return wrapper;
-      })());
+        return imgWrap;
+      };
 
-      fragment.appendChild(wrapper);
+      fragment.appendChild(imgWrap);
     }
+
+    // render the first image as soon as we have it
+    fragment.firstChild.load().then(thumb => thumb.click());
 
     wrapper.appendChild(fragment);
 
-    // render the first image as soon as we have it
-    promises[0].then((thumb) => {
-      thumb.click();
-    });
-
-    await Promise.all(promises);
+    await loadVisible();
 
     log.timeEnd('load thumbs');
   }

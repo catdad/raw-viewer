@@ -39,6 +39,12 @@ module.exports = function ({ events }) {
 
   function handleDisplay(thumb, dataUrl, { filepath, rotation }) {
     thumb.addEventListener('click', function () {
+      [].slice.call(wrapper.children).forEach(elem => {
+        elem.classList.remove('selected');
+      });
+
+      thumb.classList.add('selected');
+
       events.emit('load:image', {
         filepath: filepath,
         imageUrl: dataUrl,

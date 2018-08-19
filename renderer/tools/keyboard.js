@@ -5,6 +5,8 @@ const keys = (() => {
   const ALT = 'alt';
   const CTRL = 'control';
   const SHIFT = 'shift';
+  const LEFT = 'arrowleft';
+  const RIGHT = 'arrowright';
 
   const events = new EventEmitter();
 
@@ -14,6 +16,8 @@ const keys = (() => {
     [`${ALT}`]: true,
     [`${CTRL}`]: true,
     [`${SHIFT}`]: true,
+    [`${LEFT}`]: true,
+    [`${RIGHT}`]: true,
     z: true
   };
 
@@ -58,6 +62,8 @@ const keys = (() => {
     ALT,
     CTRL,
     SHIFT,
+    LEFT,
+    RIGHT,
     includes: (key) => !!down[key],
     on: events.addListener.bind(events),
     off: events.removeListener.bind(events)

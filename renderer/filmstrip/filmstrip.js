@@ -157,15 +157,16 @@ module.exports = function ({ events }) {
         imgWrap.load = null;
 
         log.time(`render ${file}`);
-        let { buffer, rotation } = await exiftool.readJpeg(filepath);
+        let meta = await exiftool.readShortMeta(filepath);
+        let buffer = await exiftool.readThumbFromMeta(meta);
         let data = bufferToUrl(buffer);
         log.timeEnd(`render ${file}`);
 
-        img.classList.add(`rotate-${rotation}`);
+        img.classList.add(`rotate-${meta.rotation}`);
         img.src = data;
 
         handleDisplay(imgWrap, {
-          data, filepath, file, rotation
+          data, filepath, file, rotation: meta.rotation
         });
 
         return imgWrap;

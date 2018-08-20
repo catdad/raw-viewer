@@ -81,12 +81,15 @@ async function readJpegMeta(filepath) {
     Orientation
   } = data.data[0];
 
-  const start = JpgFromRawStart || PreviewImageStart;
-  const length = JpgFromRawLength || PreviewImageLength;
-
   log.timeEnd(`jpeg ${filepath}`);
 
-  return { orientation: Orientation, start, length };
+  return {
+    orientation: Orientation,
+    start: JpgFromRawStart,
+    length: JpgFromRawLength,
+    thumbStart: PreviewImageStart,
+    thumbLength: PreviewImageLength
+  };
 }
 
 module.exports = function init(receive, send) {

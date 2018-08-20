@@ -30,39 +30,16 @@ function readExif(filepath) {
   });
 }
 
-function readJpeg(filepath) {
+function readShortMeta(filepath) {
   const id = gid() + gid();
 
   return new Promise((resolve, reject) => {
-    const ondata = async ({ orientation, start, length }) => {
-      let buffer;
-
-      if (start && length) {
-        // we can get a fast jpeg image
-        log.time(`read jpeg ${filepath}`);
-
-        buffer = Buffer.alloc(length);
-        const fd = await fs.open(filepath, 'r');
-        await fs.read(fd, buffer, 0, length, start);
-
-        log.timeEnd(`read jpeg ${filepath}`);
-      } else {
-        log.time(`read dcraw ${filepath}`);
-        // we should fall back to dcraw - e.g. Canon 30D
-        buffer = Buffer.from(await dcraw.exec('imageUint8Array', [filepath]));
-        log.timeEnd(`read dcraw ${filepath}`);
-      }
-
-      resolve({
-        orientation,
-        buffer,
-        rotation: ROTATION[orientation] || 0
-      });
-    };
-
     ipc.once(`exiftool:callback:${id}`, (ev, data) => {
       if (data.ok) {
-        return ondata(data.value);
+        return resolve(Object.assign(data.value, {
+          filepath,
+          rotation: ROTATION[data.value.orientation] || 0
+        }));
       }
 
       return reject(new Error(data.err));
@@ -72,7 +49,73 @@ function readJpeg(filepath) {
   });
 }
 
+async function readFilePart({ filepath, start, length }) {
+  let buffer = Buffer.alloc(length);
+  const fd = await fs.open(filepath, 'r');
+  await fs.read(fd, buffer, 0, length, start);
+
+  return buffer;
+}
+
+async function readJpegFromMeta({ filepath, start, length }) {
+  let buffer;
+
+  if (start && length) {
+    // we can get a fast jpeg image
+    log.time(`read jpeg ${filepath}`);
+    buffer = await readFilePart({ filepath, start, length });
+    log.timeEnd(`read jpeg ${filepath}`);
+  } else {
+    log.time(`read dcraw ${filepath}`);
+    // we should fall back to dcraw - e.g. Canon 30D
+    buffer = Buffer.from(await dcraw.exec('imageUint8Array', [filepath]));
+    log.timeEnd(`read dcraw ${filepath}`);
+  }
+
+  return buffer;
+}
+
+async function readThumbFromMeta(data) {
+  let buffer;
+
+  if (data.thumbStart && data.thumbLength) {
+    log.time(`read thumb ${data.filepath}`);
+    buffer = await readFilePart({
+      filepath: data.filepath,
+      start: data.thumbStart,
+      length: data.thumbLength
+    });
+    log.timeEnd(`read thumb ${data.filepath}`);
+  } else {
+    buffer = await readJpegFromMeta(data);
+  }
+
+  return buffer;
+}
+
+function readThumb(filepath) {
+  return readShortMeta(filepath)
+    .then((data) => {
+      return readThumbFromMeta(data).then(buffer => {
+        return Object.assign({}, data, { buffer });
+      });
+    });
+}
+
+function readJpeg(filepath) {
+  return readShortMeta(filepath)
+    .then((data) => {
+      return readJpegFromMeta(data).then(buffer => {
+        return Object.assign({}, data, { buffer });
+      });
+    });
+}
+
 module.exports = {
   readExif,
-  readJpeg
+  readShortMeta,
+  readJpeg,
+  readJpegFromMeta,
+  readThumb,
+  readThumbFromMeta
 };

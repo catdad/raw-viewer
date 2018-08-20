@@ -18,6 +18,14 @@ function isInView(containerBB, elBB) {
   ));
 }
 
+function isClippedLeft(containerBB, elBB) {
+  return elBB.left < containerBB.left;
+}
+
+function isClippedRight(containerBB, elBB) {
+  return elBB.right > containerBB.right;
+}
+
 module.exports = function ({ events }) {
   var elem = document.createElement('div');
   elem.className = name;
@@ -38,10 +46,22 @@ module.exports = function ({ events }) {
     });
   });
 
+  function findSelected() {
+    for (let elem of [].slice.call(wrapper.children)) {
+      if (elem.classList.contains('selected')) {
+        return elem;
+      }
+    }
+  }
+
   function displayImage(thumb) {
     const filepath = thumb.x_filepath;
     const data = thumb.x_dataUrl;
     const rotation = thumb.x_rotation;
+
+    // do DOM reads before we update anything
+    const parentBB = wrapper.getBoundingClientRect();
+    const thumbBB = thumb.getBoundingClientRect();
 
     [].slice.call(wrapper.children).forEach(elem => {
       elem.classList.remove('selected');
@@ -58,13 +78,11 @@ module.exports = function ({ events }) {
     events.emit('load:meta', {
       filepath: filepath
     });
-  }
 
-  function findSelected() {
-    for (let elem of [].slice.call(wrapper.children)) {
-      if (elem.classList.contains('selected')) {
-        return elem;
-      }
+    if (isClippedRight(parentBB, thumbBB)) {
+      wrapper.scrollLeft += (parentBB.width / 2) + (thumbBB.width / 2);
+    } else if (isClippedLeft(parentBB, thumbBB)) {
+      wrapper.scrollLeft -= (parentBB.width / 2) + (thumbBB.width / 2);
     }
   }
 

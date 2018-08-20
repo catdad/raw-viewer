@@ -43,6 +43,10 @@
   will-change: transform;
 }
 
+.filmstrip .thumbnail.selected {
+  border-color: #eee;
+}
+
 .filmstrip .thumbnail img {
   max-width: 100%;
   max-height: 100%;

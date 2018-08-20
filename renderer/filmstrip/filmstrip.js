@@ -4,6 +4,7 @@ const path = require('path');
 const log = require('../../tools/log.js')('filmstrip');
 const { bufferToUrl } = require('../util.js');
 const exiftool = require('../exiftool-child.js');
+const keys = require('../tools/keyboard.js');
 
 const name = 'filmstrip';
 const style = fs.readFileSync(path.resolve(__dirname, `${name}.css`), 'utf8');
@@ -15,6 +16,14 @@ function isInView(containerBB, elBB) {
     elBB.bottom <= containerBB.top ||
     elBB.right <= containerBB.left
   ));
+}
+
+function isClippedLeft(containerBB, elBB) {
+  return elBB.left < containerBB.left;
+}
+
+function isClippedRight(containerBB, elBB) {
+  return elBB.right > containerBB.right;
 }
 
 module.exports = function ({ events }) {
@@ -37,25 +46,61 @@ module.exports = function ({ events }) {
     });
   });
 
-  function handleDisplay(thumb, dataUrl, { filepath, rotation }) {
-    thumb.addEventListener('click', function () {
-      events.emit('load:image', {
-        filepath: filepath,
-        imageUrl: dataUrl,
-        rotation: rotation
-      });
+  function findSelected() {
+    for (let elem of [].slice.call(wrapper.children)) {
+      if (elem.classList.contains('selected')) {
+        return elem;
+      }
+    }
+  }
 
-      events.emit('load:meta', {
-        filepath: filepath
-      });
+  function displayImage(thumb) {
+    const filepath = thumb.x_filepath;
+    const data = thumb.x_dataUrl;
+    const rotation = thumb.x_rotation;
+
+    // do DOM reads before we update anything
+    const parentBB = wrapper.getBoundingClientRect();
+    const thumbBB = thumb.getBoundingClientRect();
+
+    [].slice.call(wrapper.children).forEach(elem => {
+      elem.classList.remove('selected');
+    });
+
+    thumb.classList.add('selected');
+
+    events.emit('load:image', {
+      filepath: filepath,
+      imageUrl: data,
+      rotation: rotation
+    });
+
+    events.emit('load:meta', {
+      filepath: filepath
+    });
+
+    if (isClippedRight(parentBB, thumbBB)) {
+      wrapper.scrollLeft += (parentBB.width / 2) + (thumbBB.width / 2);
+    } else if (isClippedLeft(parentBB, thumbBB)) {
+      wrapper.scrollLeft -= (parentBB.width / 2) + (thumbBB.width / 2);
+    }
+  }
+
+  function handleDisplay(thumb, { data, filepath, file, rotation }) {
+    thumb.setAttribute('data-filename', file);
+    thumb.x_file = file;
+    thumb.x_filepath = filepath;
+    thumb.x_rotation = rotation;
+    thumb.x_dataUrl = data;
+
+    thumb.addEventListener('click', function () {
+      displayImage(thumb);
     });
   }
 
-  function thumbnail({ file, filepath }) {
+  function thumbnail() {
     const imgWrap = document.createElement('div');
     imgWrap.className = 'thumbnail';
-    imgWrap.setAttribute('data-filename', file);
-    imgWrap.setAttribute('data-filepath', filepath);
 
     const img = document.createElement('img');
 
@@ -63,6 +108,29 @@ module.exports = function ({ events }) {
 
     return { imgWrap, img };
   }
+
+  keys.on('change', () => {
+    const isLeft = keys.includes(keys.LEFT);
+    const isRight = keys.includes(keys.RIGHT);
+
+    if (!(isLeft || isRight)) {
+      return;
+    }
+
+    const selected = findSelected();
+
+    if (!selected) {
+      return;
+    }
+
+    const target = isLeft ? selected.previousSibling : selected.nextSibling;
+
+    if (!target) {
+      return;
+    }
+
+    displayImage(target);
+  });
 
   async function loadVisible() {
     const wrapperBox = wrapper.getBoundingClientRect();
@@ -83,7 +151,7 @@ module.exports = function ({ events }) {
 
     for (let file of files) {
       let filepath = path.resolve(dir, file);
-      let { imgWrap, img } = thumbnail({ file, filepath });
+      let { imgWrap, img } = thumbnail();
 
       imgWrap.load = async () => {
         imgWrap.load = null;
@@ -96,8 +164,8 @@ module.exports = function ({ events }) {
         img.classList.add(`rotate-${rotation}`);
         img.src = data;
 
-        handleDisplay(imgWrap, data, {
-          filepath, file, rotation
+        handleDisplay(imgWrap, {
+          data, filepath, file, rotation
         });
 
         return imgWrap;

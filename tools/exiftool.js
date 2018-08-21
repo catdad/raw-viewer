@@ -87,12 +87,12 @@ async function readJpegMeta(filepath) {
 
   log.timeEnd(`jpeg ${filepath}`);
 
-  // DNG (any)     formats will have Jpeg props for full view and Preview props for thumbs
-  // CR2 (canon)   formats will have Preview props for full view and Thumbnail props for thumbs
-  // ARW (sony)    formats will have Preview props for full view and Thumbnail props for thumbs
-  // NEF (nikon)   formats will have Jpeg props for full view and Preview props for thumbs
-  // RAF (fuji)    formats will fall back to dcraw for full view and Thumbnail props for thumbs
-  // ORF (olympus) formats will have Preview props for both full image and thumbs
+  // DNG (any)     - will have Jpeg props for full view and Preview props for thumbs
+  // CR2 (canon)   - will have Preview props for full view and Thumbnail props for thumbs
+  // ARW (sony)    - will have Preview props for full view and Thumbnail props for thumbs
+  // NEF (nikon)   - will have Jpeg props for full view and Preview props for thumbs
+  // RAF (fuji)    - will fall back to dcraw for full view and Thumbnail props for thumbs
+  // ORF (olympus) - will have Preview props for both full image and thumbs
 
   return {
     orientation: Orientation,

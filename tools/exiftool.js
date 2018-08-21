@@ -70,7 +70,9 @@ async function readJpegMeta(filepath) {
     'JpgFromRawLength',
     'JpgFromRawStart',
     'PreviewImageLength',
-    'PreviewImageStart'
+    'PreviewImageStart',
+    'ThumbnailOffset',
+    'ThumbnailLength'
   ]);
 
   const {
@@ -78,17 +80,26 @@ async function readJpegMeta(filepath) {
     JpgFromRawStart,
     PreviewImageLength,
     PreviewImageStart,
+    ThumbnailOffset,
+    ThumbnailLength,
     Orientation
   } = data.data[0];
 
   log.timeEnd(`jpeg ${filepath}`);
 
+  // DNG formats will have Jpeg props for full view and Preview props for thumbs
+  // CR2 (canon) formats will have Preview props for full view and Thumbnail props for thumbs
+  // NEF (nikon) formats will have Jpeg props for full view and Preview props for thumbs
+  // RAF (fuji) formats will fall back to dcraw for full view and Thumbnail props for thumbs
+  // ORF (olympus) formats will have Preview props for both full image and thumbs
+  // ARW (sony) formats will have Preview props for full view and Thumbnail props for thumbs
+
   return {
     orientation: Orientation,
-    start: JpgFromRawStart,
-    length: JpgFromRawLength,
-    thumbStart: PreviewImageStart,
-    thumbLength: PreviewImageLength
+    start: JpgFromRawStart || PreviewImageStart,
+    length: JpgFromRawLength || PreviewImageLength,
+    thumbStart: ThumbnailOffset || PreviewImageStart,
+    thumbLength: ThumbnailLength || PreviewImageLength
   };
 }
 

@@ -34,7 +34,11 @@ function readShortMeta(filepath) {
   const id = gid() + gid();
 
   return new Promise((resolve, reject) => {
+    log.time(`read short meta ${filepath}`);
+
     ipc.once(`exiftool:callback:${id}`, (ev, data) => {
+      log.timeEnd(`read short meta ${filepath}`);
+
       if (data.ok) {
         return resolve(Object.assign(data.value, {
           filepath,

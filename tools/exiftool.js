@@ -70,7 +70,9 @@ async function readJpegMeta(filepath) {
     'JpgFromRawLength',
     'JpgFromRawStart',
     'PreviewImageLength',
-    'PreviewImageStart'
+    'PreviewImageStart',
+    'ThumbnailOffset',
+    'ThumbnailLength'
   ]);
 
   const {
@@ -78,15 +80,27 @@ async function readJpegMeta(filepath) {
     JpgFromRawStart,
     PreviewImageLength,
     PreviewImageStart,
+    ThumbnailOffset,
+    ThumbnailLength,
     Orientation
   } = data.data[0];
 
-  const start = JpgFromRawStart || PreviewImageStart;
-  const length = JpgFromRawLength || PreviewImageLength;
-
   log.timeEnd(`jpeg ${filepath}`);
 
-  return { orientation: Orientation, start, length };
+  // DNG (any)     - will have Jpeg props for full view and Preview props for thumbs
+  // CR2 (canon)   - will have Preview props for full view and Thumbnail props for thumbs
+  // ARW (sony)    - will have Preview props for full view and Thumbnail props for thumbs
+  // NEF (nikon)   - will have Jpeg props for full view and Preview props for thumbs
+  // RAF (fuji)    - will fall back to dcraw for full view and Thumbnail props for thumbs
+  // ORF (olympus) - will have Preview props for both full image and thumbs
+
+  return {
+    orientation: Orientation,
+    start: JpgFromRawStart || PreviewImageStart,
+    length: JpgFromRawLength || PreviewImageLength,
+    thumbStart: ThumbnailOffset || PreviewImageStart,
+    thumbLength: ThumbnailLength || PreviewImageLength
+  };
 }
 
 module.exports = function init(receive, send) {

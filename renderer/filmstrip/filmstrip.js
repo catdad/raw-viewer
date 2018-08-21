@@ -54,10 +54,15 @@ module.exports = function ({ events }) {
     }
   }
 
-  function displayImage(thumb) {
+  async function displayImage(thumb) {
+    const meta = thumb.x_meta;
     const filepath = thumb.x_filepath;
-    const data = thumb.x_dataUrl;
     const rotation = thumb.x_rotation;
+
+    log.time(`new data ${filepath}`);
+    const buffer = await exiftool.readJpegFromMeta(meta);
+    const data = bufferToUrl(buffer);
+    log.timeEnd(`new data ${filepath}`);
 
     // do DOM reads before we update anything
     const parentBB = wrapper.getBoundingClientRect();
@@ -75,10 +80,6 @@ module.exports = function ({ events }) {
       rotation: rotation
     });
 
-    events.emit('load:meta', {
-      filepath: filepath
-    });
-
     if (isClippedRight(parentBB, thumbBB)) {
       wrapper.scrollLeft += (parentBB.width / 2) + (thumbBB.width / 2);
     } else if (isClippedLeft(parentBB, thumbBB)) {
@@ -86,12 +87,12 @@ module.exports = function ({ events }) {
     }
   }
 
-  function handleDisplay(thumb, { data, filepath, file, rotation }) {
+  function handleDisplay(thumb, { filepath, file, meta }) {
     thumb.setAttribute('data-filename', file);
     thumb.x_file = file;
     thumb.x_filepath = filepath;
-    thumb.x_rotation = rotation;
-    thumb.x_dataUrl = data;
+    thumb.x_rotation = meta.rotation;
+    thumb.x_meta = meta;
 
     thumb.addEventListener('click', function () {
       displayImage(thumb);
@@ -166,7 +167,7 @@ module.exports = function ({ events }) {
         img.src = data;
 
         handleDisplay(imgWrap, {
-          data, filepath, file, rotation: meta.rotation
+          filepath, file, meta
         });
 
         return imgWrap;

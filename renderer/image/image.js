@@ -199,5 +199,11 @@ module.exports = function ({ events }) {
 
   events.on('load:image', loadImage);
 
+  events.on('load:image', ({ filepath }) => {
+    events.emit('load:meta', {
+      filepath: filepath
+    });
+  });
+
   return { elem, style };
 };

@@ -27,7 +27,7 @@ function isClippedRight(containerBB, elBB) {
 }
 
 async function readMetaAndDataUrl({ filepath, type = 'full', meta = null }) {
-  const ext = path.extname(filepath.toLowerCase());
+  const ext = path.extname(filepath).toLowerCase();
 
   if (meta === null) {
     meta = await exiftool.readShortMeta(filepath);

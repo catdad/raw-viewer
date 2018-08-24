@@ -168,7 +168,7 @@ module.exports = function ({ events }) {
   async function loadThumbnails(dir) {
     log.time('load thumbs');
 
-    var files = await fs.readdir(dir);
+    var files = (await fs.readdir(dir)).sort((a, b) => a.localeCompare(b));
 
     wrapper.innerHTML = '';
 

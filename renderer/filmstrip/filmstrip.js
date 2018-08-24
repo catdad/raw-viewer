@@ -2,9 +2,8 @@ const fs = require('fs-extra');
 const path = require('path');
 
 const log = require('../../tools/log.js')('filmstrip');
-const { bufferToUrl } = require('../util.js');
-const exiftool = require('../exiftool-child.js');
 const keys = require('../tools/keyboard.js');
+const readMetaAndDataUrl = require('./read-image.js');
 
 const name = 'filmstrip';
 const style = fs.readFileSync(path.resolve(__dirname, `${name}.css`), 'utf8');
@@ -24,34 +23,6 @@ function isClippedLeft(containerBB, elBB) {
 
 function isClippedRight(containerBB, elBB) {
   return elBB.right > containerBB.right;
-}
-
-async function readMetaAndDataUrl({ filepath, type = 'full', meta = null }) {
-  const ext = path.extname(filepath).toLowerCase();
-
-  if (meta === null) {
-    meta = await exiftool.readShortMeta(filepath);
-  }
-
-  if (['.jpeg', '.jpg', '.png'].includes(ext)) {
-    return {
-      url: filepath,
-      orientation: meta.orientation,
-      rotation: meta.rotation,
-      meta: meta
-    };
-  }
-
-  let buffer = type === 'full' ?
-    await exiftool.readJpegFromMeta(meta) :
-    await exiftool.readThumbFromMeta(meta);
-
-  return {
-    url: bufferToUrl(buffer),
-    orientation: meta.orientation,
-    rotation: meta.rotation,
-    meta: meta
-  };
 }
 
 module.exports = function ({ events }) {

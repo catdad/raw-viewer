@@ -105,12 +105,10 @@ async function fileSize(filepath) {
 }
 
 async function readExif(filepath) {
-  log.time(`exif ${filepath}`);
-
   await initExiftool();
 
+  log.time(`exif ${filepath}`);
   const data = await exec('readMetadata', filepath, ['-File:all']);
-
   log.timeEnd(`exif ${filepath}`);
 
   return data;

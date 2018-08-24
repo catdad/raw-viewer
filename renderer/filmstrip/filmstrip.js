@@ -26,6 +26,34 @@ function isClippedRight(containerBB, elBB) {
   return elBB.right > containerBB.right;
 }
 
+async function readMetaAndDataUrl({ filepath, type = 'full', meta = null }) {
+  const ext = path.extname(filepath.toLowerCase());
+
+  if (meta === null) {
+    meta = await exiftool.readShortMeta(filepath);
+  }
+
+  if (['.jpeg', '.jpg', '.png'].includes(ext)) {
+    return {
+      url: filepath,
+      orientation: meta.orientation,
+      rotation: meta.rotation,
+      meta: meta
+    };
+  }
+
+  let buffer = type === 'full' ?
+    await exiftool.readJpegFromMeta(meta) :
+    await exiftool.readThumbFromMeta(meta);
+
+  return {
+    url: bufferToUrl(buffer),
+    orientation: meta.orientation,
+    rotation: meta.rotation,
+    meta: meta
+  };
+}
+
 module.exports = function ({ events }) {
   var elem = document.createElement('div');
   elem.className = name;
@@ -60,8 +88,7 @@ module.exports = function ({ events }) {
     const rotation = thumb.x_rotation;
 
     log.time(`new data ${filepath}`);
-    const buffer = await exiftool.readJpegFromMeta(meta);
-    const data = bufferToUrl(buffer);
+    const { url } = await readMetaAndDataUrl({ filepath, meta, type: 'full' });
     log.timeEnd(`new data ${filepath}`);
 
     // do DOM reads before we update anything
@@ -76,7 +103,7 @@ module.exports = function ({ events }) {
 
     events.emit('load:image', {
       filepath: filepath,
-      imageUrl: data,
+      imageUrl: url,
       rotation: rotation
     });
 
@@ -158,13 +185,11 @@ module.exports = function ({ events }) {
         imgWrap.load = null;
 
         log.time(`render ${file}`);
-        let meta = await exiftool.readShortMeta(filepath);
-        let buffer = await exiftool.readThumbFromMeta(meta);
-        let data = bufferToUrl(buffer);
+        let { url, rotation, meta } = await readMetaAndDataUrl({ filepath });
         log.timeEnd(`render ${file}`);
 
-        img.classList.add(`rotate-${meta.rotation}`);
-        img.src = data;
+        img.classList.add(`rotate-${rotation}`);
+        img.src = url;
 
         handleDisplay(imgWrap, {
           filepath, file, meta

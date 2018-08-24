@@ -1,22 +1,12 @@
 const fs = require('fs-extra');
 const path = require('path');
 
-const log = require('../../tools/log.js')('filmstrip');
-const { bufferToUrl } = require('../util.js');
-const exiftool = require('../exiftool-child.js');
-const keys = require('../tools/keyboard.js');
-
 const name = 'filmstrip';
 const style = fs.readFileSync(path.resolve(__dirname, `${name}.css`), 'utf8');
 
-function isInView(containerBB, elBB) {
-  return (!(
-    elBB.top >= containerBB.bottom ||
-    elBB.left >= containerBB.right ||
-    elBB.bottom <= containerBB.top ||
-    elBB.right <= containerBB.left
-  ));
-}
+const log = require('../../tools/log.js')(name);
+const readMetaAndDataUrl = require('./read-image.js');
+const navigation = require('./navigation.js');
 
 function isClippedLeft(containerBB, elBB) {
   return elBB.left < containerBB.left;
@@ -24,34 +14,6 @@ function isClippedLeft(containerBB, elBB) {
 
 function isClippedRight(containerBB, elBB) {
   return elBB.right > containerBB.right;
-}
-
-async function readMetaAndDataUrl({ filepath, type = 'full', meta = null }) {
-  const ext = path.extname(filepath).toLowerCase();
-
-  if (meta === null) {
-    meta = await exiftool.readShortMeta(filepath);
-  }
-
-  if (['.jpeg', '.jpg', '.png'].includes(ext)) {
-    return {
-      url: filepath,
-      orientation: meta.orientation,
-      rotation: meta.rotation,
-      meta: meta
-    };
-  }
-
-  let buffer = type === 'full' ?
-    await exiftool.readJpegFromMeta(meta) :
-    await exiftool.readThumbFromMeta(meta);
-
-  return {
-    url: bufferToUrl(buffer),
-    orientation: meta.orientation,
-    rotation: meta.rotation,
-    meta: meta
-  };
 }
 
 module.exports = function ({ events }) {
@@ -62,25 +24,6 @@ module.exports = function ({ events }) {
   wrapper.className = `${name}-wrapper`;
 
   elem.appendChild(wrapper);
-
-  wrapper.addEventListener('mousewheel', function (ev) {
-    wrapper.scrollLeft -= ev.wheelDeltaY;
-    ev.preventDefault();
-  });
-
-  wrapper.addEventListener('scroll', () => {
-    loadVisible().catch(err => {
-      log.error('failed to load visible thumbnails', err);
-    });
-  });
-
-  function findSelected() {
-    for (let elem of [].slice.call(wrapper.children)) {
-      if (elem.classList.contains('selected')) {
-        return elem;
-      }
-    }
-  }
 
   async function displayImage(thumb) {
     const meta = thumb.x_meta;
@@ -134,36 +77,7 @@ module.exports = function ({ events }) {
     return { imgWrap, img };
   }
 
-  keys.on('change', () => {
-    const isLeft = keys.includes(keys.LEFT);
-    const isRight = keys.includes(keys.RIGHT);
-
-    if (!(isLeft || isRight)) {
-      return;
-    }
-
-    const selected = findSelected();
-
-    if (!selected) {
-      return;
-    }
-
-    const target = isLeft ? selected.previousSibling : selected.nextSibling;
-
-    if (!target) {
-      return;
-    }
-
-    displayImage(target);
-  });
-
-  async function loadVisible() {
-    const wrapperBox = wrapper.getBoundingClientRect();
-
-    await Promise.all([].slice.call(wrapper.querySelectorAll('.thumbnail')).filter(wrap => {
-      return wrap.load && isInView(wrapperBox, wrap.getBoundingClientRect());
-    }).map(wrap => wrap.load()));
-  }
+  const { loadVisible } = navigation({ wrapper, displayImage });
 
   async function loadThumbnails(dir) {
     log.time('load thumbs');

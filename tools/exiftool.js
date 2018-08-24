@@ -72,17 +72,19 @@ async function readJpegMeta(filepath) {
     'PreviewImageLength',
     'PreviewImageStart',
     'ThumbnailOffset',
-    'ThumbnailLength'
+    'ThumbnailLength',
+    'Rating'
   ]);
 
   const {
+    Orientation,
     JpgFromRawLength,
     JpgFromRawStart,
     PreviewImageLength,
     PreviewImageStart,
     ThumbnailOffset,
     ThumbnailLength,
-    Orientation
+    Rating
   } = data.data[0];
 
   log.timeEnd(`jpeg ${filepath}`);
@@ -96,6 +98,7 @@ async function readJpegMeta(filepath) {
 
   return {
     orientation: Orientation,
+    rating: Rating || 0,
     start: JpgFromRawStart || PreviewImageStart,
     length: JpgFromRawLength || PreviewImageLength,
     thumbStart: ThumbnailOffset || PreviewImageStart,

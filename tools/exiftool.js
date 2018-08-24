@@ -1,3 +1,4 @@
+const path = require('path');
 const fs = require('fs-extra');
 const prettyBytes = require('pretty-bytes');
 const _ = require('lodash');
@@ -7,6 +8,61 @@ const exifToolBin = require('dist-exiftool');
 const exifTool = new exifToolLib.ExiftoolProcess(exifToolBin);
 
 const log = require('./log.js')('exiftool');
+const root = require('./root.js');
+
+const operations = {};
+
+function uniqueId() {
+  // TODO make this better
+  return Math.random().toString(36).slice(2) +
+    Math.random().toString(36).slice(2) +
+    Math.random().toString(36).slice(2);
+}
+
+function tempfile(ext = '.tmp') {
+  return path.resolve(root, 'tmp', `${uniqueId()}${ext}`);
+}
+
+function execWithHooks({ afterSuccess = null, afterError = null, lockfile = null }, func, filepath, ...args) {
+  const lockname = lockfile || filepath;
+
+  if (operations[lockname]) {
+    log.info('queueing operation on', lockname);
+    // this file is already being used, so we'll wait to
+    // perform the following operation
+    return operations[lockname].then(() => {
+      return execWithHooks({ afterSuccess, afterError, lockfile }, func, filepath, ...args);
+    }).catch(() => {
+      return execWithHooks({ afterSuccess, afterError, lockfile }, func, filepath, ...args);
+    });
+  }
+
+  const prom = exifTool[func](filepath, ...args).then(async data => {
+    if (afterSuccess) {
+      await afterSuccess();
+    }
+
+    delete operations[lockname];
+    return Promise.resolve(data);
+  }).catch(async err => {
+    log.error(filepath, err);
+
+    if (afterError) {
+      await afterError();
+    }
+
+    delete operations[lockname];
+    return Promise.reject(err);
+  });
+
+  operations[filepath] = prom;
+
+  return prom;
+}
+
+function exec(func, filepath, ...args) {
+  return execWithHooks({}, func, filepath, ...args);
+}
 
 const initExiftool = (() => {
   let done = false;
@@ -53,7 +109,7 @@ async function readExif(filepath) {
 
   await initExiftool();
 
-  const data = await exifTool.readMetadata(filepath, ['-File:all']);
+  const data = await exec('readMetadata', filepath, ['-File:all']);
 
   log.timeEnd(`exif ${filepath}`);
 
@@ -65,7 +121,7 @@ async function readJpegMeta(filepath) {
 
   log.time(`jpeg ${filepath}`);
 
-  const data = await exifTool.readMetadata(filepath, [
+  const data = await exec('readMetadata', filepath, [
     'Orientation',
     'JpgFromRawLength',
     'JpgFromRawStart',
@@ -121,10 +177,30 @@ async function upsertRating(filepath, rating = 0) {
     '5': 99
   };
 
-  await exifTool.writeMetadata(filepath, {
-    'Rating': rating || '',
+  log.info('rating', filepath, rating);
+
+  const ext = path.extname(filepath);
+  const tempIn = tempfile(ext);
+  const tempOut = tempfile(ext);
+  const tempRename = uniqueId();
+
+  async function afterSuccess() {
+    await fs.rename(filepath, `${filepath}_${tempRename}`);
+    await fs.rename(tempOut, filepath);
+    await fs.unlink(`${filepath}_${tempRename}`);
+    await fs.unlink(tempIn);
+  }
+
+  // we can't use overwrite_original through exiftool, because it
+  // seems to only work on jpeg -- on raw images (dng, cr2), it writes
+  // a temp file and fails to perform the update... the original file
+  // becomes locked; therefore, we will write to a temp file and
+  // move it once we are done
+  await fs.copy(filepath, tempIn);
+  await execWithHooks({ afterSuccess, lockfile: filepath }, 'writeMetadata', tempIn, {
+    'Rating': rating,
     'RatingPercent': percentMap[rating] || ''
-  }, ['overwrite_original']);
+  }, [`filename=${tempOut}`]);
 
   return { rating };
 }

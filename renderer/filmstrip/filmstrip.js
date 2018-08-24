@@ -85,10 +85,9 @@ module.exports = function ({ events }) {
   async function displayImage(thumb) {
     const meta = thumb.x_meta;
     const filepath = thumb.x_filepath;
-    const rotation = thumb.x_rotation;
 
     log.time(`new data ${filepath}`);
-    const { url } = await readMetaAndDataUrl({ filepath, meta, type: 'full' });
+    const { url, rotation } = await readMetaAndDataUrl({ filepath, meta, type: 'full' });
     log.timeEnd(`new data ${filepath}`);
 
     // do DOM reads before we update anything
@@ -116,9 +115,7 @@ module.exports = function ({ events }) {
 
   function handleDisplay(thumb, { filepath, file, meta }) {
     thumb.setAttribute('data-filename', file);
-    thumb.x_file = file;
     thumb.x_filepath = filepath;
-    thumb.x_rotation = meta.rotation;
     thumb.x_meta = meta;
 
     thumb.addEventListener('click', function () {

@@ -65,7 +65,6 @@
   z-index: 1;
   font-size: 1.2rem;
   text-shadow: 0 0 10px #262626;
-  font-weight: bold;
 }
 
 .filmstrip .thumbnail::after {

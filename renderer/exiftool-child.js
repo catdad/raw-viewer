@@ -115,11 +115,28 @@ function readJpeg(filepath) {
     });
 }
 
+function setRating(filepath, rating = 0) {
+  const id = gid() + gid();
+
+  return new Promise((resolve, reject) => {
+    ipc.once(`exiftool:callback:${id}`, (ev, data) => {
+      if (data.ok) {
+        return resolve(data.value);
+      }
+
+      return reject(new Error(data.err));
+    });
+
+    ipc.send('exiftool:set:rating', { filepath, id, rating });
+  });
+}
+
 module.exports = {
   readExif,
   readShortMeta,
   readJpeg,
   readJpegFromMeta,
   readThumb,
-  readThumbFromMeta
+  readThumbFromMeta,
+  setRating
 };

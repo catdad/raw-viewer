@@ -106,6 +106,29 @@ async function readJpegMeta(filepath) {
   };
 }
 
+async function upsertRating(filepath, rating = 0) {
+  await initExiftool();
+
+  // I don't know if this is universal, but the Windows properties
+  // view requires Rating and RatingPercent in order to display
+  // the new rating. If I only set Rating, it will still show the
+  // old rating.
+  const percentMap = {
+    '1': 1,
+    '2': 25,
+    '3': 50,
+    '4': 75,
+    '5': 99
+  };
+
+  await exifTool.writeMetadata(filepath, {
+    'Rating': rating || '',
+    'RatingPercent': percentMap[rating] || ''
+  }, ['overwrite_original']);
+
+  return { rating };
+}
+
 module.exports = function init(receive, send) {
   function createCallback(id) {
     const cbName = `exiftool:callback:${id}`;
@@ -153,6 +176,20 @@ module.exports = function init(receive, send) {
 
     try {
       data = await readJpegMeta(filepath);
+    } catch (e) {
+      log.error(e);
+      return callback(e);
+    }
+
+    return callback(null, data);
+  });
+
+  receive('exiftool:set:rating', async (ev, { filepath, id, rating }) => {
+    let data;
+    const callback = createCallback(id);
+
+    try {
+      data = await upsertRating(filepath, rating);
     } catch (e) {
       log.error(e);
       return callback(e);

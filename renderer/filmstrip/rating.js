@@ -6,6 +6,7 @@ function ratingControl(rating) {
     const el = document.createElement('span');
     el.setAttribute('data-rate', setTo);
     el.appendChild(document.createTextNode(isFull ? '★' : '☆'));
+    el.noclick = true;
 
     return el;
   }
@@ -50,6 +51,7 @@ module.exports = function ({ filepath, meta }) {
   const elem = document.createElement('div');
   elem.className = 'rating';
   elem.setAttribute('data-rating', meta.rating);
+  elem.noclick = true;
 
   render(elem, filepath, meta.rating);
 

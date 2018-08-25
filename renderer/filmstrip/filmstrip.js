@@ -62,7 +62,14 @@ module.exports = function ({ events }) {
     thumb.x_filepath = filepath;
     thumb.x_meta = meta;
 
-    thumb.addEventListener('click', function () {
+    thumb.addEventListener('click', function (ev) {
+      // TODO this needs to be cleaner, but preventDefault()
+      // doesn't seem to work here
+      if (ev.target.noclick) {
+        log.info('rating click, ignoring');
+        return;
+      }
+
       displayImage(thumb);
     });
   }

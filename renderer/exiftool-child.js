@@ -57,6 +57,7 @@ async function readFilePart({ filepath, start, length }) {
   let buffer = Buffer.alloc(length);
   const fd = await fs.open(filepath, 'r');
   await fs.read(fd, buffer, 0, length, start);
+  await fs.close(fd);
 
   return buffer;
 }

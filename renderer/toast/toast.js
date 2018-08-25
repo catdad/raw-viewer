@@ -17,7 +17,15 @@ module.exports = function ({ events }) {
   var elem = document.createElement('div');
   elem.className = name;
 
-  function onToast({ title, text, type }) {
+  function removeToast(msg) {
+    msg.classList.remove('toast-show');
+
+    setTimeout(() => {
+      elem.removeChild(msg);
+    }, 700);
+  }
+
+  function showToast({ title, text, type }) {
     const msg = createMsg({ title, text, type });
     elem.appendChild(msg);
 
@@ -26,13 +34,13 @@ module.exports = function ({ events }) {
     }, 0);
 
     setTimeout(() => {
-//      elem.removeChild(msg);
+      removeToast(msg);
     }, 5000);
   }
 
-  events.on('toast', onToast);
+  events.on('toast', showToast);
 
-  events.on('toast:error', (args => onToast(Object.assign({}, args, { type: 'error' }))));
+  events.on('toast:error', (args => showToast(Object.assign({}, args, { type: 'error' }))));
 
   return { elem, style };
 };

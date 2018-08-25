@@ -11,8 +11,8 @@
 
   border-radius: 3px;
 
-  transform: translate(100%, 0);
-  transition: transform 500ms ease;
+  transform: translate(150%, 0);
+  transition: transform 800ms ease;
   will-change: transform;
 }
 

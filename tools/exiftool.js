@@ -162,12 +162,14 @@ async function upsertRating(filepath, rating = 0) {
     '5': 99
   };
 
-  log.info('rating', filepath, rating);
+  log.time(`rating ${filepath}`);
 
   await execWithHooks({}, 'writeMetadata', filepath, {
     'Rating': rating,
     'RatingPercent': percentMap[rating] || ''
   }, ['overwrite_original']);
+
+  log.timeEnd(`rating ${filepath}`);
 
   return { rating };
 }

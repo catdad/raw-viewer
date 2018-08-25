@@ -1,0 +1,37 @@
+.toast {
+  overflow: hidden;
+  padding: 10px;
+}
+
+.toast-msg {
+  width: 100%;
+  background: #1e77d1;
+  padding: 10px;
+  margin: 0 0 10px 0;
+  font-size: 0.9rem;
+  line-height: 1.2;
+
+  border-radius: 3px;
+
+  transform: translate(150%, 0);
+  transition: transform 800ms ease;
+  will-change: transform;
+}
+
+.toast-msg .toast-title {
+  font-size: 1rem;
+  font-weight: bold;
+  padding-bottom: 5px;
+}
+
+.toast-msg.toast-show {
+  transform: translate(0, 0);
+}
+
+.toast-msg.toast-success {
+  background: #619343;
+}
+
+.toast-msg.toast-error {
+  background: #e53f3f;
+}

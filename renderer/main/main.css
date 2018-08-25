@@ -53,6 +53,13 @@ body {
   border-top: 1px solid #282828;
 }
 
+.toast {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 250px;
+}
+
 .dropzone {
   position: absolute;
   top: 0;

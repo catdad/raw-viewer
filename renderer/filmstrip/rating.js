@@ -19,7 +19,7 @@ async function setRating(filepath, rating) {
   return await exiftool.setRating(filepath, rating);
 }
 
-function render(elem, filepath, rating) {
+function render(elem, filepath, rating, events) {
   elem.innerHTML = '';
 
   const fragment = document.createDocumentFragment();
@@ -35,6 +35,7 @@ function render(elem, filepath, rating) {
         render(elem, filepath, idx + 1);
       }).catch(err => {
         log.error(err);
+        events.emit('error', err);
       });
     });
 
@@ -44,12 +45,12 @@ function render(elem, filepath, rating) {
   elem.appendChild(fragment);
 }
 
-module.exports = function ({ filepath, meta }) {
+module.exports = function ({ filepath, meta, events }) {
   const elem = document.createElement('div');
   elem.className = 'rating';
   elem.setAttribute('data-rating', meta.rating);
 
-  render(elem, filepath, meta.rating);
+  render(elem, filepath, meta.rating, events);
 
   return elem;
 };

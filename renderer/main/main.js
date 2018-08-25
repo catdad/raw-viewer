@@ -77,7 +77,7 @@ module.exports = function (elem) {
 
   events.on('error', (err) => {
     events.emit('toast:error', {
-      title: 'Error',
+      title: 'App Error:',
       text: err.toString()
     });
   });

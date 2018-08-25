@@ -78,7 +78,7 @@ module.exports = function ({ events }) {
     return { imgWrap, img };
   }
 
-  const { loadVisible } = navigation({ wrapper, displayImage });
+  const { loadVisible } = navigation({ wrapper, displayImage, events });
 
   async function loadThumbnails(dir) {
     log.time('load thumbs');
@@ -103,7 +103,7 @@ module.exports = function ({ events }) {
         img.classList.add(`rotate-${rotation}`);
         img.src = url;
 
-        imgWrap.appendChild(rating({ filepath, meta }));
+        imgWrap.appendChild(rating({ filepath, meta, events }));
 
         handleDisplay(imgWrap, {
           filepath, file, meta

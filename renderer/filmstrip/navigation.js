@@ -20,7 +20,7 @@ function isInView(containerBB, elBB) {
   ));
 }
 
-module.exports = function ({ wrapper, displayImage }) {
+module.exports = function ({ wrapper, displayImage, events }) {
   // display visible images
   async function loadVisible() {
     const wrapperBox = wrapper.getBoundingClientRect();
@@ -39,6 +39,7 @@ module.exports = function ({ wrapper, displayImage }) {
   wrapper.addEventListener('scroll', () => {
     loadVisible().catch(err => {
       log.error('failed to load visible thumbnails', err);
+      events.emit('error', err);
     });
   });
 

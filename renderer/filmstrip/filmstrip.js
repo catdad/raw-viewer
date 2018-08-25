@@ -27,8 +27,12 @@ module.exports = function ({ events }) {
   elem.appendChild(wrapper);
 
   async function displayImage(thumb) {
-    const meta = thumb.x_meta;
+    if (thumb.load) {
+      await thumb.load();
+    }
+
     const filepath = thumb.x_filepath;
+    const meta = thumb.x_meta;
 
     log.time(`new data ${filepath}`);
     const { url, rotation } = await readMetaAndDataUrl({ filepath, meta, type: 'full' });

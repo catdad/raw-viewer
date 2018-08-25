@@ -47,7 +47,7 @@ module.exports = function ({ events }) {
   }
 
   events.on('toast', showToast);
-
+  events.on('toast:success', (args) => showToast(Object.assign({}, args, { type: 'success' })));
   events.on('toast:error', (args) => showToast(Object.assign({}, args, { type: 'error' })));
 
   return { elem, style };

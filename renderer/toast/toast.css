@@ -28,6 +28,10 @@
   transform: translate(0, 0);
 }
 
+.toast-msg.toast-success {
+  background: #619343;
+}
+
 .toast-msg.toast-error {
   background: #e53f3f;
 }

@@ -8,6 +8,7 @@
   background: #1e77d1;
   padding: 10px;
   margin: 0 0 10px 0;
+  font-size: 1rem;
   line-height: 1.2;
 
   border-radius: 3px;
@@ -15,6 +16,11 @@
   transform: translate(150%, 0);
   transition: transform 800ms ease;
   will-change: transform;
+}
+
+.toast-msg .toast-title {
+  font-size: 1.2rem;
+  font-weight: bold;
 }
 
 .toast-msg.toast-show {

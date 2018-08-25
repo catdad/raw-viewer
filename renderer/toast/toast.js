@@ -4,9 +4,16 @@ const path = require('path');
 const name = 'toast';
 const style = fs.readFileSync(path.resolve(__dirname, `${name}.css`), 'utf8');
 
-function createMsg({ text, type }) {
+function createMsg({ text, type, title = null }) {
   const div = document.createElement('div');
   div.className = `toast-msg toast-${type}`;
+
+  if (title) {
+    const titleElem = document.createElement('div');
+    titleElem.className = 'toast-title';
+
+    titleElem.appendChild(document.createTextNode(title));
+  }
 
   div.appendChild(document.createTextNode(text.toString()));
 

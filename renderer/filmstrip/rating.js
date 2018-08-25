@@ -27,7 +27,6 @@ function render(elem, filepath, rating) {
 
   ratingControl(rating).forEach((el, idx) => {
     el.addEventListener('click', (ev) => {
-      console.log('rating click', ev.target);
       ev.preventDefault();
 
       setRating(filepath, idx + 1).then(data => {

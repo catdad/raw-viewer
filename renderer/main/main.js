@@ -47,12 +47,14 @@ module.exports = function (elem) {
   const controls = render('controls');
   const image = render('image');
   const dropzone = render('dropzone');
+  const toast = render('toast');
 
   elem.appendChild(filmstrip);
   elem.appendChild(sidebar);
   elem.appendChild(controls);
   elem.appendChild(image);
   elem.appendChild(dropzone);
+  elem.appendChild(toast);
 
   events.on('config', function (data) {
     if (data.key === 'client.lastDirectory' && data.value) {

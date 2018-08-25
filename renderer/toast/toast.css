@@ -1,0 +1,25 @@
+.toast {
+  overflow: hidden;
+  padding: 10px;
+}
+
+.toast-msg {
+  width: 100%;
+  background: blue;
+  padding: 10px;
+  margin: 0 0 10px 0;
+
+  border-radius: 3px;
+
+  transform: translate(100%, 0);
+  transition: transform 500ms ease;
+  will-change: transform;
+}
+
+.toast-msg.toast-show {
+  transform: translate(0, 0);
+}
+
+.toast-msg.toast-error {
+  background: red;
+}

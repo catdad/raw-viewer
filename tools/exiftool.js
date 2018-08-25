@@ -1,4 +1,3 @@
-const path = require('path');
 const fs = require('fs-extra');
 const prettyBytes = require('pretty-bytes');
 const _ = require('lodash');
@@ -8,20 +7,8 @@ const exifToolBin = require('dist-exiftool');
 const exifTool = new exifToolLib.ExiftoolProcess(exifToolBin);
 
 const log = require('./log.js')('exiftool');
-const root = require('./root.js');
 
 const operations = {};
-
-function uniqueId() {
-  // TODO make this better
-  return Math.random().toString(36).slice(2) +
-    Math.random().toString(36).slice(2) +
-    Math.random().toString(36).slice(2);
-}
-
-function tempfile(ext = '.tmp') {
-  return path.resolve(root, 'tmp', `${uniqueId()}${ext}`);
-}
 
 function execWithHooks({ afterSuccess = null, afterError = null, lockfile = null }, func, filepath, ...args) {
   const lockname = lockfile || filepath;
@@ -177,28 +164,10 @@ async function upsertRating(filepath, rating = 0) {
 
   log.info('rating', filepath, rating);
 
-  const ext = path.extname(filepath);
-  const tempIn = tempfile(ext);
-  const tempOut = tempfile(ext);
-  const tempRename = uniqueId();
-
-  async function afterSuccess() {
-    await fs.rename(filepath, `${filepath}_${tempRename}`);
-    await fs.rename(tempOut, filepath);
-    await fs.unlink(`${filepath}_${tempRename}`);
-    await fs.unlink(tempIn);
-  }
-
-  // we can't use overwrite_original through exiftool, because it
-  // seems to only work on jpeg -- on raw images (dng, cr2), it writes
-  // a temp file and fails to perform the update... the original file
-  // becomes locked; therefore, we will write to a temp file and
-  // move it once we are done
-  await fs.copy(filepath, tempIn);
-  await execWithHooks({ afterSuccess, lockfile: filepath }, 'writeMetadata', tempIn, {
+  await execWithHooks({}, 'writeMetadata', filepath, {
     'Rating': rating,
     'RatingPercent': percentMap[rating] || ''
-  }, [`filename=${tempOut}`]);
+  }, ['overwrite_original']);
 
   return { rating };
 }

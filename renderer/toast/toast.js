@@ -13,6 +13,7 @@ function createMsg({ text, type, title = null }) {
     titleElem.className = 'toast-title';
 
     titleElem.appendChild(document.createTextNode(title));
+    div.appendChild(titleElem);
   }
 
   div.appendChild(document.createTextNode(text.toString()));
@@ -47,7 +48,7 @@ module.exports = function ({ events }) {
 
   events.on('toast', showToast);
 
-  events.on('toast:error', (args => showToast(Object.assign({}, args, { type: 'error' }))));
+  events.on('toast:error', (args) => showToast(Object.assign({}, args, { type: 'error' })));
 
   return { elem, style };
 };

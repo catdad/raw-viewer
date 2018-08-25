@@ -8,7 +8,7 @@
   background: #1e77d1;
   padding: 10px;
   margin: 0 0 10px 0;
-  font-size: 1rem;
+  font-size: 0.9rem;
   line-height: 1.2;
 
   border-radius: 3px;
@@ -19,8 +19,9 @@
 }
 
 .toast-msg .toast-title {
-  font-size: 1.2rem;
+  font-size: 1rem;
   font-weight: bold;
+  padding-bottom: 5px;
 }
 
 .toast-msg.toast-show {

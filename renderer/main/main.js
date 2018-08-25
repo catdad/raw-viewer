@@ -74,4 +74,11 @@ module.exports = function (elem) {
       value: data.value
     });
   });
+
+  events.on('error', (err) => {
+    events.emit('toast:error', {
+      title: 'Error',
+      text: err.toString()
+    });
+  });
 };

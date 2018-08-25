@@ -44,11 +44,13 @@ module.exports = function (elem) {
 
   const filmstrip = render('filmstrip');
   const sidebar = render('sidebar');
+  const controls = render('controls');
   const image = render('image');
   const dropzone = render('dropzone');
 
   elem.appendChild(filmstrip);
   elem.appendChild(sidebar);
+  elem.appendChild(controls);
   elem.appendChild(image);
   elem.appendChild(dropzone);
 

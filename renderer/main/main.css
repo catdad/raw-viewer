@@ -27,8 +27,19 @@ body {
   top: 0;
   right: 0;
   width: 280px;
-  bottom: 200px;
+  bottom: 240px;
 
+  border-left: 1px solid #282828;
+}
+
+.controls {
+  position: absolute;
+  right: 0;
+  bottom: 200px;
+  height: 40px;
+  width: 280px;
+
+  border-top: 1px solid #282828;
   border-left: 1px solid #282828;
 }
 

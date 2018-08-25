@@ -7,6 +7,7 @@ const style = fs.readFileSync(path.resolve(__dirname, `${name}.css`), 'utf8');
 const log = require('../../tools/log.js')(name);
 const readMetaAndDataUrl = require('./read-image.js');
 const navigation = require('./navigation.js');
+const rating = require('./rating.js');
 
 function isClippedLeft(containerBB, elBB) {
   return elBB.left < containerBB.left;
@@ -61,7 +62,7 @@ module.exports = function ({ events }) {
     thumb.x_filepath = filepath;
     thumb.x_meta = meta;
 
-    thumb.addEventListener('click', function () {
+    thumb.addEventListener('click', () => {
       displayImage(thumb);
     });
   }
@@ -101,6 +102,8 @@ module.exports = function ({ events }) {
 
         img.classList.add(`rotate-${rotation}`);
         img.src = url;
+
+        imgWrap.appendChild(rating({ filepath, meta }));
 
         handleDisplay(imgWrap, {
           filepath, file, meta

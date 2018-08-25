@@ -8,6 +8,49 @@ const exifTool = new exifToolLib.ExiftoolProcess(exifToolBin);
 
 const log = require('./log.js')('exiftool');
 
+const operations = {};
+
+function execWithHooks({ afterSuccess = null, afterError = null, lockfile = null }, func, filepath, ...args) {
+  const lockname = lockfile || filepath;
+
+  if (operations[lockname]) {
+    log.info('queueing operation on', lockname);
+    // this file is already being used, so we'll wait to
+    // perform the following operation
+    return operations[lockname].then(() => {
+      return execWithHooks({ afterSuccess, afterError, lockfile }, func, filepath, ...args);
+    }).catch(() => {
+      return execWithHooks({ afterSuccess, afterError, lockfile }, func, filepath, ...args);
+    });
+  }
+
+  const prom = exifTool[func](filepath, ...args).then(async data => {
+    if (afterSuccess) {
+      await afterSuccess();
+    }
+
+    delete operations[lockname];
+    return Promise.resolve(data);
+  }).catch(async err => {
+    log.error(filepath, err);
+
+    if (afterError) {
+      await afterError();
+    }
+
+    delete operations[lockname];
+    return Promise.reject(err);
+  });
+
+  operations[filepath] = prom;
+
+  return prom;
+}
+
+function exec(func, filepath, ...args) {
+  return execWithHooks({}, func, filepath, ...args);
+}
+
 const initExiftool = (() => {
   let done = false;
   let prom;
@@ -49,12 +92,10 @@ async function fileSize(filepath) {
 }
 
 async function readExif(filepath) {
-  log.time(`exif ${filepath}`);
-
   await initExiftool();
 
-  const data = await exifTool.readMetadata(filepath, ['-File:all']);
-
+  log.time(`exif ${filepath}`);
+  const data = await exec('readMetadata', filepath, ['-File:all']);
   log.timeEnd(`exif ${filepath}`);
 
   return data;
@@ -65,42 +106,70 @@ async function readJpegMeta(filepath) {
 
   log.time(`jpeg ${filepath}`);
 
-  const data = await exifTool.readMetadata(filepath, [
+  const data = await exec('readMetadata', filepath, [
     'Orientation',
     'JpgFromRawLength',
     'JpgFromRawStart',
     'PreviewImageLength',
     'PreviewImageStart',
     'ThumbnailOffset',
-    'ThumbnailLength'
+    'ThumbnailLength',
+    'Rating'
   ]);
 
   const {
+    Orientation,
     JpgFromRawLength,
     JpgFromRawStart,
     PreviewImageLength,
     PreviewImageStart,
     ThumbnailOffset,
     ThumbnailLength,
-    Orientation
+    Rating
   } = data.data[0];
 
   log.timeEnd(`jpeg ${filepath}`);
 
   // DNG (any)     - will have Jpeg props for full view and Preview props for thumbs
+  // NEF (nikon)   - will have Jpeg props for full view and Preview props for thumbs
   // CR2 (canon)   - will have Preview props for full view and Thumbnail props for thumbs
   // ARW (sony)    - will have Preview props for full view and Thumbnail props for thumbs
-  // NEF (nikon)   - will have Jpeg props for full view and Preview props for thumbs
-  // RAF (fuji)    - will fall back to dcraw for full view and Thumbnail props for thumbs
   // ORF (olympus) - will have Preview props for both full image and thumbs
+  // RAF (fuji)    - will fall back to dcraw for full view and Thumbnail props for thumbs
 
   return {
     orientation: Orientation,
+    rating: Rating || 0,
     start: JpgFromRawStart || PreviewImageStart,
     length: JpgFromRawLength || PreviewImageLength,
     thumbStart: ThumbnailOffset || PreviewImageStart,
     thumbLength: ThumbnailLength || PreviewImageLength
   };
+}
+
+async function upsertRating(filepath, rating = 0) {
+  await initExiftool();
+
+  // I don't know if this is universal, but the Windows properties
+  // view requires Rating and RatingPercent in order to display
+  // the new rating. If I only set Rating, it will still show the
+  // old rating.
+  const percentMap = {
+    '1': 1,
+    '2': 25,
+    '3': 50,
+    '4': 75,
+    '5': 99
+  };
+
+  log.info('rating', filepath, rating);
+
+  await execWithHooks({}, 'writeMetadata', filepath, {
+    'Rating': rating,
+    'RatingPercent': percentMap[rating] || ''
+  }, ['overwrite_original']);
+
+  return { rating };
 }
 
 module.exports = function init(receive, send) {
@@ -150,6 +219,20 @@ module.exports = function init(receive, send) {
 
     try {
       data = await readJpegMeta(filepath);
+    } catch (e) {
+      log.error(e);
+      return callback(e);
+    }
+
+    return callback(null, data);
+  });
+
+  receive('exiftool:set:rating', async (ev, { filepath, id, rating }) => {
+    let data;
+    const callback = createCallback(id);
+
+    try {
+      data = await upsertRating(filepath, rating);
     } catch (e) {
       log.error(e);
       return callback(e);

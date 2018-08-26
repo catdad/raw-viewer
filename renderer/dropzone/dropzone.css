@@ -6,6 +6,7 @@
 .dropzone .container {
   display: flex;
   margin: auto;
+  pointer-events: none;
 
   width: 50%;
   height: 50%;
@@ -13,7 +14,7 @@
   align-items: center;
   text-align: center;
 
-  background: rgba(70, 70, 70, 0.5);
+  background: rgba(70, 70, 70, 0.6);
   border: 5px dashed #eee;
   border-radius: 20px;
 }

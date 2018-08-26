@@ -1,0 +1,24 @@
+.dropzone {
+  display: flex;
+  background: rgba(128, 128, 128, 0.85);
+}
+
+.dropzone .container {
+  display: flex;
+  margin: auto;
+
+  width: 50%;
+  height: 50%;
+
+  align-items: center;
+  text-align: center;
+
+  background: rgba(70, 70, 70, 0.5);
+  border: 5px dashed #eee;
+  border-radius: 20px;
+}
+
+.dropzone .text {
+  width: 100%;
+  font-size: 4rem;
+}

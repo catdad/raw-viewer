@@ -54,7 +54,7 @@ module.exports = function ({ events }) {
 
   window.addEventListener('dragenter', (ev) => {
     ev.preventDefault();
-    elem.style.display = 'block';
+    elem.style.display = 'flex';
   });
 
   events.on('load:directory', () => {

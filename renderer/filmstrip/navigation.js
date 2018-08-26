@@ -24,23 +24,62 @@ function sleep(time = 100) {
   return new Promise(resolve => setTimeout(resolve, time));
 }
 
-module.exports = function ({ wrapper, displayImage, events }) {
-  let loading = false;
-  let queueLoading = false;
+function throttle(asyncFunc) {
+  let isRunning = false;
+  let isWaiting = false;
+  let isQueued = false;
+  let promise;
 
-  // display visible images
-  async function loadVisible(throttle = 0) {
-    if (loading) {
-      queueLoading = true;
-      return;
+  async function exec(time) {
+    isRunning = true;
+
+    isWaiting = true;
+    await sleep(time);
+    isWaiting = false;
+
+    let val = await asyncFunc();
+    isRunning = false;
+
+    if (isQueued) {
+      isQueued = false;
+      val = await exec(0);
     }
 
-    loading = true;
+    return val;
+  }
 
-    // throttle if requested, like when executing on
-    // a scroll event
-    await sleep(throttle);
+  return function addToQueue(time) {
+    // do not queue new executions while in
+    // the throttle waiting period
+    if (isWaiting) {
+      return promise;
+    }
 
+    // if running and not waiting, queue
+    // another execution to happen at the end
+    if (isRunning) {
+      isQueued = true;
+
+      return promise;
+    }
+
+    // this is the first time this is called,
+    // so execute with a throttle
+    promise = exec(time).then(data => {
+      promise = null;
+      return Promise.resolve(data);
+    }).catch(err => {
+      promise = null;
+      return Promise.reject(err);
+    });
+
+    return promise;
+  };
+}
+
+module.exports = function ({ wrapper, displayImage, events }) {
+  // display visible images
+  const loadVisible = throttle(async function loadVisible() {
     const wrapperBox = wrapper.getBoundingClientRect();
 
     const states = [].slice.call(wrapper.querySelectorAll('.thumbnail')).map(child => {
@@ -61,15 +100,7 @@ module.exports = function ({ wrapper, displayImage, events }) {
       .filter(({ visible }) => !visible)
       .map(({ child }) => child.unload())
     );
-
-    loading = false;
-
-    if (queueLoading) {
-      queueLoading = false;
-
-      await loadVisible();
-    }
-  }
+  });
 
   // handle scrolling
   wrapper.addEventListener('mousewheel', function (ev) {

@@ -59,12 +59,17 @@
   transform: rotate(270deg);
 }
 
-.filmstrip .thumbnail .rating {
+.filmstrip .rating {
   position: absolute;
   top: 0;
   z-index: 1;
   font-size: 1.2rem;
   text-shadow: 0 0 10px #262626;
+}
+
+.filmstrip .rating [data-rate="0"] {
+  padding: 0 2px;
+  opacity: 0.7;
 }
 
 .filmstrip .thumbnail::after {

@@ -165,13 +165,13 @@ async function upsertRating(filepath, rating = 0) {
   log.time(`rating ${filepath}`);
 
   await execWithHooks({}, 'writeMetadata', filepath, {
-    'Rating': rating,
+    'Rating': rating || '',
     'RatingPercent': percentMap[rating] || ''
   }, ['overwrite_original']);
 
   log.timeEnd(`rating ${filepath}`);
 
-  return { rating };
+  return readJpegMeta(filepath);
 }
 
 module.exports = function init(receive, send) {

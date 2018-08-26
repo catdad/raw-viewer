@@ -97,6 +97,10 @@ module.exports = function ({ events }) {
       let filepath = path.resolve(dir, file);
       let { imgWrap, img } = thumbnail();
 
+      let setMeta = (meta) => {
+        imgWrap.x_meta = Object.assign(imgWrap.x_meta, meta);
+      };
+
       let reload = async () => {
         imgWrap.load = null;
 
@@ -115,7 +119,7 @@ module.exports = function ({ events }) {
 
         let { meta } = await reload();
 
-        imgWrap.appendChild(rating({ filepath, meta, events }));
+        imgWrap.appendChild(rating({ filepath, meta, events, setMeta }));
 
         handleDisplay(imgWrap, {
           filepath, file, meta

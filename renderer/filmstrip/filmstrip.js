@@ -97,8 +97,8 @@ module.exports = function ({ events }) {
       let filepath = path.resolve(dir, file);
       let { imgWrap, img } = thumbnail();
 
-      imgWrap.load = async () => {
-        imgWrap.load = null;
+      let reload = async () => {
+        img.load = null;
 
         log.time(`render ${file}`);
         let { url, rotation, meta } = await readMetaAndDataUrl({ filepath });
@@ -106,6 +106,14 @@ module.exports = function ({ events }) {
 
         img.classList.add(`rotate-${rotation}`);
         img.src = url;
+
+        return { url, rotation, meta };
+      };
+
+      let load = async () => {
+        imgWrap.load = null;
+
+        let { meta } = await reload();
 
         imgWrap.appendChild(rating({ filepath, meta, events }));
 
@@ -115,6 +123,18 @@ module.exports = function ({ events }) {
 
         return imgWrap;
       };
+
+      let unload = async () => {
+        if (!img.src) {
+          return;
+        }
+
+        img.src = '';
+        imgWrap.load = reload;
+      };
+
+      imgWrap.load = load;
+      imgWrap.unload = unload;
 
       fragment.appendChild(imgWrap);
     }

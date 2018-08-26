@@ -98,7 +98,7 @@ module.exports = function ({ events }) {
       let { imgWrap, img } = thumbnail();
 
       let reload = async () => {
-        img.load = null;
+        imgWrap.load = null;
 
         log.time(`render ${file}`);
         let { url, rotation, meta } = await readMetaAndDataUrl({ filepath });

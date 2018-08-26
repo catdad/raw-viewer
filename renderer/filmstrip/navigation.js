@@ -48,7 +48,7 @@ function throttle(asyncFunc) {
     return val;
   }
 
-  return function addToQueue(time) {
+  return function addToQueue(time = 0) {
     // do not queue new executions while in
     // the throttle waiting period
     if (isWaiting) {

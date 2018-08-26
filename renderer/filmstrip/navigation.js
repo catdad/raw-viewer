@@ -20,14 +20,55 @@ function isInView(containerBB, elBB) {
   ));
 }
 
+function sleep(time = 100) {
+  return new Promise(resolve => setTimeout(resolve, time));
+}
+
 module.exports = function ({ wrapper, displayImage, events }) {
+  let loading = false;
+  let queueLoading = false;
+
   // display visible images
-  async function loadVisible() {
+  async function loadVisible(throttle = 0) {
+    if (loading) {
+      queueLoading = true;
+      return;
+    }
+
+    loading = true;
+
+    // throttle if requested, like when executing on
+    // a scroll event
+    await sleep(throttle);
+
     const wrapperBox = wrapper.getBoundingClientRect();
 
-    await Promise.all([].slice.call(wrapper.querySelectorAll('.thumbnail')).filter(wrap => {
-      return wrap.load && isInView(wrapperBox, wrap.getBoundingClientRect());
-    }).map(wrap => wrap.load()));
+    const states = [].slice.call(wrapper.querySelectorAll('.thumbnail')).map(child => {
+      return {
+        child,
+        visible: isInView(wrapperBox, child.getBoundingClientRect())
+      };
+    });
+
+    // load all visible thumbnails
+    await Promise.all(states
+      .filter(({ child, visible }) => visible && child.load)
+      .map(({ child }) => child.load())
+    );
+
+    // unload all out-of-view thumbnails
+    await Promise.all(states
+      .filter(({ visible }) => !visible)
+      .map(({ child }) => child.unload())
+    );
+
+    loading = false;
+
+    if (queueLoading) {
+      queueLoading = false;
+
+      await loadVisible();
+    }
   }
 
   // handle scrolling
@@ -37,7 +78,7 @@ module.exports = function ({ wrapper, displayImage, events }) {
   });
 
   wrapper.addEventListener('scroll', () => {
-    loadVisible().catch(err => {
+    loadVisible(200).catch(err => {
       log.error('failed to load visible thumbnails', err);
       events.emit('error', err);
     });

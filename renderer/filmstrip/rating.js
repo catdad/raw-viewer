@@ -2,16 +2,19 @@ const log = require('../../tools/log.js')('filmstrip-rating');
 const exiftool = require('../exiftool-child.js');
 
 function ratingControl(rating) {
-  function star(setTo, isFull = false) {
+  function star(setTo) {
+    const char = setTo === 0 ? '⨯' :
+      setTo <= rating ? '★' : '☆';
+
     const el = document.createElement('span');
     el.setAttribute('data-rate', setTo);
-    el.appendChild(document.createTextNode(isFull ? '★' : '☆'));
+    el.appendChild(document.createTextNode(char));
 
     return el;
   }
 
-  return Array.apply(null, new Array(5)).map((n, i) => {
-    return star(i + 1, i + 1 <= rating);
+  return Array.apply(null, new Array(6)).map((n, i) => {
+    return star(i);
   });
 }
 
@@ -19,7 +22,7 @@ async function setRating(filepath, rating) {
   return await exiftool.setRating(filepath, rating);
 }
 
-function render(elem, filepath, rating, events) {
+function render(elem, filepath, rating, events, setMeta) {
   elem.innerHTML = '';
 
   const fragment = document.createDocumentFragment();
@@ -29,10 +32,9 @@ function render(elem, filepath, rating, events) {
       ev.preventDefault();
       ev.stopPropagation();
 
-      setRating(filepath, idx + 1).then(data => {
-        log.info('rating response', data);
-
-        render(elem, filepath, idx + 1);
+      setRating(filepath, idx).then(data => {
+        setMeta(data);
+        render(elem, filepath, idx, events, setMeta);
       }).catch(err => {
         log.error(err);
         events.emit('error', err);
@@ -45,12 +47,12 @@ function render(elem, filepath, rating, events) {
   elem.appendChild(fragment);
 }
 
-module.exports = function ({ filepath, meta, events }) {
+module.exports = function ({ filepath, meta, events, setMeta }) {
   const elem = document.createElement('div');
   elem.className = 'rating';
   elem.setAttribute('data-rating', meta.rating);
 
-  render(elem, filepath, meta.rating, events);
+  render(elem, filepath, meta.rating, events, setMeta);
 
   return elem;
 };

@@ -26,25 +26,6 @@ module.exports = function ({ events }) {
 
   elem.appendChild(wrapper);
 
-  let leastRating = 0;
-
-  function applyRating(thumb) {
-    const isVisible = thumb.style.display !== 'none';
-    const shouldBeVisible = thumb.x_rating === undefined || thumb.x_rating >= leastRating;
-
-    if (isVisible && !shouldBeVisible) {
-      thumb.style.display = 'none';
-      return true;
-    }
-
-    if (!isVisible && shouldBeVisible) {
-      thumb.style.display = 'flex';
-      return true;
-    }
-
-    return false;
-  }
-
   async function displayImage(thumb) {
     if (thumb.load) {
       await thumb.load();
@@ -102,30 +83,7 @@ module.exports = function ({ events }) {
     return { imgWrap, img };
   }
 
-  const { loadVisible } = navigation({ wrapper, displayImage, events });
-
-  function applyFilters() {
-    let changed = false;
-
-    const thumbs = [].slice.call(wrapper.children);
-
-    thumbs.forEach((thumb) => {
-      const didChange = applyRating(thumb);
-      changed = changed || didChange;
-    });
-
-    return changed;
-  }
-
-  async function resolveVisible() {
-    await loadVisible();
-
-    const changed = applyFilters();
-
-    if (changed) {
-      await resolveVisible();
-    }
-  }
+  const { resolveVisible } = navigation({ wrapper, displayImage, events });
 
   async function loadThumbnails(dir) {
     log.time('load thumbs');
@@ -195,18 +153,6 @@ module.exports = function ({ events }) {
 
     log.timeEnd('load thumbs');
   }
-
-  events.on('image:filter', ({ rating }) => {
-    if (rating === leastRating) {
-      return;
-    }
-
-    leastRating = rating;
-
-    resolveVisible().catch(err => {
-      events.emit('error', err);
-    });
-  });
 
   events.on('load:directory', function ({ dir }) {
     loadThumbnails(dir);

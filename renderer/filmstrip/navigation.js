@@ -78,8 +78,40 @@ function throttle(asyncFunc) {
 }
 
 module.exports = function ({ wrapper, displayImage, events }) {
+  let leastRating = 0;
+
+  function applyRating(thumb) {
+    const isVisible = thumb.style.display !== 'none';
+    const shouldBeVisible = thumb.x_rating === undefined || thumb.x_rating >= leastRating;
+
+    if (isVisible && !shouldBeVisible) {
+      thumb.style.display = 'none';
+      return true;
+    }
+
+    if (!isVisible && shouldBeVisible) {
+      thumb.style.display = 'flex';
+      return true;
+    }
+
+    return false;
+  }
+
+  function applyFilters() {
+    let changed = false;
+
+    const thumbs = [].slice.call(wrapper.children);
+
+    thumbs.forEach((thumb) => {
+      const didChange = applyRating(thumb);
+      changed = changed || didChange;
+    });
+
+    return changed;
+  }
+
   // display visible images
-  const loadVisible = throttle(async function loadVisible() {
+  const resolveVisible = throttle(async function self() {
     const wrapperBox = wrapper.getBoundingClientRect();
 
     const states = [].slice.call(wrapper.querySelectorAll('.thumbnail')).map(child => {
@@ -100,6 +132,13 @@ module.exports = function ({ wrapper, displayImage, events }) {
       .filter(({ visible }) => !visible)
       .map(({ child }) => child.unload())
     );
+
+    // apply any filters
+    const changed = applyFilters();
+
+    if (changed) {
+      await self();
+    }
   });
 
   // handle scrolling
@@ -109,7 +148,7 @@ module.exports = function ({ wrapper, displayImage, events }) {
   });
 
   wrapper.addEventListener('scroll', () => {
-    loadVisible(200).catch(err => {
+    resolveVisible(200).catch(err => {
       log.error('failed to load visible thumbnails', err);
       events.emit('error', err);
     });
@@ -139,7 +178,19 @@ module.exports = function ({ wrapper, displayImage, events }) {
     displayImage(target);
   });
 
+  events.on('image:filter', ({ rating }) => {
+    if (rating === leastRating) {
+      return;
+    }
+
+    leastRating = rating;
+
+    resolveVisible().catch(err => {
+      events.emit('error', err);
+    });
+  });
+
   return {
-    loadVisible
+    resolveVisible
   };
 };

@@ -11,6 +11,22 @@ function findSelected(wrapper) {
   }
 }
 
+function findNextTarget(wrapper, direction) {
+  const next = direction === 'left' ? 'previousSibling' : 'nextSibling';
+
+  let selected = findSelected(wrapper);
+
+  while (selected && selected[next]) {
+    selected = selected[next];
+
+    if (selected && selected.style.display !== 'none') {
+      return selected;
+    }
+  }
+
+  return null;
+}
+
 function isInView(containerBB, elBB) {
   return (!(
     elBB.top >= containerBB.bottom ||
@@ -163,13 +179,7 @@ module.exports = function ({ wrapper, displayImage, events }) {
       return;
     }
 
-    const selected = findSelected(wrapper);
-
-    if (!selected) {
-      return;
-    }
-
-    const target = isLeft ? selected.previousSibling : selected.nextSibling;
+    const target = findNextTarget(wrapper, isLeft ? 'left' : 'right');
 
     if (!target) {
       return;

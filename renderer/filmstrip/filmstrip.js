@@ -18,10 +18,10 @@ function isClippedRight(containerBB, elBB) {
 }
 
 module.exports = function ({ events }) {
-  var elem = document.createElement('div');
+  const elem = document.createElement('div');
   elem.className = name;
 
-  var wrapper = document.createElement('div');
+  const wrapper = document.createElement('div');
   wrapper.className = `${name}-wrapper`;
 
   elem.appendChild(wrapper);
@@ -87,7 +87,7 @@ module.exports = function ({ events }) {
   async function loadThumbnails(dir) {
     log.time('load thumbs');
 
-    var files = (await fs.readdir(dir)).sort((a, b) => a.localeCompare(b));
+    const files = (await fs.readdir(dir)).sort((a, b) => a.localeCompare(b));
 
     wrapper.innerHTML = '';
 

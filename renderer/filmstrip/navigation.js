@@ -3,6 +3,18 @@ const keys = require('../tools/keyboard.js');
 
 const SELECTED = 'selected';
 
+function show(thumb) {
+  thumb.style.display = 'flex';
+}
+
+function hide(thumb) {
+  thumb.style.display = 'none';
+}
+
+function ok(thumb) {
+  return thumb.style.display !== 'none';
+}
+
 function findSelected(wrapper) {
   for (let elem of [].slice.call(wrapper.children)) {
     if (elem.classList.contains(SELECTED)) {
@@ -19,7 +31,7 @@ function findNextTarget(wrapper, direction) {
   while (selected && selected[next]) {
     selected = selected[next];
 
-    if (selected && selected.style.display !== 'none') {
+    if (selected && ok(selected)) {
       return selected;
     }
   }
@@ -97,16 +109,16 @@ module.exports = function ({ wrapper, displayImage, events }) {
   let leastRating = 0;
 
   function applyRating(thumb) {
-    const isVisible = thumb.style.display !== 'none';
+    const isVisible = ok(thumb);
     const shouldBeVisible = thumb.x_rating === undefined || thumb.x_rating >= leastRating;
 
     if (isVisible && !shouldBeVisible) {
-      thumb.style.display = 'none';
+      hide(thumb);
       return true;
     }
 
     if (!isVisible && shouldBeVisible) {
-      thumb.style.display = 'flex';
+      show(thumb);
       return true;
     }
 

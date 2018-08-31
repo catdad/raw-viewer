@@ -3,12 +3,40 @@ const keys = require('../tools/keyboard.js');
 
 const SELECTED = 'selected';
 
+function show(thumb) {
+  thumb.style.display = 'flex';
+}
+
+function hide(thumb) {
+  thumb.style.display = 'none';
+}
+
+function ok(thumb) {
+  return thumb.style.display !== 'none';
+}
+
 function findSelected(wrapper) {
   for (let elem of [].slice.call(wrapper.children)) {
     if (elem.classList.contains(SELECTED)) {
       return elem;
     }
   }
+}
+
+function findNextTarget(wrapper, direction) {
+  const next = direction === 'left' ? 'previousSibling' : 'nextSibling';
+
+  let selected = findSelected(wrapper);
+
+  while (selected && selected[next]) {
+    selected = selected[next];
+
+    if (selected && ok(selected)) {
+      return selected;
+    }
+  }
+
+  return null;
 }
 
 function isInView(containerBB, elBB) {
@@ -78,8 +106,40 @@ function throttle(asyncFunc) {
 }
 
 module.exports = function ({ wrapper, displayImage, events }) {
+  let leastRating = 0;
+
+  function applyRating(thumb) {
+    const isVisible = ok(thumb);
+    const shouldBeVisible = thumb.x_rating === undefined || thumb.x_rating >= leastRating;
+
+    if (isVisible && !shouldBeVisible) {
+      hide(thumb);
+      return true;
+    }
+
+    if (!isVisible && shouldBeVisible) {
+      show(thumb);
+      return true;
+    }
+
+    return false;
+  }
+
+  function applyFilters() {
+    let changed = false;
+
+    const thumbs = [].slice.call(wrapper.children);
+
+    thumbs.forEach((thumb) => {
+      const didChange = applyRating(thumb);
+      changed = changed || didChange;
+    });
+
+    return changed;
+  }
+
   // display visible images
-  const loadVisible = throttle(async function loadVisible() {
+  const resolveVisible = throttle(async function self() {
     const wrapperBox = wrapper.getBoundingClientRect();
 
     const states = [].slice.call(wrapper.querySelectorAll('.thumbnail')).map(child => {
@@ -100,6 +160,13 @@ module.exports = function ({ wrapper, displayImage, events }) {
       .filter(({ visible }) => !visible)
       .map(({ child }) => child.unload())
     );
+
+    // apply any filters
+    const changed = applyFilters();
+
+    if (changed) {
+      await self();
+    }
   });
 
   // handle scrolling
@@ -109,7 +176,7 @@ module.exports = function ({ wrapper, displayImage, events }) {
   });
 
   wrapper.addEventListener('scroll', () => {
-    loadVisible(200).catch(err => {
+    resolveVisible(200).catch(err => {
       log.error('failed to load visible thumbnails', err);
       events.emit('error', err);
     });
@@ -124,13 +191,7 @@ module.exports = function ({ wrapper, displayImage, events }) {
       return;
     }
 
-    const selected = findSelected(wrapper);
-
-    if (!selected) {
-      return;
-    }
-
-    const target = isLeft ? selected.previousSibling : selected.nextSibling;
+    const target = findNextTarget(wrapper, isLeft ? 'left' : 'right');
 
     if (!target) {
       return;
@@ -139,7 +200,19 @@ module.exports = function ({ wrapper, displayImage, events }) {
     displayImage(target);
   });
 
+  events.on('image:filter', ({ rating }) => {
+    if (rating === leastRating) {
+      return;
+    }
+
+    leastRating = rating;
+
+    resolveVisible().catch(err => {
+      events.emit('error', err);
+    });
+  });
+
   return {
-    loadVisible
+    resolveVisible
   };
 };

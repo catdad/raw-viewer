@@ -18,10 +18,10 @@ function isClippedRight(containerBB, elBB) {
 }
 
 module.exports = function ({ events }) {
-  var elem = document.createElement('div');
+  const elem = document.createElement('div');
   elem.className = name;
 
-  var wrapper = document.createElement('div');
+  const wrapper = document.createElement('div');
   wrapper.className = `${name}-wrapper`;
 
   elem.appendChild(wrapper);
@@ -65,6 +65,7 @@ module.exports = function ({ events }) {
     thumb.setAttribute('data-filename', file);
     thumb.x_filepath = filepath;
     thumb.x_meta = meta;
+    thumb.x_rating = meta.rating || 0;
 
     thumb.addEventListener('click', () => {
       displayImage(thumb);
@@ -82,12 +83,12 @@ module.exports = function ({ events }) {
     return { imgWrap, img };
   }
 
-  const { loadVisible } = navigation({ wrapper, displayImage, events });
+  const { resolveVisible } = navigation({ wrapper, displayImage, events });
 
   async function loadThumbnails(dir) {
     log.time('load thumbs');
 
-    var files = (await fs.readdir(dir)).sort((a, b) => a.localeCompare(b));
+    const files = (await fs.readdir(dir)).sort((a, b) => a.localeCompare(b));
 
     wrapper.innerHTML = '';
 
@@ -148,7 +149,7 @@ module.exports = function ({ events }) {
 
     wrapper.appendChild(fragment);
 
-    await loadVisible();
+    await resolveVisible();
 
     log.timeEnd('load thumbs');
   }

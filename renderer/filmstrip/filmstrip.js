@@ -4,7 +4,7 @@ const path = require('path');
 const name = 'filmstrip';
 const style = fs.readFileSync(path.resolve(__dirname, `${name}.css`), 'utf8');
 
-const log = require('../../tools/log.js')(name);
+const log = require('../../lib/log.js')(name);
 const readMetaAndDataUrl = require('./read-image.js');
 const navigation = require('./navigation.js');
 const rating = require('./rating.js');

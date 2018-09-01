@@ -1,5 +1,5 @@
 const EventEmitter = require('events');
-const log = require('../../tools/log.js')('dcraw');
+const log = require('../../lib/log.js')('dcraw');
 
 // USAGE:
 // let workers = require('workers.js')(4);

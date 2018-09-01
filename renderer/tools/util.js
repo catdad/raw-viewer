@@ -2,7 +2,7 @@ const fs = require('fs-extra');
 const prettyBytes = require('pretty-bytes');
 
 const dcraw = require('dcraw');
-const log = require('../../tools/log.js')('util');
+const log = require('../../lib/log.js')('util');
 
 function bufferToUrl(buff) {
   return `data:image/jpeg;base64,${Buffer.from(buff).toString('base64')}`;

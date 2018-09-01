@@ -1,4 +1,4 @@
-const log = require('../../tools/log.js')('filmstrip-nav');
+const log = require('../../lib/log.js')('filmstrip-nav');
 const keys = require('../tools/keyboard.js');
 
 const SELECTED = 'selected';

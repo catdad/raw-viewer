@@ -9,8 +9,8 @@ try {
 const path = require('path');
 const url = require('url');
 
-const config = require('./tools/config.js');
-const exiftool = require('./tools/exiftool.js');
+const config = require('./lib/config.js');
+const exiftool = require('./lib/exiftool.js');
 
 const { app, BrowserWindow, ipcMain } = require('electron');
 

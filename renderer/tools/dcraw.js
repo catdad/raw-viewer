@@ -26,7 +26,7 @@ module.exports = function (count) {
     function createWorker(idx) {
       return new Promise((resolve) => {
         // this path is relative to index.html
-        const worker = new Worker('./filmstrip-worker.js');
+        const worker = new Worker('./dcraw-worker.js');
 
         worker.onmessage = function (ev) {
           if (ev.data.type === 'ready') {

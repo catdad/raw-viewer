@@ -3,6 +3,7 @@ const ipc = require('electron').ipcRenderer;
 
 const log = require('../tools/log.js')('exiftool-child');
 const dcraw = require('./dcraw.js')(2);
+const { bufferToUrl } = require('./util.js');
 
 const ROTATION = {
   'Horizontal (normal)': 0,
@@ -77,7 +78,7 @@ async function readJpegFromMeta({ filepath, start, length }) {
     log.timeEnd(`read dcraw ${filepath}`);
   }
 
-  return buffer;
+  return bufferToUrl(buffer);
 }
 
 async function readThumbFromMeta(data) {
@@ -95,14 +96,14 @@ async function readThumbFromMeta(data) {
     buffer = await readJpegFromMeta(data);
   }
 
-  return buffer;
+  return bufferToUrl(buffer);
 }
 
 function readThumb(filepath) {
   return readShortMeta(filepath)
     .then((data) => {
-      return readThumbFromMeta(data).then(buffer => {
-        return Object.assign({}, data, { buffer });
+      return readThumbFromMeta(data).then(url => {
+        return Object.assign({}, data, { url });
       });
     });
 }
@@ -110,8 +111,8 @@ function readThumb(filepath) {
 function readJpeg(filepath) {
   return readShortMeta(filepath)
     .then((data) => {
-      return readJpegFromMeta(data).then(buffer => {
-        return Object.assign({}, data, { buffer });
+      return readJpegFromMeta(data).then(url => {
+        return Object.assign({}, data, { url });
       });
     });
 }

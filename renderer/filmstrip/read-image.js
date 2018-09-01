@@ -1,6 +1,5 @@
 const path = require('path');
 
-const { bufferToUrl } = require('../util.js');
 const exiftool = require('../exiftool-child.js');
 
 async function readMetaAndDataUrl({ filepath, type = 'full', meta = null }) {
@@ -19,12 +18,12 @@ async function readMetaAndDataUrl({ filepath, type = 'full', meta = null }) {
     };
   }
 
-  let buffer = type === 'full' ?
+  let url = type === 'full' ?
     await exiftool.readJpegFromMeta(meta) :
     await exiftool.readThumbFromMeta(meta);
 
   return {
-    url: bufferToUrl(buffer),
+    url:url,
     orientation: meta.orientation,
     rotation: meta.rotation,
     meta: meta

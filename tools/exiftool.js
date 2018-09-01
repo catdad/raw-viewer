@@ -98,7 +98,13 @@ async function readExif(filepath) {
   const data = await exec('readMetadata', filepath, ['-File:all']);
   log.timeEnd(`exif ${filepath}`);
 
-  return data;
+  if (data.error) {
+    return {
+      error: data.error
+    };
+  }
+
+  return data.data[0];
 }
 
 async function readJpegMeta(filepath) {
@@ -117,6 +123,14 @@ async function readJpegMeta(filepath) {
     'Rating'
   ]);
 
+  log.timeEnd(`jpeg ${filepath}`);
+
+  if (data.error) {
+    return {
+      error: data.error
+    };
+  }
+
   const {
     Orientation,
     JpgFromRawLength,
@@ -128,7 +142,6 @@ async function readJpegMeta(filepath) {
     Rating
   } = data.data[0];
 
-  log.timeEnd(`jpeg ${filepath}`);
 
   // DNG (any)     - will have Jpeg props for full view and Preview props for thumbs
   // NEF (nikon)   - will have Jpeg props for full view and Preview props for thumbs
@@ -205,8 +218,8 @@ module.exports = function init(receive, send) {
 
       // use incorrect (format-wise) tag names, to hopefully make it clear
       // these are not property exif or maker tags
-      _.set(data, 'data[0].Z-FileBytes', size);
-      _.set(data, 'data[0].Z-FileSize', prettyBytes(size));
+      _.set(data, 'Z-FileBytes', size);
+      _.set(data, 'Z-FileSize', prettyBytes(size));
     } catch (e) {
       log.error(e);
       return callback(e);

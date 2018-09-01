@@ -21,52 +21,52 @@ function gid() {
   return Math.random().toString(36).substr(2);
 }
 
-function readMeta(filepath) {
+function exiftool(name, data) {
   const id = gid() + gid();
 
   return new Promise((resolve, reject) => {
-    ipc.once(`exiftool:callback:${id}`, (ev, data) => {
-      if (data.ok) {
-        return resolve(data.value);
+    ipc.once(`exiftool:callback:${id}`, (ev, result) => {
+      if (result.ok) {
+        return resolve(result.value);
       }
 
-      return reject(new Error(data.err));
+      return reject(new Error(result.err));
     });
 
-    ipc.send('exiftool:read:metadata', { filepath, id });
+    ipc.send(`exiftool:${name}`, Object.assign({}, data, { id }));
   });
 }
 
-function readShortMeta(filepath) {
-  const id = gid() + gid();
+async function readMeta(filepath) {
+  return await exiftool('read:metadata', { filepath });
+}
 
-  return new Promise((resolve, reject) => {
-    log.time(`read short meta ${filepath}`);
+async function readShortMeta(filepath) {
+  const placeholder = {
+    disabled: true,
+    url: unknown,
+    rotation: 0,
+    rating: 0,
+    filepath
+  };
 
-    ipc.once(`exiftool:callback:${id}`, (ev, data) => {
-      log.timeEnd(`read short meta ${filepath}`);
+  const stat = await fs.stat(filepath);
 
-      if (!data.ok) {
-        return reject(new Error(data.err));
-      }
+  if (stat.isDirectory()) {
+    return placeholder;
+  }
 
-      if (data.value.error) {
-        return resolve({
-          disabled: true,
-          url: unknown,
-          rotation: 0,
-          rating: 0,
-          filepath
-        });
-      }
+  log.time(`read short meta ${filepath}`);
+  const value = await exiftool('read:jpegmeta', { filepath });
+  log.timeEnd(`read short meta ${filepath}`);
 
-      return resolve(Object.assign(data.value, {
-        filepath,
-        rotation: ROTATION[data.value.orientation] || 0
-      }));
-    });
+  if (value.error) {
+    return placeholder;
+  }
 
-    ipc.send('exiftool:read:jpegmeta', { filepath, id });
+  return Object.assign(value, {
+    filepath,
+    rotation: ROTATION[value.orientation] || 0
   });
 }
 

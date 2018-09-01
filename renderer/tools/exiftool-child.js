@@ -3,7 +3,7 @@ const ipc = require('electron').ipcRenderer;
 
 const log = require('../../lib/log.js')('exiftool-child');
 const dcraw = require('./dcraw.js')(2);
-const { bufferToUrl } = require('./util.js');
+const bufferToUrl = require('./bufferToUrl.js');
 
 const ROTATION = {
   'Horizontal (normal)': 0,

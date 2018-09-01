@@ -4,7 +4,7 @@ try {
     showDevTools: false,
     devToolsMode: 'right'
   });
-} catch (err) {}
+} catch (err) {} // eslint-disable-line no-empty
 
 const path = require('path');
 const url = require('url');

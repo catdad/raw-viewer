@@ -1,9 +1,13 @@
-var path = require('path');
+/* eslint-disable no-console */
+
 var spawn = require('child_process').spawn;
 
 var gulp = require('gulp');
 var _ = require('lodash');
 var sequence = require('run-sequence');
+
+var pkg = require('./package.json');
+process.title = pkg.name;
 
 var server;
 

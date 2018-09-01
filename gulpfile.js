@@ -70,5 +70,5 @@ gulp.task('dev', ['restart'], function () {
 
   // all the server files are watched here
   gulp.watch('main.js', onchange);
-  gulp.watch('tools/**/*.js', onchange);
+  gulp.watch('lib/**/*.js', onchange);
 });

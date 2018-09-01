@@ -1,5 +1,5 @@
 try {
-  require('./tools/electron-watcher.js');
+  require('./lib/electron-watcher.js');
   require('electron-debug')({
     showDevTools: false,
     devToolsMode: 'right'

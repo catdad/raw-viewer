@@ -16,8 +16,6 @@ module.exports = function ({ events }) {
     const meta = await exiftool.readExif(filepath);
     log.timeEnd(`exif ${filepath}`);
 
-    console.log(meta);
-
     // Canon has a lower and upper focus distance, while
     // others have a single value
     if (meta.FocusDistanceLower && meta.FocusDistanceUpper) {

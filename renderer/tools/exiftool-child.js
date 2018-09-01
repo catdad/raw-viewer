@@ -1,9 +1,15 @@
+const path = require('path');
 const fs = require('fs-extra');
 const ipc = require('electron').ipcRenderer;
 
 const log = require('../../lib/log.js')('exiftool-child');
 const dcraw = require('./dcraw.js')(2);
 const bufferToUrl = require('./bufferToUrl.js');
+
+const unknown = (function () {
+  const svg = fs.readFileSync(path.resolve(__dirname, 'unknown.svg'), 'utf8');
+  return `data:image/svg+xml;base64,${Buffer.from(svg).toString('base64')}`;
+}());
 
 const ROTATION = {
   'Horizontal (normal)': 0,
@@ -40,14 +46,24 @@ function readShortMeta(filepath) {
     ipc.once(`exiftool:callback:${id}`, (ev, data) => {
       log.timeEnd(`read short meta ${filepath}`);
 
-      if (data.ok) {
-        return resolve(Object.assign(data.value, {
-          filepath,
-          rotation: ROTATION[data.value.orientation] || 0
-        }));
+      if (!data.ok) {
+        return reject(new Error(data.err));
       }
 
-      return reject(new Error(data.err));
+      if (data.value.error) {
+        return resolve({
+          disabled: true,
+          url: unknown,
+          rotation: 0,
+          rating: 0,
+          filepath
+        });
+      }
+
+      return resolve(Object.assign(data.value, {
+        filepath,
+        rotation: ROTATION[data.value.orientation] || 0
+      }));
     });
 
     ipc.send('exiftool:read:jpegmeta', { filepath, id });
@@ -63,7 +79,11 @@ async function readFilePart({ filepath, start, length }) {
   return buffer;
 }
 
-async function readJpegFromMeta({ filepath, start, length }) {
+async function readJpegFromMeta({ filepath, start, length, url }) {
+  if (url) {
+    return url;
+  }
+
   let buffer;
 
   if (start && length) {
@@ -82,6 +102,10 @@ async function readJpegFromMeta({ filepath, start, length }) {
 }
 
 async function readThumbFromMeta(data) {
+  if (data.url) {
+    return data.url;
+  }
+
   let buffer;
 
   if (data.thumbStart && data.thumbLength) {

@@ -1,6 +1,6 @@
 const path = require('path');
 
-const exiftool = require('../exiftool-child.js');
+const exiftool = require('../tools/exiftool-child.js');
 
 async function readMetaAndDataUrl({ filepath, type = 'full', meta = null }) {
   const ext = path.extname(filepath).toLowerCase();

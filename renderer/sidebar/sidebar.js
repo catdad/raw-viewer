@@ -4,7 +4,7 @@ const fs = require('fs');
 const name = 'sidebar';
 const style = fs.readFileSync(path.resolve(__dirname, `${name}.css`), 'utf8');
 
-const exiftool = require('../exiftool-child.js');
+const exiftool = require('../tools/exiftool-child.js');
 const log = require('../../tools/log.js')(name);
 
 module.exports = function ({ events }) {

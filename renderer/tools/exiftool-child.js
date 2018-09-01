@@ -1,7 +1,7 @@
 const fs = require('fs-extra');
 const ipc = require('electron').ipcRenderer;
 
-const log = require('../tools/log.js')('exiftool-child');
+const log = require('../../tools/log.js')('exiftool-child');
 const dcraw = require('./dcraw.js')(2);
 const { bufferToUrl } = require('./util.js');
 

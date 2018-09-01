@@ -1,6 +1,6 @@
 /* global postMessage */
 
-const { imageUrl, imageUint8Array } = require('../renderer/util.js');
+const { imageUrl, imageUint8Array } = require('../renderer/tools/util.js');
 const log = require('../tools/log.js')('worker');
 
 function exec(data) {

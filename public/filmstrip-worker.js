@@ -1,7 +1,7 @@
 /* global postMessage */
 
-const { imageUrl, imageUint8Array } = require('../renderer/util.js');
-const log = require('../tools/log.js')('worker');
+const { imageUrl, imageUint8Array } = require('../renderer/tools/util.js');
+const log = require('../lib/log.js')('worker');
 
 function exec(data) {
   function onDone(err, res) {

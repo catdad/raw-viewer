@@ -1,4 +1,4 @@
-const log = require('../../tools/log.js')('image-control');
+const log = require('../../lib/log.js')('image-control');
 const keys = require('../tools/keyboard.js');
 
 function int(num) {

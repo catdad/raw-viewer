@@ -1,5 +1,5 @@
-const log = require('../../tools/log.js')('filmstrip-rating');
-const exiftool = require('../exiftool-child.js');
+const log = require('../../lib/log.js')('filmstrip-rating');
+const exiftool = require('../tools/exiftool-child.js');
 
 function ratingControl(rating) {
   function star(setTo) {

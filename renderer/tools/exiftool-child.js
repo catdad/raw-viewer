@@ -1,9 +1,15 @@
+const path = require('path');
 const fs = require('fs-extra');
 const ipc = require('electron').ipcRenderer;
 
 const log = require('../../lib/log.js')('exiftool-child');
 const dcraw = require('./dcraw.js')(2);
 const bufferToUrl = require('./bufferToUrl.js');
+
+const unknown = (function () {
+  const svg = fs.readFileSync(path.resolve(__dirname, 'unknown.svg'), 'utf8');
+  return `data:image/svg+xml;base64,${Buffer.from(svg).toString('base64')}`;
+}());
 
 const ROTATION = {
   'Horizontal (normal)': 0,
@@ -15,42 +21,52 @@ function gid() {
   return Math.random().toString(36).substr(2);
 }
 
-function readExif(filepath) {
+function exiftool(name, data) {
   const id = gid() + gid();
 
   return new Promise((resolve, reject) => {
-    ipc.once(`exiftool:callback:${id}`, (ev, data) => {
-      if (data.ok) {
-        return resolve(data.value);
+    ipc.once(`exiftool:callback:${id}`, (ev, result) => {
+      if (result.ok) {
+        return resolve(result.value);
       }
 
-      return reject(new Error(data.err));
+      return reject(new Error(result.err));
     });
 
-    ipc.send('exiftool:read:metadata', { filepath, id });
+    ipc.send(`exiftool:${name}`, Object.assign({}, data, { id }));
   });
 }
 
-function readShortMeta(filepath) {
-  const id = gid() + gid();
+async function readMeta(filepath) {
+  return await exiftool('read:metadata', { filepath });
+}
 
-  return new Promise((resolve, reject) => {
-    log.time(`read short meta ${filepath}`);
+async function readShortMeta(filepath) {
+  const placeholder = {
+    disabled: true,
+    url: unknown,
+    rotation: 0,
+    rating: 0,
+    filepath
+  };
 
-    ipc.once(`exiftool:callback:${id}`, (ev, data) => {
-      log.timeEnd(`read short meta ${filepath}`);
+  const stat = await fs.stat(filepath);
 
-      if (data.ok) {
-        return resolve(Object.assign(data.value, {
-          filepath,
-          rotation: ROTATION[data.value.orientation] || 0
-        }));
-      }
+  if (stat.isDirectory()) {
+    return placeholder;
+  }
 
-      return reject(new Error(data.err));
-    });
+  log.time(`read short meta ${filepath}`);
+  const value = await exiftool('read:jpegmeta', { filepath });
+  log.timeEnd(`read short meta ${filepath}`);
 
-    ipc.send('exiftool:read:jpegmeta', { filepath, id });
+  if (value.error) {
+    return placeholder;
+  }
+
+  return Object.assign(value, {
+    filepath,
+    rotation: ROTATION[value.orientation] || 0
   });
 }
 
@@ -63,7 +79,11 @@ async function readFilePart({ filepath, start, length }) {
   return buffer;
 }
 
-async function readJpegFromMeta({ filepath, start, length }) {
+async function readJpegFromMeta({ filepath, start, length, url }) {
+  if (url) {
+    return url;
+  }
+
   let buffer;
 
   if (start && length) {
@@ -82,6 +102,10 @@ async function readJpegFromMeta({ filepath, start, length }) {
 }
 
 async function readThumbFromMeta(data) {
+  if (data.url) {
+    return data.url;
+  }
+
   let buffer;
 
   if (data.thumbStart && data.thumbLength) {
@@ -134,7 +158,7 @@ function setRating(filepath, rating = 0) {
 }
 
 module.exports = {
-  readExif,
+  readMeta,
   readShortMeta,
   readJpeg,
   readJpegFromMeta,

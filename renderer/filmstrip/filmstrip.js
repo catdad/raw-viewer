@@ -120,7 +120,9 @@ module.exports = function ({ events }) {
 
         let { meta } = await reload();
 
-        imgWrap.appendChild(rating({ filepath, meta, events, setMeta }));
+        if (!meta.disabled) {
+          imgWrap.appendChild(rating({ filepath, meta, events, setMeta }));
+        }
 
         handleDisplay(imgWrap, {
           filepath, file, meta

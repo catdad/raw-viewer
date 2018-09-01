@@ -13,7 +13,7 @@ module.exports = function ({ events }) {
 
   async function loadInfo({ filepath }) {
     log.time(`exif ${filepath}`);
-    const meta = await exiftool.readExif(filepath);
+    const meta = await exiftool.readMeta(filepath);
     log.timeEnd(`exif ${filepath}`);
 
     // Canon has a lower and upper focus distance, while

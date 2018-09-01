@@ -15,7 +15,7 @@ function gid() {
   return Math.random().toString(36).substr(2);
 }
 
-function readExif(filepath) {
+function readMeta(filepath) {
   const id = gid() + gid();
 
   return new Promise((resolve, reject) => {
@@ -134,7 +134,7 @@ function setRating(filepath, rating = 0) {
 }
 
 module.exports = {
-  readExif,
+  readMeta,
   readShortMeta,
   readJpeg,
   readJpegFromMeta,

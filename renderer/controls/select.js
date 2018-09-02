@@ -5,14 +5,12 @@ module.exports = ({ values }) => {
   const select = document.createElement('select');
   select.className = 'select';
 
-  const options = values.map((val) => {
+  values.forEach((val) => {
     const opt = document.createElement('option');
     opt.appendChild(document.createTextNode(val.label));
     opt.x_value = val.value;
 
     select.appendChild(opt);
-
-    return opt;
   });
 
   select.onchange = () => {

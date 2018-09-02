@@ -1,20 +1,73 @@
 .controls {
   padding: 6px;
   line-height: 1;
+
+  display: flex;
+  align-items: center;
 }
 
-.controls button {
+/* toggle control */
+
+.controls .toggle {
+  display: inline-block;
+  user-select: none;
   height: 100%;
-  min-width: 30px;
-  margin: 0 6px 0 0;
-
-  color: #262626;
-  background: #eee;
-  border: none;
+  border: 1px solid #282828;
   border-radius: 3px;
+  overflow: hidden;
+  margin-right: 6px;
 }
 
-.controls .filter-rating {
-  font-size: 1.2rem;
-  cursor: pointer;
+.controls .toggle:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.controls input[type=radio] {
+  position: relative;
+  float: left;
+  display: inline-block;
+  height: 100%;
+  width: 2.2rem;
+  color: #eee;
+  padding: 0;
+  margin: 0;
+}
+
+.controls input[type=radio]:after {
+  content: attr(value);
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  background: #464646;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.controls input[type=radio]:checked:after {
+  color: #abd64d;
+}
+
+/* select control */
+
+.controls .select {
+  border: 1px solid #282828;
+  border-radius: 3px;
+  height: 100%;
+  background: #464646;
+  color: #eee;
+  -webkit-padding-start: 5px;
+  -webkit-padding-end: 5px;
+}
+
+.controls .select .label {
+  height: 100%;
+}
+
+.controls .select ul {
+  max-height: 0;
 }

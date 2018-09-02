@@ -31,6 +31,13 @@ function onIpc(ev, data) {
   }
 }
 
+function onDragStart(ev, { filepath }) {
+  ev.sender.startDrag({
+    file: filepath,
+    icon: ''
+  });
+}
+
 function createWindow () {
   config.read().then(function () {
     // Create the browser window.
@@ -60,6 +67,7 @@ function createWindow () {
     });
 
     ipcMain.on('message', onIpc);
+    ipcMain.on('ondragstart', onDragStart);
 
     mainWindow.webContents.on('devtools-opened', () => {
       config.setProp('devToolsOpen', true);

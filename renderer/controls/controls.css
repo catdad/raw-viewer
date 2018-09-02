@@ -22,6 +22,8 @@
   cursor: pointer;
 }
 
+/* toggle control */
+
 .controls .toggle {
   display: inline-block;
   user-select: none;
@@ -44,7 +46,7 @@
   display: inline-block;
   height: 100%;
   width: 2.2rem;
-  color: #e5e5e5;
+  color: #eee;
   padding: 0;
   margin: 0;
 }
@@ -66,3 +68,22 @@
   color: #abd64d;
 }
 
+/* select control */
+
+.controls .select {
+  border: 1px solid #282828;
+  border-radius: 3px;
+  height: 100%;
+  background: #464646;
+  color: #eee;
+  -webkit-padding-start: 5px;
+  -webkit-padding-end: 5px;
+}
+
+.controls .select .label {
+  height: 100%;
+}
+
+.controls .select ul {
+  max-height: 0;
+}

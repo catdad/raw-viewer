@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 const toggle = require('./toggle.js');
+const select = require('./select.js');
 
 const name = 'controls';
 const style = fs.readFileSync(path.resolve(__dirname, `${name}.css`), 'utf8');
@@ -64,16 +65,29 @@ module.exports = function ({ events }) {
     events.emit('image:zoom', { scale: value === '1:1' ? 1 : 'fit' });
   });
 
-  elem.appendChild(zoom.elem);
-
-  const ratings = stars({
-    onclick: ({ rating }) => {
-      events.emit('image:filter', { rating });
-    },
-    className: 'filter-rating'
+  const ratings = select({
+    name: 'rating',
+    values: [
+      '★ 0+',
+      '★ 1+',
+      '★ 2+',
+      '★ 3+',
+      '★ 4+',
+      '★ 5',
+    ]
   });
 
-  elem.appendChild(ratings);
+  elem.appendChild(zoom.elem);
+  elem.appendChild(ratings.elem);
+
+//  const ratings = stars({
+//    onclick: ({ rating }) => {
+//      events.emit('image:filter', { rating });
+//    },
+//    className: 'filter-rating'
+//  });
+//
+//  elem.appendChild(ratings);
 
   return { elem, style };
 };

@@ -6,51 +6,6 @@ const select = require('./select.js');
 
 const name = 'controls';
 const style = fs.readFileSync(path.resolve(__dirname, `${name}.css`), 'utf8');
-let curentRating = 0;
-
-//  function button({ onclick, text, className = '' }) {
-//    const el = document.createElement('button');
-//    el.className = className;
-//    el.appendChild(document.createTextNode(text));
-//    el.addEventListener('click', onclick);
-//
-//    return el;
-//  }
-
-function stars({ onclick, className = '' }) {
-  const parent = document.createElement('span');
-  parent.className = className;
-
-  function setFilter({ rating }) {
-    curentRating = rating;
-    onclick({ rating });
-
-    spans.forEach((span, idx) => {
-      if (idx === 0) {
-        return;
-      }
-
-      span.innerText = idx <= curentRating ? '★' : '☆';
-    });
-  }
-
-  const spans = [0, 1, 2, 3, 4, 5].map((rating) => {
-    const char = rating === 0 ? '⨯' :
-      rating <= curentRating ? '★' : '☆';
-
-    const el = document.createElement('span');
-    el.onclick = () => {
-      setFilter({ rating });
-    };
-    el.appendChild(document.createTextNode(char));
-
-    parent.appendChild(el);
-
-    return el;
-  });
-
-  return parent;
-}
 
 module.exports = function ({ events }) {
   const elem = document.createElement('div');
@@ -68,26 +23,21 @@ module.exports = function ({ events }) {
   const ratings = select({
     name: 'rating',
     values: [
-      '★ 0+',
-      '★ 1+',
-      '★ 2+',
-      '★ 3+',
-      '★ 4+',
-      '★ 5',
+      { label: '★ 0+', value: 0 },
+      { label: '★ 1+', value: 1 },
+      { label: '★ 2+', value: 2 },
+      { label: '★ 3+', value: 3 },
+      { label: '★ 4+', value: 4 },
+      { label: '★ 5', value: 5 }
     ]
+  });
+
+  ratings.on('change', ({ value }) => {
+    events.emit('image:filter', { rating: value });
   });
 
   elem.appendChild(zoom.elem);
   elem.appendChild(ratings.elem);
-
-//  const ratings = stars({
-//    onclick: ({ rating }) => {
-//      events.emit('image:filter', { rating });
-//    },
-//    className: 'filter-rating'
-//  });
-//
-//  elem.appendChild(ratings);
 
   return { elem, style };
 };

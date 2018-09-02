@@ -6,22 +6,6 @@
   align-items: center;
 }
 
-.controls button {
-  height: 100%;
-  min-width: 30px;
-  margin: 0 6px 0 0;
-
-  color: #262626;
-  background: #eee;
-  border: none;
-  border-radius: 3px;
-}
-
-.controls .filter-rating {
-  font-size: 1.2rem;
-  cursor: pointer;
-}
-
 /* toggle control */
 
 .controls .toggle {

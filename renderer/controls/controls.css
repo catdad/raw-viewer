@@ -43,7 +43,7 @@
   float: left;
   display: inline-block;
   height: 100%;
-  width: 2.5rem;
+  width: 2.2rem;
   color: #e5e5e5;
   padding: 0;
   margin: 0;
@@ -52,10 +52,13 @@
 .controls input[type=radio]:after {
   content: attr(value);
   position: absolute;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
   background: #464646;
   width: 100%;
   height: 100%;
-  text-align: center;
   box-sizing: border-box;
 }
 

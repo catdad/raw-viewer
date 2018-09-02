@@ -28,14 +28,12 @@ function onIpc(ev, data) {
         value: config.getProp(data.key)
       });
       break;
+    case data.type === 'dragstart':
+      ev.sender.startDrag({
+        file: data.filepath,
+        icon: '' // icon is required :(
+      });
   }
-}
-
-function onDragStart(ev, { filepath }) {
-  ev.sender.startDrag({
-    file: filepath,
-    icon: ''
-  });
 }
 
 function createWindow () {
@@ -67,7 +65,6 @@ function createWindow () {
     });
 
     ipcMain.on('message', onIpc);
-    ipcMain.on('ondragstart', onDragStart);
 
     mainWindow.webContents.on('devtools-opened', () => {
       config.setProp('devToolsOpen', true);

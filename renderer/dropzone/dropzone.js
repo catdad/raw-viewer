@@ -1,5 +1,5 @@
-const fs = require('fs');
 const path = require('path');
+const fs = require('fs-extra');
 
 const name = 'dropzone';
 const style = fs.readFileSync(path.resolve(__dirname, `${name}.css`), 'utf8');
@@ -24,6 +24,29 @@ module.exports = function ({ events }) {
 
   elem.appendChild(dropzoneContent());
 
+  function open() {
+    elem.style.display = 'flex';
+  }
+
+  function close() {
+    elem.style.display = 'none';
+  }
+
+  async function handleOpen(dirpath) {
+    try {
+      const stat = await fs.stat(dirpath);
+
+      if (!stat.isDirectory()) {
+        return events.emit('error', new Error('try opening a folder instead of a file'));
+      }
+
+      events.emit('load:directory', { dir: dirpath });
+      events.emit('config:directory', { value: dirpath });
+    } catch(e) {
+      return events.emit('error', e);
+    }
+  }
+
   function stop() {
     return false;
   }
@@ -45,8 +68,8 @@ module.exports = function ({ events }) {
     const dir = e.dataTransfer.files[0];
 
     if (dir) {
-      events.emit('load:directory', { dir: dir.path });
-      events.emit('config:directory', { value: dir.path });
+      handleOpen(dir.path);
+      close();
     }
 
     return false;
@@ -54,12 +77,12 @@ module.exports = function ({ events }) {
 
   window.addEventListener('dragenter', (ev) => {
     ev.preventDefault();
-    elem.style.display = 'flex';
+    open();
   });
 
   events.on('load:directory', () => {
     hasDir = true;
-    elem.style.display = 'none';
+    close();
   });
 
   return { elem, style };

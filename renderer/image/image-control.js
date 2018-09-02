@@ -95,7 +95,6 @@ module.exports = ({ name, elem }) => {
 
     refreshBox();
 
-
     img.onload = function () {
       if (isRotated) {
         width = img.naturalHeight;

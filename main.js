@@ -28,6 +28,11 @@ function onIpc(ev, data) {
         value: config.getProp(data.key)
       });
       break;
+    case data.type === 'dragstart':
+      ev.sender.startDrag({
+        file: data.filepath,
+        icon: '' // icon is required :(
+      });
   }
 }
 

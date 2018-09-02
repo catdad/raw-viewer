@@ -5,6 +5,7 @@ const name = 'filmstrip';
 const style = fs.readFileSync(path.resolve(__dirname, `${name}.css`), 'utf8');
 
 const log = require('../../lib/log.js')(name);
+const dragDrop = require('../tools/ipc-draganddrop.js');
 const readMetaAndDataUrl = require('./read-image.js');
 const navigation = require('./navigation.js');
 const rating = require('./rating.js');
@@ -70,6 +71,8 @@ module.exports = function ({ events }) {
     thumb.addEventListener('click', () => {
       displayImage(thumb);
     });
+
+    dragDrop(thumb, filepath);
   }
 
   function thumbnail() {

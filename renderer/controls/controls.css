@@ -1,6 +1,9 @@
 .controls {
   padding: 6px;
   line-height: 1;
+
+  display: flex;
+  align-items: center;
 }
 
 .controls button {
@@ -18,3 +21,45 @@
   font-size: 1.2rem;
   cursor: pointer;
 }
+
+.controls .toggle {
+  display: inline-block;
+  user-select: none;
+  height: 100%;
+  border: 1px solid #282828;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-right: 6px;
+}
+
+.controls .toggle:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.controls input[type=radio] {
+  position: relative;
+  float: left;
+  display: inline-block;
+  height: 100%;
+  width: 2.5rem;
+  color: #e5e5e5;
+  padding: 0;
+  margin: 0;
+}
+
+.controls input[type=radio]:after {
+  content: attr(value);
+  position: absolute;
+  background: #464646;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.controls input[type=radio]:checked:after {
+  color: #abd64d;
+}
+

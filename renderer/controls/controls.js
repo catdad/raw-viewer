@@ -1,18 +1,20 @@
 const fs = require('fs');
 const path = require('path');
 
+const toggle = require('./toggle.js');
+
 const name = 'controls';
 const style = fs.readFileSync(path.resolve(__dirname, `${name}.css`), 'utf8');
 let curentRating = 0;
 
-function button({ onclick, text, className = '' }) {
-  const el = document.createElement('button');
-  el.className = className;
-  el.appendChild(document.createTextNode(text));
-  el.addEventListener('click', onclick);
-
-  return el;
-}
+//  function button({ onclick, text, className = '' }) {
+//    const el = document.createElement('button');
+//    el.className = className;
+//    el.appendChild(document.createTextNode(text));
+//    el.addEventListener('click', onclick);
+//
+//    return el;
+//  }
 
 function stars({ onclick, className = '' }) {
   const parent = document.createElement('span');
@@ -53,19 +55,16 @@ module.exports = function ({ events }) {
   const elem = document.createElement('div');
   elem.className = name;
 
-  const oneToOne = button({
-    onclick: () => {
-      events.emit('image:zoom', { scale: 1 });
-    },
-    text: '1:1'
+  const zoom = toggle({
+    name: 'zoom',
+    values: [ 'fit', '1:1' ]
   });
 
-  const fit = button({
-    onclick: () => {
-      events.emit('image:zoom', { scale: 'fit' });
-    },
-    text:' fit'
+  zoom.on('change', ({ value }) => {
+    events.emit('image:zoom', { scale: value === '1:1' ? 1 : 'fit' });
   });
+
+  elem.appendChild(zoom.elem);
 
   const ratings = stars({
     onclick: ({ rating }) => {
@@ -74,8 +73,6 @@ module.exports = function ({ events }) {
     className: 'filter-rating'
   });
 
-  elem.appendChild(oneToOne);
-  elem.appendChild(fit);
   elem.appendChild(ratings);
 
   return { elem, style };

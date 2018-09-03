@@ -108,12 +108,17 @@ function throttle(asyncFunc) {
 const filter = {
   rating: (expected, actual) => {
     if (actual === undefined) {
-      return true; // ??? not sure.. the code was like this at one point
+      // thumbs that haven't loaded yet won't have a value set
+      return true;
     }
 
     return actual >= expected;
   },
   type: (expected, actual) => {
+    if (actual === undefined) {
+      return true;
+    }
+
     if (expected === '*') {
       return true;
     }
@@ -124,10 +129,12 @@ const filter = {
 
 module.exports = function ({ wrapper, displayImage, events }) {
   let expectRating = 0;
+  let expectType = '*';
 
-  function applyRating(thumb) {
+  function applyFilter(thumb) {
     const isVisible = ok(thumb);
-    const shouldBeVisible = filter.rating(expectRating, thumb.x_rating);
+    const shouldBeVisible = filter.rating(expectRating, thumb.x_rating) &&
+      filter.type(expectType, thumb.x_type);
 
     if (isVisible && !shouldBeVisible) {
       hide(thumb);
@@ -145,10 +152,11 @@ module.exports = function ({ wrapper, displayImage, events }) {
   function applyFilters() {
     let changed = false;
 
+
     const thumbs = [].slice.call(wrapper.children);
 
     thumbs.forEach((thumb) => {
-      const didChange = applyRating(thumb);
+      const didChange = applyFilter(thumb);
       changed = changed || didChange;
     });
 
@@ -217,12 +225,13 @@ module.exports = function ({ wrapper, displayImage, events }) {
     displayImage(target);
   });
 
-  events.on('image:filter', ({ rating }) => {
-    if (rating === expectRating) {
+  events.on('image:filter', ({ rating, type }) => {
+    if (rating === expectRating && type === expectType) {
       return;
     }
 
-    expectRating = rating;
+    expectRating = rating === undefined ? expectRating : rating;
+    expectType = type === undefined ? expectType : type;
 
     resolveVisible().catch(err => {
       events.emit('error', err);

@@ -36,8 +36,16 @@ module.exports = function ({ events }) {
     events.emit('image:filter', { rating: value });
   });
 
+  const typeFilter = select({
+    name: 'type',
+    values: [
+      { label: 'all', value: '*' }
+    ]
+  });
+
   elem.appendChild(zoom.elem);
   elem.appendChild(ratingFilter.elem);
+  elem.appendChild(typeFilter.elem);
 
   events.on('image:load', () => {
     zoom.value = 'fit';

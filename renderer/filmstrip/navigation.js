@@ -105,12 +105,29 @@ function throttle(asyncFunc) {
   };
 }
 
+const filter = {
+  rating: (expected, actual) => {
+    if (actual === undefined) {
+      return true; // ??? not sure.. the code was like this at one point
+    }
+
+    return actual >= expected;
+  },
+  type: (expected, actual) => {
+    if (expected === '*') {
+      return true;
+    }
+
+    return expected === actual;
+  }
+};
+
 module.exports = function ({ wrapper, displayImage, events }) {
-  let leastRating = 0;
+  let expectRating = 0;
 
   function applyRating(thumb) {
     const isVisible = ok(thumb);
-    const shouldBeVisible = thumb.x_rating === undefined || thumb.x_rating >= leastRating;
+    const shouldBeVisible = filter.rating(expectRating, thumb.x_rating);
 
     if (isVisible && !shouldBeVisible) {
       hide(thumb);
@@ -201,11 +218,11 @@ module.exports = function ({ wrapper, displayImage, events }) {
   });
 
   events.on('image:filter', ({ rating }) => {
-    if (rating === leastRating) {
+    if (rating === expectRating) {
       return;
     }
 
-    leastRating = rating;
+    expectRating = rating;
 
     resolveVisible().catch(err => {
       events.emit('error', err);

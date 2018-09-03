@@ -49,7 +49,7 @@
 }
 
 .controls input[type=radio]:checked:after {
-  color: #abd64d;
+  color: #ffda00;
 }
 
 /* select control */

@@ -107,6 +107,7 @@ module.exports = function ({ events }) {
 
       let setMeta = (meta) => {
         imgWrap.x_meta = Object.assign(imgWrap.x_meta, meta);
+        imgWrap.x_rating = meta.rating;
       };
 
       let reload = async () => {

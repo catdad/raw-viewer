@@ -53,6 +53,12 @@ module.exports = function ({ events }) {
 
   events.on('image:load', () => {
     zoom.value = 'fit';
+    ratingFilter.value = 0;
+    typeFilter.value = '*';
+
+    // setting the value of a select doesn't fire a change event
+    // not sure why... as Chrome
+    events.emit('image:filter', { rating: 0, type: '*' });
   });
 
   events.on('directory:discover', ({ files }) => {

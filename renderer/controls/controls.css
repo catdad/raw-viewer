@@ -70,6 +70,6 @@
   height: 100%;
 }
 
-.controls .select ul {
-  max-height: 0;
+.controls .select option {
+  font-size: 0.95rem;
 }

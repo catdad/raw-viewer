@@ -6,15 +6,20 @@ const fs = require('fs-extra');
 module.exports = function ({ events }) {
 
   async function ondir(dir) {
-    const files = (await fs.readdir(dir)).sort((a, b) => a.localeCompare(b));
-    const filepaths = files.map((file) => path.resolve(dir, file));
-    const types = Object.keys(files.reduce((memo, file) => {
-      memo[path.extname(file)] = true;
-      return memo;
-    }, {}));
+    const list = (await fs.readdir(dir)).sort((a, b) => a.localeCompare(b));
+
+    const files = list.map((file) => {
+      const type = path.extname(file).toLowerCase().replace(/^\./, '');
+
+      return {
+        filepath: path.resolve(dir, file),
+        file: file,
+        type: type
+      };
+    });
 
     return {
-      dir, filepaths, types
+      dir, files
     };
   }
 

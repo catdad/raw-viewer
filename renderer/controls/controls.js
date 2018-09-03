@@ -43,6 +43,10 @@ module.exports = function ({ events }) {
     ]
   });
 
+  typeFilter.on('change', ({ value }) => {
+    events.emit('image:filter', { type: value });
+  });
+
   elem.appendChild(zoom.elem);
   elem.appendChild(ratingFilter.elem);
   elem.appendChild(typeFilter.elem);

@@ -1,4 +1,4 @@
-const fs = require('fs-extra');
+const trash = require('trash');
 
 const log = require('../../lib/log.js')('filmstrip-nav');
 const keys = require('../tools/keyboard.js');
@@ -199,7 +199,7 @@ module.exports = function ({ wrapper, displayImage, events }) {
     const selected = findSelected(wrapper);
     const target = findNextTarget(wrapper, 'right');
 
-    await fs.unlink(selected.x_filepath);
+    await trash([selected.x_filepath]);
     wrapper.removeChild(selected);
 
     return { target };

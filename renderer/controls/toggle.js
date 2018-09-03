@@ -10,6 +10,15 @@ function getValue(radios) {
   return null;
 }
 
+function setValue(radios, val) {
+  for (var i = 0, l = radios.length; i < l; i++) {
+    if (radios[i].value === val) {
+      radios[i].checked = 'checked';
+      return;
+    }
+  }
+}
+
 module.exports = function createToggle({ name, values }) {
   const ev = new EventEmitter();
   const div = document.createElement('span');
@@ -44,7 +53,8 @@ module.exports = function createToggle({ name, values }) {
     off: ev.removeListener.bind(ev)
   }, {
     value: {
-      get: () => getValue(radios)
+      get: () => getValue(radios),
+      set: (val) => setValue(radios, val)
     }
   });
 };

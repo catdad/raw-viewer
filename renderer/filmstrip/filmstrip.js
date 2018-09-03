@@ -18,6 +18,10 @@ function isClippedRight(containerBB, elBB) {
   return elBB.right > containerBB.right;
 }
 
+function isClipped(containerBB, elBB) {
+  return isClippedLeft(containerBB, elBB) || isClippedRight(containerBB, elBB);
+}
+
 module.exports = function ({ events }) {
   const elem = document.createElement('div');
   elem.className = name;
@@ -55,10 +59,10 @@ module.exports = function ({ events }) {
       rotation: rotation
     });
 
-    if (isClippedRight(parentBB, thumbBB)) {
-      wrapper.scrollLeft += (parentBB.width / 2) + (thumbBB.width / 2);
-    } else if (isClippedLeft(parentBB, thumbBB)) {
-      wrapper.scrollLeft -= (parentBB.width / 2) + (thumbBB.width / 2);
+    if (isClipped(parentBB, thumbBB)) {
+      thumb.scrollIntoView({
+        inline: 'center'
+      });
     }
   }
 

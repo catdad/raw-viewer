@@ -87,7 +87,7 @@ module.exports = function ({ events }) {
   events.on('image:load', ({ imageUrl, rotation }) => load({ imageUrl, rotation }));
 
   events.on('image:load', ({ filepath }) => {
-    events.emit('load:meta', {
+    events.emit('meta:load', {
       filepath: filepath
     });
   });

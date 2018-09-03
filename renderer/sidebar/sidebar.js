@@ -49,7 +49,7 @@ module.exports = function ({ events }) {
     elem.appendChild(fragment);
   }
 
-  events.on('load:meta', loadInfo);
+  events.on('meta:load', loadInfo);
 
   return { elem, style };
 };

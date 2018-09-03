@@ -92,17 +92,15 @@ module.exports = function ({ events }) {
 
   const { resolveVisible } = navigation({ wrapper, displayImage, events });
 
-  async function loadThumbnails(dir) {
+  async function loadThumbnails({ filepaths }) {
     log.time('load thumbs');
-
-    const files = (await fs.readdir(dir)).sort((a, b) => a.localeCompare(b));
 
     wrapper.innerHTML = '';
 
     const fragment = document.createDocumentFragment();
 
-    for (let file of files) {
-      let filepath = path.resolve(dir, file);
+    for (let filepath of filepaths) {
+      const file = path.basename(filepath);
       let { imgWrap, img } = thumbnail();
 
       let setMeta = (meta) => {
@@ -164,8 +162,8 @@ module.exports = function ({ events }) {
     log.timeEnd('load thumbs');
   }
 
-  events.on('directory:load', function ({ dir }) {
-    loadThumbnails(dir);
+  events.on('directory:discover', function ({ filepaths }) {
+    loadThumbnails({ filepaths });
   });
 
   return { elem, style };

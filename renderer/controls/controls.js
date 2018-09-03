@@ -20,7 +20,7 @@ module.exports = function ({ events }) {
     events.emit('image:zoom', { scale: value === '1:1' ? 1 : 'fit' });
   });
 
-  const ratings = select({
+  const ratingFilter = select({
     name: 'rating',
     values: [
       { label: '★ 0+', value: 0 },
@@ -32,15 +32,42 @@ module.exports = function ({ events }) {
     ]
   });
 
-  ratings.on('change', ({ value }) => {
+  ratingFilter.on('change', ({ value }) => {
     events.emit('image:filter', { rating: value });
   });
 
+  const typeFilter = select({
+    name: 'type',
+    values: [
+      { label: 'all', value: '*' }
+    ]
+  });
+
+  typeFilter.on('change', ({ value }) => {
+    events.emit('image:filter', { type: value });
+  });
+
   elem.appendChild(zoom.elem);
-  elem.appendChild(ratings.elem);
+  elem.appendChild(ratingFilter.elem);
+  elem.appendChild(typeFilter.elem);
 
   events.on('image:load', () => {
     zoom.value = 'fit';
+    ratingFilter.value = 0;
+    typeFilter.value = '*';
+
+    // setting the value of a select doesn't fire a change event
+    // not sure why... as Chrome
+    events.emit('image:filter', { rating: 0, type: '*' });
+  });
+
+  events.on('directory:discover', ({ files }) => {
+    const types = Array.from(new Set(files.map(file => file.type)))
+      .filter(val => !!val)
+      .sort((a, b) => a.localeCompare(b));
+
+    typeFilter.values = [{ label: 'all', value: '*' }]
+      .concat(types.map(type => ({ label: type, value: type })));
   });
 
   return { elem, style };

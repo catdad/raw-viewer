@@ -62,12 +62,14 @@
   color: #eee;
   -webkit-padding-start: 5px;
   -webkit-padding-end: 5px;
+
+  margin-right: 6px;
 }
 
 .controls .select .label {
   height: 100%;
 }
 
-.controls .select ul {
-  max-height: 0;
+.controls .select option {
+  font-size: 0.95rem;
 }

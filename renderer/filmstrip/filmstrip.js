@@ -66,12 +66,7 @@ module.exports = function ({ events }) {
     }
   }
 
-  function handleDisplay(thumb, { filepath, file, meta }) {
-    thumb.setAttribute('data-filename', file);
-    thumb.x_filepath = filepath;
-    thumb.x_meta = meta;
-    thumb.x_rating = meta.rating || 0;
-
+  function handleDisplay(thumb, { filepath }) {
     thumb.addEventListener('click', () => {
       displayImage(thumb);
     });
@@ -92,18 +87,20 @@ module.exports = function ({ events }) {
 
   const { resolveVisible } = navigation({ wrapper, displayImage, events });
 
-  async function loadThumbnails(dir) {
+  async function loadThumbnails({ files }) {
     log.time('load thumbs');
-
-    const files = (await fs.readdir(dir)).sort((a, b) => a.localeCompare(b));
 
     wrapper.innerHTML = '';
 
     const fragment = document.createDocumentFragment();
 
-    for (let file of files) {
-      let filepath = path.resolve(dir, file);
+    for (let { file, filepath, type } of files) {
       let { imgWrap, img } = thumbnail();
+
+      imgWrap.setAttribute('data-filename', file);
+      imgWrap.x_filepath = filepath;
+      imgWrap.x_meta = {};
+      imgWrap.x_type = type;
 
       let setMeta = (meta) => {
         imgWrap.x_meta = Object.assign(imgWrap.x_meta, meta);
@@ -132,8 +129,10 @@ module.exports = function ({ events }) {
           imgWrap.appendChild(rating({ filepath, meta, events, setMeta }));
         }
 
+        setMeta(meta);
+
         handleDisplay(imgWrap, {
-          filepath, file, meta
+          filepath, file, type, meta
         });
 
         return imgWrap;
@@ -164,8 +163,8 @@ module.exports = function ({ events }) {
     log.timeEnd('load thumbs');
   }
 
-  events.on('directory:load', function ({ dir }) {
-    loadThumbnails(dir);
+  events.on('directory:discover', function ({ files }) {
+    loadThumbnails({ files });
   });
 
   return { elem, style };

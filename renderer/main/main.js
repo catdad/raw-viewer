@@ -29,12 +29,16 @@ function applyStyle(css) {
   document.head.appendChild(elem);
 }
 
-function render(name) {
+function render(name, parentElem) {
   const mod = require(path.resolve(__dirname, '..', name, `${name}.js`))({ events });
 
-  applyStyle(mod.style);
+  if (mod.style) {
+    applyStyle(mod.style);
+  }
 
-  return mod.elem;
+  if (mod.elem) {
+    parentElem.appendChild(mod.elem);
+  }
 }
 
 module.exports = function (elem) {
@@ -42,19 +46,13 @@ module.exports = function (elem) {
 
   elem.classList.add(name);
 
-  const filmstrip = render('filmstrip');
-  const sidebar = render('sidebar');
-  const controls = render('controls');
-  const image = render('image');
-  const dropzone = render('dropzone');
-  const toast = render('toast');
-
-  elem.appendChild(filmstrip);
-  elem.appendChild(sidebar);
-  elem.appendChild(controls);
-  elem.appendChild(image);
-  elem.appendChild(dropzone);
-  elem.appendChild(toast);
+  render('directory', elem);
+  render('filmstrip', elem);
+  render('sidebar', elem);
+  render('controls', elem);
+  render('image', elem);
+  render('dropzone', elem);
+  render('toast', elem);
 
   events.on('config', function (data) {
     if (data.key === 'client.lastDirectory' && data.value) {

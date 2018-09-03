@@ -105,12 +105,36 @@ function throttle(asyncFunc) {
   };
 }
 
-module.exports = function ({ wrapper, displayImage, events }) {
-  let leastRating = 0;
+const filter = {
+  rating: (expected, actual) => {
+    if (actual === undefined) {
+      // thumbs that haven't loaded yet won't have a value set
+      return true;
+    }
 
-  function applyRating(thumb) {
+    return actual >= expected;
+  },
+  type: (expected, actual) => {
+    if (actual === undefined) {
+      return true;
+    }
+
+    if (expected === '*') {
+      return true;
+    }
+
+    return expected === actual;
+  }
+};
+
+module.exports = function ({ wrapper, displayImage, events }) {
+  let expectRating = 0;
+  let expectType = '*';
+
+  function applyFilter(thumb) {
     const isVisible = ok(thumb);
-    const shouldBeVisible = thumb.x_rating === undefined || thumb.x_rating >= leastRating;
+    const shouldBeVisible = filter.rating(expectRating, thumb.x_rating) &&
+      filter.type(expectType, thumb.x_type);
 
     if (isVisible && !shouldBeVisible) {
       hide(thumb);
@@ -131,7 +155,7 @@ module.exports = function ({ wrapper, displayImage, events }) {
     const thumbs = [].slice.call(wrapper.children);
 
     thumbs.forEach((thumb) => {
-      const didChange = applyRating(thumb);
+      const didChange = applyFilter(thumb);
       changed = changed || didChange;
     });
 
@@ -200,12 +224,13 @@ module.exports = function ({ wrapper, displayImage, events }) {
     displayImage(target);
   });
 
-  events.on('image:filter', ({ rating }) => {
-    if (rating === leastRating) {
+  events.on('image:filter', ({ rating, type }) => {
+    if (rating === expectRating && type === expectType) {
       return;
     }
 
-    leastRating = rating;
+    expectRating = rating === undefined ? expectRating : rating;
+    expectType = type === undefined ? expectType : type;
 
     resolveVisible().catch(err => {
       events.emit('error', err);

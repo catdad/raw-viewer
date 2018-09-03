@@ -1,9 +1,7 @@
 const EventEmitter = require('events');
 
-module.exports = ({ values }) => {
-  const ev = new EventEmitter();
-  const select = document.createElement('select');
-  select.className = 'select';
+function setOptions(select, values) {
+  select.innerHTML = '';
 
   values.forEach((val) => {
     const opt = document.createElement('option');
@@ -12,6 +10,27 @@ module.exports = ({ values }) => {
 
     select.appendChild(opt);
   });
+}
+
+function setOption(select, value) {
+  for (let i = 0, l = select.options.length; i < l; i++) {
+    if (select.options[i].x_value === value) {
+      select.selectedIndex = 0;
+      return;
+    }
+  }
+}
+
+function getOption(select) {
+  return select[select.selectedIndex].x_value;
+}
+
+module.exports = ({ values }) => {
+  const ev = new EventEmitter();
+  const select = document.createElement('select');
+  select.className = 'select';
+
+  setOptions(select, values);
 
   select.onchange = () => {
     ev.emit('change', {
@@ -25,6 +44,17 @@ module.exports = ({ values }) => {
     on: ev.on.bind(ev),
     off: ev.removeListener.bind(ev)
   }, {
-    value: () => {}
+    value: {
+      configurable: false,
+      enumerable: true,
+      get: () => getOption(select),
+      set: (value) => setOption(select, value)
+    },
+    values: {
+      configurable: false,
+      enumetable: true,
+      get: () => {},
+      set: (values) => setOptions(select, values)
+    }
   });
 };

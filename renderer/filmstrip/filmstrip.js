@@ -164,7 +164,7 @@ module.exports = function ({ events }) {
     log.timeEnd('load thumbs');
   }
 
-  events.on('load:directory', function ({ dir }) {
+  events.on('directory:load', function ({ dir }) {
     loadThumbnails(dir);
   });
 

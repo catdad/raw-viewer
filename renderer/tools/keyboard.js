@@ -7,6 +7,7 @@ const keys = (() => {
   const SHIFT = 'shift';
   const LEFT = 'arrowleft';
   const RIGHT = 'arrowright';
+  const DELETE = 'delete';
 
   const events = new EventEmitter();
 
@@ -18,6 +19,7 @@ const keys = (() => {
     [`${SHIFT}`]: true,
     [`${LEFT}`]: true,
     [`${RIGHT}`]: true,
+    [`${DELETE}`]: true,
     z: true
   };
 
@@ -64,6 +66,7 @@ const keys = (() => {
     SHIFT,
     LEFT,
     RIGHT,
+    DELETE,
     includes: (key) => !!down[key],
     on: events.addListener.bind(events),
     off: events.removeListener.bind(events)

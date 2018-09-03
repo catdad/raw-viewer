@@ -1,3 +1,5 @@
+const trash = require('trash');
+
 const log = require('../../lib/log.js')('filmstrip-nav');
 const keys = require('../tools/keyboard.js');
 
@@ -193,6 +195,24 @@ module.exports = function ({ wrapper, displayImage, events }) {
     }
   });
 
+  async function deleteCurrent() {
+    const selected = findSelected(wrapper);
+    const target = findNextTarget(wrapper, 'right');
+
+    await trash([selected.x_filepath]);
+    wrapper.removeChild(selected);
+
+    return { target };
+  }
+
+  function navigateTo(target) {
+    if (!target) {
+      return;
+    }
+
+    displayImage(target);
+  }
+
   // handle scrolling
   wrapper.addEventListener('mousewheel', function (ev) {
     wrapper.scrollLeft -= ev.wheelDeltaY;
@@ -210,18 +230,23 @@ module.exports = function ({ wrapper, displayImage, events }) {
   keys.on('change', () => {
     const isLeft = keys.includes(keys.LEFT);
     const isRight = keys.includes(keys.RIGHT);
+    const isDelete = keys.includes(keys.DELETE);
 
-    if (!(isLeft || isRight)) {
+    if (isDelete) {
+      deleteCurrent()
+        .then(({ target }) => {
+          navigateTo(target);
+        })
+        .catch((err) => {
+          events.emit('error', err);
+        });
+
       return;
     }
 
-    const target = findNextTarget(wrapper, isLeft ? 'left' : 'right');
-
-    if (!target) {
-      return;
+    if (isLeft || isRight) {
+      navigateTo(findNextTarget(wrapper, isLeft ? 'left' : 'right'));
     }
-
-    displayImage(target);
   });
 
   events.on('image:filter', ({ rating, type }) => {

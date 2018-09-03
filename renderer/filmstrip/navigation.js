@@ -152,7 +152,6 @@ module.exports = function ({ wrapper, displayImage, events }) {
   function applyFilters() {
     let changed = false;
 
-
     const thumbs = [].slice.call(wrapper.children);
 
     thumbs.forEach((thumb) => {

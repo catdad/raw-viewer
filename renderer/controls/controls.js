@@ -43,5 +43,11 @@ module.exports = function ({ events }) {
     zoom.value = 'fit';
   });
 
+  events.on('directory:discover', ({ files }) => {
+    const types = Array.from(new Set(files.map(file => file.type)))
+      .filter(val => !!val)
+      .sort((a, b) => a.localeCompare(b));
+  });
+
   return { elem, style };
 };

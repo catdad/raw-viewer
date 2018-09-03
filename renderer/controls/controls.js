@@ -20,7 +20,7 @@ module.exports = function ({ events }) {
     events.emit('image:zoom', { scale: value === '1:1' ? 1 : 'fit' });
   });
 
-  const ratings = select({
+  const ratingFilter = select({
     name: 'rating',
     values: [
       { label: '★ 0+', value: 0 },
@@ -32,12 +32,12 @@ module.exports = function ({ events }) {
     ]
   });
 
-  ratings.on('change', ({ value }) => {
+  ratingFilter.on('change', ({ value }) => {
     events.emit('image:filter', { rating: value });
   });
 
   elem.appendChild(zoom.elem);
-  elem.appendChild(ratings.elem);
+  elem.appendChild(ratingFilter.elem);
 
   events.on('image:load', () => {
     zoom.value = 'fit';

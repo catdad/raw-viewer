@@ -72,6 +72,10 @@
   opacity: 0.7;
 }
 
+.filmstrip .rating .★ {
+  color: #ffda00;
+}
+
 .filmstrip .thumbnail::after {
   content: attr(data-filename);
   position: absolute;

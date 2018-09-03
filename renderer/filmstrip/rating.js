@@ -9,6 +9,7 @@ function ratingControl(rating) {
     const el = document.createElement('span');
     el.setAttribute('data-rate', setTo);
     el.appendChild(document.createTextNode(char));
+    el.className = char;
 
     return el;
   }

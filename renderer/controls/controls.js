@@ -39,7 +39,7 @@ module.exports = function ({ events }) {
   elem.appendChild(zoom.elem);
   elem.appendChild(ratings.elem);
 
-  events.on('load:image', () => {
+  events.on('image:load', () => {
     zoom.value = 'fit';
   });
 

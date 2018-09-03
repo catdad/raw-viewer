@@ -40,7 +40,7 @@ module.exports = function ({ events }) {
         return events.emit('error', new Error('try opening a folder instead of a file'));
       }
 
-      events.emit('load:directory', { dir: dirpath });
+      events.emit('directory:load', { dir: dirpath });
       events.emit('config:directory', { value: dirpath });
     } catch(e) {
       return events.emit('error', e);
@@ -80,7 +80,7 @@ module.exports = function ({ events }) {
     open();
   });
 
-  events.on('load:directory', () => {
+  events.on('directory:load', () => {
     hasDir = true;
     close();
   });

@@ -58,7 +58,7 @@ module.exports = function (elem) {
 
   events.on('config', function (data) {
     if (data.key === 'client.lastDirectory' && data.value) {
-      events.emit('load:directory', { dir: data.value });
+      events.emit('directory:load', { dir: data.value });
     }
   });
 

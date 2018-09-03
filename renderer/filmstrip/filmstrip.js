@@ -53,7 +53,7 @@ module.exports = function ({ events }) {
 
     thumb.classList.add('selected');
 
-    events.emit('load:image', {
+    events.emit('image:load', {
       filepath: filepath,
       imageUrl: url,
       rotation: rotation
@@ -164,7 +164,7 @@ module.exports = function ({ events }) {
     log.timeEnd('load thumbs');
   }
 
-  events.on('load:directory', function ({ dir }) {
+  events.on('directory:load', function ({ dir }) {
     loadThumbnails(dir);
   });
 

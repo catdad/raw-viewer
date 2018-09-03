@@ -12,6 +12,19 @@ function setOptions(select, values) {
   });
 }
 
+function setOption(select, value) {
+  for (let i = 0, l = select.options.length; i < l; i++) {
+    if (select.options[i].x_value === value) {
+      select.selectedIndex = 0;
+      return;
+    }
+  }
+}
+
+function getOption(select) {
+  return select[select.selectedIndex].x_value;
+}
+
 module.exports = ({ values }) => {
   const ev = new EventEmitter();
   const select = document.createElement('select');
@@ -34,7 +47,8 @@ module.exports = ({ values }) => {
     value: {
       configurable: false,
       enumerable: true,
-      get: () => {}
+      get: () => getOption(select),
+      set: (value) => setOption(select, value)
     },
     values: {
       configurable: false,

@@ -55,6 +55,9 @@ module.exports = function ({ events }) {
     const types = Array.from(new Set(files.map(file => file.type)))
       .filter(val => !!val)
       .sort((a, b) => a.localeCompare(b));
+
+    typeFilter.values = [{ label: 'all', value: '*' }]
+      .concat(types.map(type => ({ label: type, value: type })));
   });
 
   return { elem, style };

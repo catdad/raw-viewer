@@ -67,7 +67,7 @@ function throttle(asyncFunc) {
     await sleep(time);
     isWaiting = false;
 
-    let val = await asyncFunc();
+    let val = asyncFunc();
     isRunning = false;
 
     if (isQueued) {

@@ -4,6 +4,7 @@
   "description": "raw-viewer",
   "main": "main.js",
   "scripts": {
+    "postinstall": "electron-rebuild",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "electron .",
     "dev": "gulp dev",
@@ -29,11 +30,13 @@
     "node-exiftool": "^2.3.0",
     "p-throttle": "^2.1.0",
     "pretty-bytes": "^5.1.0",
+    "sharp": "^0.21.3",
     "trash": "^4.3.0"
   },
   "devDependencies": {
     "chokidar": "^2.0.4",
     "electron-debug": "^2.0.0",
+    "electron-rebuild": "^1.8.2",
     "eslint": "^4.19.1",
     "gulp": "^3.9.1",
     "run-sequence": "^2.2.1"

@@ -38,7 +38,7 @@ function exiftool(name, data) {
 }
 
 async function readMeta(filepath) {
-  return await exiftool('read:metadata', { filepath });
+  return await exiftool('read:fullmeta', { filepath });
 }
 
 async function readShortMeta(filepath) {
@@ -57,7 +57,7 @@ async function readShortMeta(filepath) {
   }
 
   log.time(`read short meta ${filepath}`);
-  const value = await exiftool('read:jpegmeta', { filepath });
+  const value = await exiftool('read:shortmeta', { filepath });
   log.timeEnd(`read short meta ${filepath}`);
 
   if (value.error) {

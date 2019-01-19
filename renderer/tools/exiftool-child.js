@@ -1,5 +1,6 @@
 const path = require('path');
 const fs = require('fs-extra');
+const sharp = require('sharp');
 const ipc = require('electron').ipcRenderer;
 
 const log = require('../../lib/log.js')('exiftool-child');
@@ -109,6 +110,10 @@ async function readThumbFromMeta(data) {
   let buffer;
 
   if (data.thumbStart && data.thumbLength) {
+    // sometimes, the raw file will store a full size preview
+    // and a thumbnail, and in those cases, using the smaller
+    // image will be faster... though the resize makes large
+    // images pretty fast, so maybe it's not worth?
     log.time(`read thumb ${data.filepath}`);
     buffer = await readFilePart({
       filepath: data.filepath,
@@ -119,6 +124,10 @@ async function readThumbFromMeta(data) {
   } else {
     buffer = await readJpegFromMeta(data);
   }
+
+  log.time(`resize thumb ${data.filepath}`);
+  buffer = await sharp(buffer).resize(200).toBuffer();
+  log.timeEnd(`resize thumb ${data.filepath}`);
 
   return bufferToUrl(buffer);
 }

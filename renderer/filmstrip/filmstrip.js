@@ -111,7 +111,7 @@ module.exports = function ({ events }) {
         imgWrap.load = null;
 
         log.time(`render ${file}`);
-        let { url, rotation, meta } = await readMetaAndDataUrl({ filepath });
+        let { url, rotation, meta } = await readMetaAndDataUrl({ filepath, type: 'thumb' });
         log.timeEnd(`render ${file}`);
 
         img.classList.add(`rotate-${rotation}`);

@@ -1,4 +1,5 @@
 const trash = require('trash');
+const throttle = require('p-throttle');
 
 const log = require('../../lib/log.js')('filmstrip-nav');
 const keys = require('../tools/keyboard.js');
@@ -48,63 +49,6 @@ function isInView(containerBB, elBB) {
     elBB.bottom <= containerBB.top ||
     elBB.right <= containerBB.left
   ));
-}
-
-function sleep(time = 100) {
-  return new Promise(resolve => setTimeout(resolve, time));
-}
-
-function throttle(asyncFunc) {
-  let isRunning = false;
-  let isWaiting = false;
-  let isQueued = false;
-  let promise;
-
-  async function exec(time) {
-    isRunning = true;
-
-    isWaiting = true;
-    await sleep(time);
-    isWaiting = false;
-
-    let val = asyncFunc();
-    isRunning = false;
-
-    if (isQueued) {
-      isQueued = false;
-      val = await exec(0);
-    }
-
-    return val;
-  }
-
-  return function addToQueue(time = 0) {
-    // do not queue new executions while in
-    // the throttle waiting period
-    if (isWaiting) {
-      return promise;
-    }
-
-    // if running and not waiting, queue
-    // another execution to happen at the end
-    if (isRunning) {
-      isQueued = true;
-
-      return promise;
-    }
-
-    // this is the first time this is called,
-    // so execute with a throttle
-    promise = exec(time).then(data => {
-      promise = null;
-      return Promise.resolve(data);
-    }).catch(err => {
-      promise = null;
-      return Promise.reject(err);
-    });
-
-    return promise;
-  };
 }
 
 const filter = {
@@ -193,7 +137,7 @@ module.exports = function ({ wrapper, displayImage, events }) {
     if (changed) {
       await self();
     }
-  });
+  }, 1, 200);
 
   async function deleteCurrent() {
     const selected = findSelected(wrapper);
@@ -220,7 +164,7 @@ module.exports = function ({ wrapper, displayImage, events }) {
   });
 
   wrapper.addEventListener('scroll', () => {
-    resolveVisible(200).catch(err => {
+    resolveVisible().catch(err => {
       log.error('failed to load visible thumbnails', err);
       events.emit('error', err);
     });

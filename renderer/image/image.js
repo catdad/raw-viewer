@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 const keys = require('../tools/keyboard.js');
+const imageControl = require('./image-control.js');
 
 const name = 'image';
 const style = fs.readFileSync(path.resolve(__dirname, `${name}.css`), 'utf8');
@@ -10,14 +11,14 @@ function registerMouse(elem) {
   let x, y;
 
   const onMouseMove = (e) => {
-    // TODO don't do this on every single move
-    if (keys.includes(keys.SPACE)) {
-      // panning
-      elem.scrollLeft += x - e.x;
-      elem.scrollTop += y - e.y;
-    } else if (keys.includes('z')) {
+    if (keys.includes('z')) {
       // TODO see #19
+      // implement drag-based zoom
     }
+
+    // panning by default
+    elem.scrollLeft += x - e.x;
+    elem.scrollTop += y - e.y;
 
     x = e.x;
     y = e.y;
@@ -40,15 +41,8 @@ function registerMouse(elem) {
     x = e.x;
     y = e.y;
 
-    // panning
-    const start = keys.includes(keys.SPACE) ||
-      // zooming
-      keys.includes('z');
-
-    if (start) {
-      elem.addEventListener('mousemove', onMouseMove);
-      elem.addEventListener('mouseup', onMouseUp);
-    }
+    elem.addEventListener('mousemove', onMouseMove);
+    elem.addEventListener('mouseup', onMouseUp);
 
     return false;
   };
@@ -60,15 +54,11 @@ module.exports = function ({ events }) {
   const elem = document.createElement('div');
   elem.className = name;
 
-  const { dom, load, zoom } = require('./image-control.js')({ name, elem });
+  const { dom, load, zoom } = imageControl({ name, elem });
 
   elem.appendChild(dom);
 
   keys.on('change', ({ down }) => {
-    if (down.includes(keys.SPACE)) {
-      return elem.style.cursor = '-webkit-grab';
-    }
-
     if (down.includes(keys.ALT) && down.includes('z')) {
       return elem.style.cursor = 'zoom-out';
     }
@@ -77,7 +67,7 @@ module.exports = function ({ events }) {
       return elem.style.cursor = 'zoom-in';
     }
 
-    return elem.style.cursor = 'auto';
+    return elem.style.cursor = '-webkit-grab';
   });
 
   registerMouse(elem);

@@ -1,11 +1,12 @@
 const fs = require('fs');
 const path = require('path');
 
-const keys = require('../tools/keyboard.js');
-const imageControl = require('./image-control.js');
-
 const name = 'image';
 const style = fs.readFileSync(path.resolve(__dirname, `${name}.css`), 'utf8');
+
+const keys = require('../tools/keyboard.js');
+const imageControl = require('./image-control.js');
+const log = require('../../lib/log.js')(name);
 
 function registerMouse(elem) {
   let x, y;
@@ -50,20 +51,31 @@ function registerMouse(elem) {
   elem.addEventListener('mousedown', onMouseDown);
 }
 
+function setRating(filepath, rating) {
+  log.info(`RATE ${rating} STARS for ${filepath}`);
+}
+
 module.exports = function ({ events }) {
   const elem = document.createElement('div');
   elem.className = name;
 
   const { dom, load, zoom } = imageControl({ name, elem });
+  let loadedFilepath = null;
 
   elem.appendChild(dom);
 
-  keys.on('change', ({ down }) => {
-    if (down.includes(keys.ALT) && down.includes('z')) {
+  keys.on('change', () => {
+    for (let i = 0; i <= 5; i++) {
+      if (keys.includes(i)) {
+        return setRating(loadedFilepath, i);
+      }
+    }
+
+    if (keys.includes(keys.ALT) && keys.includes('z')) {
       return elem.style.cursor = 'zoom-out';
     }
 
-    if (down.includes('z')) {
+    if (keys.includes('z')) {
       return elem.style.cursor = 'zoom-in';
     }
 
@@ -77,6 +89,8 @@ module.exports = function ({ events }) {
   events.on('image:load', ({ imageUrl, rotation }) => load({ imageUrl, rotation }));
 
   events.on('image:load', ({ filepath }) => {
+    loadedFilepath = filepath;
+
     events.emit('meta:load', {
       filepath: filepath
     });

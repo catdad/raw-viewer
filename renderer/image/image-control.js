@@ -18,6 +18,7 @@ module.exports = ({ name, elem }) => {
   let height = 0;
   let isRotated = false;
   let rotateStyle = '';
+  let zoomType = 'fit';
 
   const img = document.createElement('img');
   const container = document.createElement('div');
@@ -41,20 +42,7 @@ module.exports = ({ name, elem }) => {
     refreshBox();
   });
 
-  function zoomToBestFit() {
-    const scale = Math.min(
-      box.width / width,
-      box.height / height
-    );
-
-    zoom(scale);
-  }
-
-  function zoom(toScale) {
-    if (toScale === 'fit') {
-      return zoomToBestFit();
-    }
-
+  function zoomToScale(toScale) {
     // JavaScript math sucks
     scale = Math.min(Number(toScale.toFixed(2)), 1);
 
@@ -87,6 +75,26 @@ module.exports = ({ name, elem }) => {
     elem.scrollLeft = (targetWidth / 2) - (box.width / 2);
   }
 
+  function zoomToBestFit() {
+    const scale = Math.min(
+      box.width / width,
+      box.height / height
+    );
+
+    zoomToScale(scale);
+  }
+
+  function zoom(toScale) {
+    if (toScale === 'fit') {
+      zoomType = 'fit';
+      return zoomToBestFit();
+    }
+
+    zoomType = 'custom';
+
+    return zoomToScale(toScale);
+  }
+
   function load({ imageUrl, rotation }) {
     width = img.width;
     height = img.height;
@@ -104,7 +112,9 @@ module.exports = ({ name, elem }) => {
         height = img.naturalHeight;
       }
 
-      zoomToBestFit();
+      if (zoomType === 'fit') {
+        zoomToBestFit();
+      }
     };
 
     elem.onclick = function () {

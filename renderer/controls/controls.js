@@ -51,10 +51,6 @@ module.exports = function ({ events }) {
   elem.appendChild(ratingFilter.elem);
   elem.appendChild(typeFilter.elem);
 
-  events.on('image:load', () => {
-    zoom.value = 'fit';
-  });
-
   events.on('directory:discover', ({ files }) => {
     ratingFilter.value = 0;
     typeFilter.value = '*';

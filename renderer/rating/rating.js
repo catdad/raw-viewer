@@ -1,7 +1,6 @@
-// const name = 'rating';
+const name = 'rating';
 const exiftool = require('../tools/exiftool-child.js');
-
-const log = require('../../lib/log.js')('rating');
+const log = require('../../lib/log.js')(name);
 const keys = require('../tools/keyboard.js');
 
 module.exports = function ({ events }) {

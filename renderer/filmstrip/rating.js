@@ -49,8 +49,6 @@ module.exports = function ({ filepath, meta, events, setMeta }) {
     render(elem, filepath, rating, events);
   };
 
-  // TODO these have to be disconnected at some point, because there's
-  // about to be a bunch of them
   events.on('image:rated', onRated);
 
   events.once('directory:load', () => {

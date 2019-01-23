@@ -1,6 +1,7 @@
 // const name = 'rating';
+const exiftool = require('../tools/exiftool-child.js');
 
-const log = require('../../lib/log.js')('filmstrip-nav');
+const log = require('../../lib/log.js')('rating');
 const keys = require('../tools/keyboard.js');
 
 module.exports = function ({ events }) {
@@ -8,7 +9,20 @@ module.exports = function ({ events }) {
 
   function setRating(filepath, rating) {
     log.info(`RATE ${rating} STARS for ${filepath}`);
-    events.emit('toast', { text: `set to ${rating} stars` });
+
+    log.time(`rating ${filepath}`);
+
+    exiftool.setRating(filepath, rating).then((meta) => {
+      log.timeEnd(`rating ${filepath}`);
+
+      events.emit('image:rated', { filepath, rating, meta });
+      events.emit('toast', { text: `set to ${rating} stars` });
+    }).catch((err) => {
+      log.timeEnd(`rating ${filepath}`);
+
+      log.error(err);
+      events.emit('error', err);
+    });
   }
 
   keys.on('change', () => {
@@ -17,6 +31,10 @@ module.exports = function ({ events }) {
         return setRating(loadedFilepath, i);
       }
     }
+  });
+
+  events.on('image:rate', ({ filepath, rating }) => {
+    setRating(filepath, rating);
   });
 
   events.on('image:load', ({ filepath }) => {

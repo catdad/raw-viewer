@@ -47,6 +47,7 @@ module.exports = function (elem) {
   elem.classList.add(name);
 
   render('directory', elem);
+  render('rating', elem);
   render('filmstrip', elem);
   render('sidebar', elem);
   render('controls', elem);

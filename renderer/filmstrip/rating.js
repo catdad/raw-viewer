@@ -40,15 +40,21 @@ module.exports = function ({ filepath, meta, events, setMeta }) {
   elem.className = 'rating';
   elem.setAttribute('data-rating', meta.rating);
 
-  // TODO these have to be disconnected at some point, because there's
-  // about to be a bunch of them
-  events.on('image:rated', ({ filepath: evpath, rating, meta }) => {
+  const onRated = ({ filepath: evpath, rating, meta }) => {
     if (evpath !== filepath) {
       return;
     }
 
     setMeta(meta);
     render(elem, filepath, rating, events);
+  };
+
+  // TODO these have to be disconnected at some point, because there's
+  // about to be a bunch of them
+  events.on('image:rated', onRated);
+
+  events.once('directory:load', () => {
+    events.off('image:rated', onRated);
   });
 
   render(elem, filepath, meta.rating, events);

@@ -5,6 +5,9 @@ const EventEmitter = require('events');
 const ipc = require('electron').ipcRenderer;
 
 const events = new EventEmitter();
+// allow infinite amount of listeners, since this
+// will be used quite a lot
+events.setMaxListeners(0);
 
 const name = 'main';
 const style = fs.readFileSync(path.resolve(__dirname, `${name}.css`), 'utf8');
@@ -47,6 +50,7 @@ module.exports = function (elem) {
   elem.classList.add(name);
 
   render('directory', elem);
+  render('rating', elem);
   render('filmstrip', elem);
   render('sidebar', elem);
   render('controls', elem);

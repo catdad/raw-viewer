@@ -1,11 +1,11 @@
 const fs = require('fs');
 const path = require('path');
 
-const keys = require('../tools/keyboard.js');
-const imageControl = require('./image-control.js');
-
 const name = 'image';
 const style = fs.readFileSync(path.resolve(__dirname, `${name}.css`), 'utf8');
+
+const keys = require('../tools/keyboard.js');
+const imageControl = require('./image-control.js');
 
 function registerMouse(elem) {
   let x, y;
@@ -58,12 +58,12 @@ module.exports = function ({ events }) {
 
   elem.appendChild(dom);
 
-  keys.on('change', ({ down }) => {
-    if (down.includes(keys.ALT) && down.includes('z')) {
+  keys.on('change', () => {
+    if (keys.includes(keys.ALT) && keys.includes('z')) {
       return elem.style.cursor = 'zoom-out';
     }
 
-    if (down.includes('z')) {
+    if (keys.includes('z')) {
       return elem.style.cursor = 'zoom-in';
     }
 

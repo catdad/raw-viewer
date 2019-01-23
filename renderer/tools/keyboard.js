@@ -20,7 +20,13 @@ const keys = (() => {
     [`${LEFT}`]: true,
     [`${RIGHT}`]: true,
     [`${DELETE}`]: true,
-    z: true
+    z: true,
+    0: true,
+    1: true,
+    2: true,
+    3: true,
+    4: true,
+    5: true
   };
 
   window.addEventListener('keydown', (e) => {
@@ -67,7 +73,7 @@ const keys = (() => {
     LEFT,
     RIGHT,
     DELETE,
-    includes: (key) => !!down[key],
+    includes: (key) => !!down[key.toString()],
     on: events.addListener.bind(events),
     off: events.removeListener.bind(events)
   }, {

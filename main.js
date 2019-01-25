@@ -13,6 +13,7 @@ const config = require('./lib/config.js');
 const exiftool = require('./lib/exiftool.js');
 
 const { app, BrowserWindow, ipcMain } = require('electron');
+const log = require('./lib/log.js')('main');
 
 let mainWindow;
 
@@ -78,7 +79,7 @@ function createWindow () {
       mainWindow.webContents.openDevTools();
     }
 
-    exiftool(
+    exiftool.open(
       ipcMain.on.bind(ipcMain),
       mainWindow.webContents.send.bind(mainWindow.webContents)
     );
@@ -86,6 +87,21 @@ function createWindow () {
     throw err;
   });
 }
+
+function onBeforeQuit(e) {
+  log.info('raw-viewer is closing, cleaning up');
+  e.preventDefault();
+
+  exiftool.close().then(() => {
+    log.info('exiftool closed successfully');
+    app.quit();
+  }).catch((err) => {
+    log.error('exiftool closed with error', err);
+    app.quit();
+  });
+}
+
+app.once('before-quit', onBeforeQuit);
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.

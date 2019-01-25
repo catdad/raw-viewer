@@ -9,7 +9,8 @@
     "start": "electron .",
     "dev": "gulp dev",
     "gulp": "gulp",
-    "kill:win": "taskkill /IM exiftool.exe /F"
+    "exif-kill": "taskkill /IM exiftool.exe /F",
+    "exif-find": "tasklist | findstr exiftool"
   },
   "repository": {
     "type": "git",

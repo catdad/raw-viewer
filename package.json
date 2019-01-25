@@ -1,5 +1,6 @@
 {
   "name": "raw-viewer",
+  "productName": "Raw Viewer",
   "version": "1.0.0",
   "description": "raw-viewer",
   "main": "main.js",

@@ -88,7 +88,7 @@ function createWindow () {
   });
 }
 
-function onBeforeQuit(e) {
+function onClose(e) {
   log.info('raw-viewer is closing, cleaning up');
   e.preventDefault();
 
@@ -101,7 +101,7 @@ function onBeforeQuit(e) {
   });
 }
 
-app.once('before-quit', onBeforeQuit);
+app.once('will-quit', onClose);
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.

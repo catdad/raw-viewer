@@ -9,10 +9,10 @@ try {
 const path = require('path');
 const url = require('url');
 
+const { app, BrowserWindow, ipcMain } = require('electron');
+
 const config = require('./lib/config.js');
 const exiftool = require('./lib/exiftool.js');
-
-const { app, BrowserWindow, ipcMain } = require('electron');
 const log = require('./lib/log.js')('main');
 
 let mainWindow;

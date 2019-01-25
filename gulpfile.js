@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 
 var spawn = require('child_process').spawn;
+var exec = require('child_process').exec;
 
 var gulp = require('gulp');
 var _ = require('lodash');
@@ -12,6 +13,8 @@ process.title = pkg.name;
 var server;
 
 gulp.task('electron:start', function () {
+  process.title = pkg.name;
+
   return new Promise(function (resolve) {
     var electron = require('electron');
 
@@ -56,7 +59,25 @@ gulp.task('electron:kill', function () {
       temp.kill();
       resolve();
     })
-  ]);
+  ]).then(function () {
+    return new Promise(function (resolve) {
+      exec('npm run exif-kill', function (err, stdout, stderr) {
+        if (err) {
+          console.log(err);
+        } else {
+          if (stdout.trim()) {
+            console.log(stdout);
+          }
+
+          if (stderr.trim()) {
+            console.log(stderr);
+          }
+        }
+
+        resolve();
+      });
+    });
+  });
 });
 
 gulp.task('restart', function (done) {

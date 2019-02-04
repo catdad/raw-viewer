@@ -8,6 +8,7 @@ const events = new EventEmitter();
 // allow infinite amount of listeners, since this
 // will be used quite a lot
 events.setMaxListeners(0);
+events.off = events.removeListener;
 
 const name = 'main';
 const style = fs.readFileSync(path.resolve(__dirname, `${name}.css`), 'utf8');

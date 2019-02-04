@@ -106,6 +106,21 @@ module.exports = ({ name, elem }) => {
     return zoomToScale(toScale, forceCenter);
   }
 
+  function onclick() {
+    const zout = keys.includes(keys.ALT) && keys.includes('z');
+    const zin = keys.includes('z') && !zout;
+
+    if (scale > 0.1 && zout) {
+      // zooming out
+      scale -= 0.1;
+      zoom(scale);
+    } else if (scale < 1 && zin) {
+      // zooming in
+      scale += 0.1;
+      zoom(scale);
+    }
+  }
+
   function load({ imageUrl, rotation }) {
     width = img.width;
     height = img.height;
@@ -130,20 +145,7 @@ module.exports = ({ name, elem }) => {
       }
     };
 
-    elem.onclick = function () {
-      const zout = keys.includes(keys.ALT) && keys.includes('z');
-      const zin = keys.includes('z') && !zout;
-
-      if (scale > 0.1 && zout) {
-        // zooming out
-        scale -= 0.1;
-        zoom(scale);
-      } else if (scale < 1 && zin) {
-        // zooming in
-        scale += 0.1;
-        zoom(scale);
-      }
-    };
+    elem.onclick = onclick;
 
     img.style.transform = '';
     img.src = imageUrl;

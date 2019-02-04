@@ -112,12 +112,10 @@ module.exports = ({ name, elem }) => {
 
     if (scale > 0.1 && zout) {
       // zooming out
-      scale -= 0.1;
-      zoom(scale);
+      zoom(scale - 0.1, { forceCenter: true });
     } else if (scale < 1 && zin) {
       // zooming in
-      scale += 0.1;
-      zoom(scale);
+      zoom(scale + 0.1, { forceCenter: true });
     }
   }
 

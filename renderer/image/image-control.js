@@ -55,8 +55,8 @@ module.exports = ({ name, elem }) => {
     // calculate scroll percentage before the zoom operation
     const imgRect = img.getBoundingClientRect();
     const before = {
-      top: forceCenter ? 0.5 : elem.scrollTop / (imgRect.height - box.height),
-      left: forceCenter ? 0.5 : elem.scrollLeft / (imgRect.width - box.width)
+      top: forceCenter ? 0.5 : (elem.scrollTop + (box.height / 2)) / imgRect.height,
+      left: forceCenter ? 0.5 : (elem.scrollLeft + (box.width / 2)) / imgRect.width
     };
 
     const targetWidth = evenInt(width * scale);

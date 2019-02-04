@@ -19,7 +19,6 @@ module.exports = ({ name, elem }) => {
   let isRotated = false;
   let rotateStyle = '';
   let zoomType = 'fit';
-  let lastScale = 1;
 
   const img = document.createElement('img');
   const container = document.createElement('div');
@@ -44,7 +43,6 @@ module.exports = ({ name, elem }) => {
   });
 
   function zoomToScale(toScale) {
-    lastScale = toScale;
     // JavaScript math sucks
     scale = Math.min(Number(toScale.toFixed(2)), 1);
 
@@ -117,7 +115,7 @@ module.exports = ({ name, elem }) => {
       if (zoomType === 'fit') {
         zoomToBestFit();
       } else {
-        zoomToScale(lastScale);
+        zoomToScale(scale);
       }
     };
 

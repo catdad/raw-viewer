@@ -72,7 +72,7 @@ module.exports = function ({ events }) {
 
   registerMouse(elem);
 
-  events.on('image:zoom', ({ scale }) => zoom(scale));
+  events.on('image:zoom', ({ scale }) => zoom(scale, { forceCenter: true }));
 
   events.on('image:load', ({ imageUrl, rotation }) => load({ imageUrl, rotation }));
 

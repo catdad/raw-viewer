@@ -31,7 +31,11 @@ module.exports = ({ name, elem }) => {
 
     box = {
       width: rect.width - 20,
-      height: rect.height - 20
+      height: rect.height - 20,
+      bottom: rect.bottom,
+      left: rect.left,
+      right: rect.right,
+      top: rect.top
     };
   }
 
@@ -42,11 +46,18 @@ module.exports = ({ name, elem }) => {
     refreshBox();
   });
 
-  function zoomToScale(toScale) {
+  function zoomToScale(toScale, forceCenter = false) {
     // JavaScript math sucks
     scale = Math.min(Number(toScale.toFixed(2)), 1);
 
     log.info('zoom to', scale);
+
+    // calculate scroll percentage before the zoom operation
+    const imgRect = img.getBoundingClientRect();
+    const before = {
+      top: forceCenter ? 0.5 : (elem.scrollTop + (box.height / 2)) / imgRect.height,
+      left: forceCenter ? 0.5 : (elem.scrollLeft + (box.width / 2)) / imgRect.width
+    };
 
     const targetWidth = evenInt(width * scale);
     const targetHeight = evenInt(height * scale);
@@ -70,9 +81,9 @@ module.exports = ({ name, elem }) => {
     container.style.height = `${targetHeight}px`;
     container.style.transform = `translate(${transformWidth}px, ${transformHeight}px)`;
 
-    // scroll to center by default
-    elem.scrollTop = (targetHeight / 2) - (box.height / 2);
-    elem.scrollLeft = (targetWidth / 2) - (box.width / 2);
+    // scroll to same percentage as before the zoom
+    elem.scrollTop = (targetHeight * before.top) - (box.height * before.top);
+    elem.scrollLeft = (targetWidth * before.left) - (box.width * before.left);
   }
 
   function zoomToBestFit() {
@@ -81,10 +92,10 @@ module.exports = ({ name, elem }) => {
       box.height / height
     );
 
-    zoomToScale(scale);
+    zoomToScale(scale, true);
   }
 
-  function zoom(toScale) {
+  function zoom(toScale, { forceCenter = false } = {}) {
     if (toScale === 'fit') {
       zoomType = 'fit';
       return zoomToBestFit();
@@ -92,7 +103,20 @@ module.exports = ({ name, elem }) => {
 
     zoomType = 'custom';
 
-    return zoomToScale(toScale);
+    return zoomToScale(toScale, forceCenter);
+  }
+
+  function onclick() {
+    const zout = keys.includes(keys.ALT) && keys.includes('z');
+    const zin = keys.includes('z') && !zout;
+
+    if (scale > 0.1 && zout) {
+      // zooming out
+      zoom(scale - 0.1, { forceCenter: true });
+    } else if (scale < 1 && zin) {
+      // zooming in
+      zoom(scale + 0.1, { forceCenter: true });
+    }
   }
 
   function load({ imageUrl, rotation }) {
@@ -119,20 +143,7 @@ module.exports = ({ name, elem }) => {
       }
     };
 
-    elem.onclick = function () {
-      const zout = keys.includes(keys.ALT) && keys.includes('z');
-      const zin = keys.includes('z') && !zout;
-
-      if (scale > 0.1 && zout) {
-        // zooming out
-        scale -= 0.1;
-        zoom(scale);
-      } else if (scale < 1 && zin) {
-        // zooming in
-        scale += 0.1;
-        zoom(scale);
-      }
-    };
+    elem.onclick = onclick;
 
     img.style.transform = '';
     img.src = imageUrl;

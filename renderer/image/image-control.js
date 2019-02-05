@@ -46,7 +46,7 @@ module.exports = ({ name, elem }) => {
     refreshBox();
   });
 
-  function zoomToScale(toScale, forceCenter = false) {
+  function zoomToScale(toScale, { forceCenter = false, lockX = 0.5, lockY = 0.5 } = {}) {
     // JavaScript math sucks
     scale = Math.min(Number(toScale.toFixed(2)), 1);
 
@@ -55,8 +55,9 @@ module.exports = ({ name, elem }) => {
     // calculate scroll percentage before the zoom operation
     const imgRect = img.getBoundingClientRect();
     const before = {
-      top: forceCenter ? 0.5 : (elem.scrollTop + (box.height / 2)) / imgRect.height,
-      left: forceCenter ? 0.5 : (elem.scrollLeft + (box.width / 2)) / imgRect.width
+      // TODO doesn't work when the image is smaller than the viewport
+      top: forceCenter ? 0.5 : (elem.scrollTop + (box.height * lockY)) / imgRect.height,
+      left: forceCenter ? 0.5 : (elem.scrollLeft + (box.width * lockX)) / imgRect.width
     };
 
     const targetWidth = evenInt(width * scale);
@@ -95,7 +96,7 @@ module.exports = ({ name, elem }) => {
     zoomToScale(scale, true);
   }
 
-  function zoom(toScale, { forceCenter = false } = {}) {
+  function zoom(toScale, opts) {
     if (toScale === 'fit') {
       zoomType = 'fit';
       return zoomToBestFit();
@@ -103,19 +104,28 @@ module.exports = ({ name, elem }) => {
 
     zoomType = 'custom';
 
-    return zoomToScale(toScale, forceCenter);
+    return zoomToScale(toScale, opts);
   }
 
-  function onclick() {
+  function onclick(ev) {
     const zout = keys.includes(keys.ALT) && keys.includes('z');
     const zin = keys.includes('z') && !zout;
 
+    const rect = img.getBoundingClientRect();
+
+    function evcenter() {
+      return {
+        lockX: (ev.clientX - rect.left) / rect.width,
+        lockY: (ev.clientY - rect.top) / rect.height
+      };
+    }
+
     if (scale > 0.1 && zout) {
       // zooming out
-      zoom(scale - 0.1, { forceCenter: true });
+      zoom(scale - 0.1, evcenter());
     } else if (scale < 1 && zin) {
       // zooming in
-      zoom(scale + 0.1, { forceCenter: true });
+      zoom(scale + 0.1, evcenter());
     }
   }
 

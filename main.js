@@ -6,6 +6,9 @@ try {
     showDevTools: false,
     devToolsMode: 'right'
   });
+
+  // eslint-disable-next-line no-console
+  console.log('node version', process.version);
 } catch (err) {} // eslint-disable-line no-empty
 
 const path = require('path');
@@ -46,6 +49,7 @@ function createWindow () {
       width: config.getProp('window.width') || 800,
       height: config.getProp('window.height') || 600,
       webPreferences: {
+        nodeIntegration: true,
         nodeIntegrationInWorker: true
       }
     });

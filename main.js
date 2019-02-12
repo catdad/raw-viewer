@@ -1,5 +1,7 @@
 try {
+  // watch renderer files and reload the page on changes
   require('./lib/electron-watcher.js');
+  // provide F12, F5, and activates devtron
   require('electron-debug')({
     showDevTools: false,
     devToolsMode: 'right'

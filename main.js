@@ -6,9 +6,6 @@ try {
     showDevTools: false,
     devToolsMode: 'right'
   });
-
-  // eslint-disable-next-line no-console
-  console.log('node version', process.version);
 } catch (err) {} // eslint-disable-line no-empty
 
 const path = require('path');
@@ -19,6 +16,8 @@ const { app, BrowserWindow, ipcMain } = require('electron');
 const config = require('./lib/config.js');
 const exiftool = require('./lib/exiftool.js');
 const log = require('./lib/log.js')('main');
+
+log.info(`electron node version: ${process.version}`);
 
 let mainWindow;
 

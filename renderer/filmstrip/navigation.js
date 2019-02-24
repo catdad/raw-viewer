@@ -117,39 +117,42 @@ module.exports = function ({ wrapper, displayImage, events }) {
         thumb.x_isInView = isInView(wrapperBox, thumb.getBoundingClientRect());
 
         if (thumb.x_isInView && thumb.load) {
-          return { thumb, thumbnails };
+          return thumb;
         }
       }
 
-      return { thumb: null, thumbnails };
+      return null;
     }
 
-    async function internal() {
+    async function recurseThumbnails() {
+      // find visible area each time, as this may change
+      // between iterations of this function
       const wrapperBox = wrapper.getBoundingClientRect();
 
-      // load the firsrt image we find that needs to be loaded
-      const { thumb, thumbnails } = await findImageToLoad(wrapperBox);
+      // load the first image we find that needs to be loaded
+      const thumb = await findImageToLoad(wrapperBox);
 
       if (thumb) {
         await thumb.load();
-        await internal();
-      }
-
-      // unload all out-of-view thumbnails from last iteration
-      await Promise.all(thumbnails
-        .filter(({ x_isInView }) => !x_isInView)
-        .map(thumb => thumb.unload())
-      );
-
-      // apply any filters
-      const changed = applyFilters();
-
-      if (changed) {
-        await self();
+        // repeat loading first image
+        await recurseThumbnails();
       }
     }
 
-    return await internal(false);
+    await recurseThumbnails();
+
+    // unload all out-of-view thumbnails from last iteration
+    await Promise.all(thumbnails
+      .filter(({ x_isInView }) => !x_isInView)
+      .map(thumb => thumb.unload())
+    );
+
+    // apply any filters
+    const changed = applyFilters();
+
+    if (changed) {
+      await self();
+    }
   }, 1, 200);
 
   async function deleteCurrent() {

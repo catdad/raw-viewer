@@ -110,25 +110,41 @@ module.exports = function ({ wrapper, displayImage, events }) {
 
   // display visible images
   const resolveVisible = throttle(async function self() {
-    const wrapperBox = wrapper.getBoundingClientRect();
+    const thumbnails = [].slice.call(wrapper.querySelectorAll('.thumbnail'));
 
-    const states = [].slice.call(wrapper.querySelectorAll('.thumbnail')).map(child => {
-      return {
-        child,
-        visible: isInView(wrapperBox, child.getBoundingClientRect())
-      };
-    });
+    async function findImageToLoad(wrapperBox) {
+      for (let thumb of thumbnails) {
+        thumb.x_isInView = isInView(wrapperBox, thumb.getBoundingClientRect());
 
-    // load all visible thumbnails
-    await Promise.all(states
-      .filter(({ child, visible }) => visible && child.load)
-      .map(({ child }) => child.load())
-    );
+        if (thumb.x_isInView && thumb.load) {
+          return thumb;
+        }
+      }
 
-    // unload all out-of-view thumbnails
-    await Promise.all(states
-      .filter(({ visible }) => !visible)
-      .map(({ child }) => child.unload())
+      return null;
+    }
+
+    async function recurseThumbnails() {
+      // find visible area each time, as this may change
+      // between iterations of this function
+      const wrapperBox = wrapper.getBoundingClientRect();
+
+      // load the first image we find that needs to be loaded
+      const thumb = await findImageToLoad(wrapperBox);
+
+      if (thumb) {
+        await thumb.load();
+        // repeat loading first image
+        await recurseThumbnails();
+      }
+    }
+
+    await recurseThumbnails();
+
+    // unload all out-of-view thumbnails from last iteration
+    await Promise.all(thumbnails
+      .filter(({ x_isInView }) => !x_isInView)
+      .map(thumb => thumb.unload())
     );
 
     // apply any filters

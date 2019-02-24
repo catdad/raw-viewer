@@ -27,8 +27,8 @@ function registerMouse(elem) {
   };
 
   const onMouseUp = () => {
-    elem.removeEventListener('mousemove', onMouseMove);
-    elem.removeEventListener('mouseup', onMouseUp);
+    window.removeEventListener('mousemove', onMouseMove);
+    window.removeEventListener('mouseup', onMouseUp);
 
     x = y = null;
 
@@ -41,8 +41,8 @@ function registerMouse(elem) {
     x = e.x;
     y = e.y;
 
-    elem.addEventListener('mousemove', onMouseMove);
-    elem.addEventListener('mouseup', onMouseUp);
+    window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('mouseup', onMouseUp);
 
     return false;
   };

@@ -106,7 +106,7 @@ function onClose(e) {
   });
 }
 
-app.once('will-quit', onClose);
+app.once('before-quit', onClose);
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.

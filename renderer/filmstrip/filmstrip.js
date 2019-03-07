@@ -123,17 +123,23 @@ module.exports = function ({ events }) {
       let load = async () => {
         imgWrap.load = null;
 
-        let { meta } = await reload();
+        try {
+          let { meta } = await reload();
 
-        if (!meta.disabled) {
-          imgWrap.appendChild(rating({ filepath, meta, events, setMeta }));
+          if (!meta.disabled) {
+            imgWrap.appendChild(rating({ filepath, meta, events, setMeta }));
+          }
+
+          setMeta(meta);
+
+          handleDisplay(imgWrap, {
+            filepath, file, type, meta
+          });
+        } catch (e) {
+          log.error('handled error:', e);
+          events.emit('error', `failed to load ${file}`);
+          img.src = '';
         }
-
-        setMeta(meta);
-
-        handleDisplay(imgWrap, {
-          filepath, file, type, meta
-        });
 
         return imgWrap;
       };
@@ -154,11 +160,7 @@ module.exports = function ({ events }) {
     }
 
     // render the first image as soon as we have it
-    const childToLoad = fragment.firstChild;
-    childToLoad.load().then(thumb => thumb.click()).catch(err => {
-      log.error('handled error:', err);
-      events.emit('error', `failed to load ${childToLoad.getAttribute('data-filename')}`);
-    });
+    fragment.firstChild.load().then(thumb => thumb.click());
 
     wrapper.appendChild(fragment);
 

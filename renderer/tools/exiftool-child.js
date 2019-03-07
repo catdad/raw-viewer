@@ -80,11 +80,7 @@ async function readFilePart({ filepath, start, length }) {
   return buffer;
 }
 
-async function readJpegFromMeta({ filepath, start, length, url }) {
-  if (url) {
-    return url;
-  }
-
+async function readJpegBufferFromMeta({ filepath, start, length }) {
   let buffer;
 
   if (start && length) {
@@ -99,7 +95,15 @@ async function readJpegFromMeta({ filepath, start, length, url }) {
     log.timeEnd(`read dcraw ${filepath}`);
   }
 
-  return bufferToUrl(buffer);
+  return buffer;
+}
+
+async function readJpegFromMeta({ filepath, start, length, url }) {
+  if (url) {
+    return url;
+  }
+
+  return bufferToUrl(await readJpegBufferFromMeta({ filepath, start, length }));
 }
 
 async function readThumbFromMeta(data) {
@@ -122,7 +126,7 @@ async function readThumbFromMeta(data) {
     });
     log.timeEnd(`read thumb ${data.filepath}`);
   } else {
-    buffer = await readJpegFromMeta(data);
+    buffer = await readJpegBufferFromMeta(data);
   }
 
   log.time(`resize thumb ${data.filepath}`);

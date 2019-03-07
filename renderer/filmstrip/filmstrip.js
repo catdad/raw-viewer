@@ -154,7 +154,11 @@ module.exports = function ({ events }) {
     }
 
     // render the first image as soon as we have it
-    fragment.firstChild.load().then(thumb => thumb.click());
+    const childToLoad = fragment.firstChild;
+    childToLoad.load().then(thumb => thumb.click()).catch(err => {
+      log.error('handled error:', err);
+      events.emit('error', `failed to load ${childToLoad.getAttribute('data-filename')}`);
+    });
 
     wrapper.appendChild(fragment);
 

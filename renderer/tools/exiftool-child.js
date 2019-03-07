@@ -57,9 +57,10 @@ async function readShortMeta(filepath) {
     return placeholder;
   }
 
-  log.time(`read short meta ${filepath}`);
-  const value = await exiftool('read:shortmeta', { filepath });
-  log.timeEnd(`read short meta ${filepath}`);
+  const value = await log.timing(
+    `read short meta ${filepath}`,
+    async () => await exiftool('read:shortmeta', { filepath })
+  );
 
   if (value.error) {
     return placeholder;
@@ -85,14 +86,16 @@ async function readJpegBufferFromMeta({ filepath, start, length }) {
 
   if (start && length) {
     // we can get a fast jpeg image
-    log.time(`read jpeg ${filepath}`);
-    buffer = await readFilePart({ filepath, start, length });
-    log.timeEnd(`read jpeg ${filepath}`);
+    buffer = await log.timing(
+      `read jpeg ${filepath}`,
+      async () => await readFilePart({ filepath, start, length })
+    );
   } else {
-    log.time(`read dcraw ${filepath}`);
     // we should fall back to dcraw - e.g. Canon 30D
-    buffer = Buffer.from(await dcraw.exec('imageUint8Array', [filepath]));
-    log.timeEnd(`read dcraw ${filepath}`);
+    buffer = await log.timing(
+      `read dcraw ${filepath}`,
+      async () => Buffer.from(await dcraw.exec('imageUint8Array', [filepath]))
+    );
   }
 
   return buffer;
@@ -118,20 +121,22 @@ async function readThumbFromMeta(data) {
     // and a thumbnail, and in those cases, using the smaller
     // image will be faster... though the resize makes large
     // images pretty fast, so maybe it's not worth?
-    log.time(`read thumb ${data.filepath}`);
-    buffer = await readFilePart({
-      filepath: data.filepath,
-      start: data.thumbStart,
-      length: data.thumbLength
-    });
-    log.timeEnd(`read thumb ${data.filepath}`);
+    buffer = await log.timing(
+      `read thumb ${data.filepath}`,
+      async () => await readFilePart({
+        filepath: data.filepath,
+        start: data.thumbStart,
+        length: data.thumbLength
+      })
+    );
   } else {
     buffer = await readJpegBufferFromMeta(data);
   }
 
-  log.time(`resize thumb ${data.filepath}`);
-  buffer = await sharp(buffer).resize(200).toBuffer();
-  log.timeEnd(`resize thumb ${data.filepath}`);
+  buffer = await log.timing(
+    `resize thumb ${data.filepath}`,
+    async () => await sharp(buffer).resize(200).toBuffer()
+  );
 
   return bufferToUrl(buffer);
 }

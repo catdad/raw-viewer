@@ -53,10 +53,8 @@ module.exports = function (count) {
     setImmediate(flushQueue);
   }
 
-  log.time('worker init');
-
-  spawnWorkers().then(() => {
-    log.timeEnd('worker init');
+  log.timing('worker init', () => spawnWorkers()).then(() => {
+    log.info('workers ready');
   }).catch(err => {
     log.error('failed to create workers', err);
   });

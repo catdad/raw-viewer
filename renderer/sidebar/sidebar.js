@@ -45,6 +45,19 @@ module.exports = function ({ events }) {
       return p;
     }).forEach(elem => fragment.appendChild(elem));
 
+    const button = document.createElement('button');
+    button.innerHTML = 'Show all metadata'
+    button.onclick = () => {
+      let str = '';
+      for (let i in meta) {
+        str += `${i}: ${meta[i]}\n`;
+      }
+
+      alert(str);
+    };
+
+    fragment.appendChild(button);
+
     elem.innerHTML = '';
     elem.appendChild(fragment);
   }

@@ -35,6 +35,28 @@ const render = (meta) => {
   return fragment;
 };
 
+const derive = (meta) => {
+  const derived = {};
+
+  // Canon has a lower and upper focus distance, while
+  // others have a single value
+  if (meta.FocusDistanceLower && meta.FocusDistanceUpper) {
+    derived.FocusDistance = meta.FocusDistance ||
+      `${meta.FocusDistanceLower} - ${meta.FocusDistanceUpper}`;
+  }
+
+  // Sony sometimes has FocusDistance2 instead of FocusDistance
+  if (meta.FocusDistance2 && !meta.FocusDistance) {
+    derived.FocusDistance = meta.FocusDistance2;
+  }
+
+  if (meta.CameraTemperature) {
+    derived.Temperature = meta.CameraTemperature;
+  }
+
+  return derived;
+};
+
 module.exports = function ({ events }) {
   var elem = document.createElement('div');
   elem.className = name;
@@ -45,21 +67,7 @@ module.exports = function ({ events }) {
       async () => await exiftool.readMeta(filepath)
     );
 
-    const derived = {};
-
-    // Canon has a lower and upper focus distance, while
-    // others have a single value
-    if (meta.FocusDistanceLower && meta.FocusDistanceUpper) {
-      derived.FocusDistance = meta.FocusDistance ||
-        `${meta.FocusDistanceLower} - ${meta.FocusDistanceUpper}`;
-    }
-
-    // Sony sometimes has FocusDistance2 instead of FocusDistance
-    if (meta.FocusDistance2 && !meta.FocusDistance) {
-      derived.FocusDistance = meta.FocusDistance2;
-    }
-
-    const allMeta = Object.assign({}, meta, derived);
+    const allMeta = Object.assign({}, meta, derive(meta));
 
     const fragment = document.createDocumentFragment();
 
@@ -74,6 +82,7 @@ module.exports = function ({ events }) {
       { key: 'FocusDistance', gui: 'Focus Distance' },
       { key: 'ImageSize', gui: 'Dimensions' }, // this is sensor size, pre-crop, maybe use DefaultCropSize
       { key: 'Orientation', gui: 'Orientation' },
+      { key: 'Temperature', gui: 'Temperature' },
       { key: 'DateTimeOriginal', gui: 'Timestamp' },
       { key: 'Z-FileSize', gui: 'Size' },
     ].filter(({ key }) => !!allMeta[key]).map(({ key, gui }) => {

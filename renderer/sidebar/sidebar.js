@@ -45,12 +45,16 @@ module.exports = function ({ events }) {
       async () => await exiftool.readMeta(filepath)
     );
 
+    const derived = {};
+
     // Canon has a lower and upper focus distance, while
     // others have a single value
     if (meta.FocusDistanceLower && meta.FocusDistanceUpper) {
-      meta.FocusDistance = meta.FocusDistance ||
+      derived.FocusDistance = meta.FocusDistance ||
         `${meta.FocusDistanceLower} - ${meta.FocusDistanceUpper}`;
     }
+
+    const allMeta = Object.assign({}, meta, derived);
 
     const fragment = document.createDocumentFragment();
 
@@ -67,9 +71,9 @@ module.exports = function ({ events }) {
       { key: 'Orientation', gui: 'Orientation' },
       { key: 'DateTimeOriginal', gui: 'Timestamp' },
       { key: 'Z-FileSize', gui: 'Size' },
-    ].filter(({ key }) => !!meta[key]).map(({ key, gui }) => {
+    ].filter(({ key }) => !!allMeta[key]).map(({ key, gui }) => {
       const p = document.createElement('p');
-      p.appendChild(document.createTextNode(`${gui}: ${meta[key]}`));
+      p.appendChild(document.createTextNode(`${gui}: ${allMeta[key]}`));
 
       return p;
     }).forEach(elem => fragment.appendChild(elem));

@@ -28,24 +28,27 @@ module.exports = ({ events }) => {
     elem.classList.add('hidden');
   });
 
-  events.on('modal', ({ content, str }) => {
+  container.addEventListener('click', (ev) => {
+    ev.stopPropagation();
+  });
+
+  events.on('modal', ({ content = document.createDocumentFragment(), str }) => {
     empty(container);
 
     if (str) {
-      const fragment = document.createDocumentFragment();
+      content = document.createDocumentFragment();
 
       str.split('\n').forEach(s => {
         const text = document.createTextNode(s);
         const p = document.createElement('p');
         p.appendChild(text);
-        fragment.appendChild(p);
+        content.appendChild(p);
       });
-
-      container.appendChild(fragment);
-
-      elem.classList.remove('hidden');
     }
 
+    container.appendChild(content);
+
+    elem.classList.remove('hidden');
     container.scrollTop = 0;
 
     log.info('modal opened', content);

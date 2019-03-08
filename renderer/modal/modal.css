@@ -22,9 +22,11 @@
   max-width: 600px;
   height: 70%;
   margin: auto;
-  padding: 10px;
+  padding: 16px;
 
   border-radius: 3px;
   background-color: #464646;
   border: 1px solid #282828;
+
+  overflow: auto;
 }

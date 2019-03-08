@@ -7,6 +7,34 @@ const style = fs.readFileSync(path.resolve(__dirname, `${name}.css`), 'utf8');
 const exiftool = require('../tools/exiftool-child.js');
 const log = require('../../lib/log.js')(name);
 
+const renderKeyValue = ({ key, value }) => {
+  const p = document.createElement('p');
+  const keySpan = document.createElement('span');
+  keySpan.style.opacity = 0.8;
+  keySpan.style.fontSize = '0.9em';
+  keySpan.appendChild(document.createTextNode(key));
+  const valueSpan = document.createElement('span');
+  valueSpan.style.fontWeight = 'bold';
+  valueSpan.style.fontSize = '1.1em';
+  valueSpan.appendChild(document.createTextNode(value));
+
+  p.appendChild(keySpan);
+  p.appendChild(document.createTextNode(': '));
+  p.appendChild(valueSpan);
+
+  return p;
+};
+
+const render = (meta) => {
+  const fragment = document.createDocumentFragment();
+
+  for (let i in meta) {
+    fragment.appendChild(renderKeyValue({ key: i, value: meta[i]}));
+  }
+
+  return fragment;
+};
+
 module.exports = function ({ events }) {
   var elem = document.createElement('div');
   elem.className = name;
@@ -49,12 +77,7 @@ module.exports = function ({ events }) {
     const button = document.createElement('button');
     button.innerHTML = 'Show all metadata';
     button.onclick = () => {
-      let str = '';
-      for (let i in meta) {
-        str += `${i}: ${meta[i]}\n`;
-      }
-
-      alert(str);
+      events.emit('modal', { content: render(meta) });
     };
 
     fragment.appendChild(button);

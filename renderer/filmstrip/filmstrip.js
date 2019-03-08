@@ -39,9 +39,10 @@ module.exports = function ({ events }) {
     const filepath = thumb.x_filepath;
     const meta = thumb.x_meta;
 
-    log.time(`new data ${filepath}`);
-    const { url, rotation } = await readMetaAndDataUrl({ filepath, meta, type: 'full' });
-    log.timeEnd(`new data ${filepath}`);
+    const { url, rotation } = await log.timing(
+      `new data ${filepath}`,
+      async () => await readMetaAndDataUrl({ filepath, meta, type: 'full' })
+    );
 
     // do DOM reads before we update anything
     const parentBB = wrapper.getBoundingClientRect();
@@ -88,8 +89,6 @@ module.exports = function ({ events }) {
   const { resolveVisible } = navigation({ wrapper, displayImage, events });
 
   async function loadThumbnails({ files }) {
-    log.time('load thumbs');
-
     wrapper.innerHTML = '';
 
     const fragment = document.createDocumentFragment();
@@ -110,9 +109,10 @@ module.exports = function ({ events }) {
       let reload = async () => {
         imgWrap.load = null;
 
-        log.time(`render ${file}`);
-        let { url, rotation, meta } = await readMetaAndDataUrl({ filepath, type: 'thumb' });
-        log.timeEnd(`render ${file}`);
+        let { url, rotation, meta } = await log.timing(
+          `render ${file}`,
+          async () => await readMetaAndDataUrl({ filepath, type: 'thumb' })
+        );
 
         img.classList.add(`rotate-${rotation}`);
         img.src = url;
@@ -123,17 +123,23 @@ module.exports = function ({ events }) {
       let load = async () => {
         imgWrap.load = null;
 
-        let { meta } = await reload();
+        try {
+          let { meta } = await reload();
 
-        if (!meta.disabled) {
-          imgWrap.appendChild(rating({ filepath, meta, events, setMeta }));
+          if (!meta.disabled) {
+            imgWrap.appendChild(rating({ filepath, meta, events, setMeta }));
+          }
+
+          setMeta(meta);
+
+          handleDisplay(imgWrap, {
+            filepath, file, type, meta
+          });
+        } catch (e) {
+          log.error('handled error:', e);
+          events.emit('error', `failed to load ${file}`);
+          img.src = '';
         }
-
-        setMeta(meta);
-
-        handleDisplay(imgWrap, {
-          filepath, file, type, meta
-        });
 
         return imgWrap;
       };
@@ -159,12 +165,10 @@ module.exports = function ({ events }) {
     wrapper.appendChild(fragment);
 
     await resolveVisible();
-
-    log.timeEnd('load thumbs');
   }
 
   events.on('directory:discover', function ({ files }) {
-    loadThumbnails({ files });
+    log.timing('load thumbs', async () => await loadThumbnails({ files }));
   });
 
   return { elem, style };

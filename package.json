@@ -35,6 +35,7 @@
     "trash": "^4.3.0"
   },
   "devDependencies": {
+    "chalk": "^2.4.2",
     "devtron": "^1.4.0",
     "electron-debug": "^2.1.0",
     "electron-rebuild": "^1.8.4",

@@ -17,18 +17,16 @@ async function readFileBuffer(filepath) {
 }
 
 async function imageUint8Array(filepath) {
-  log.time('preview');
+  return await log.timing('preview', async () => {
+    const file = await readFileBuffer(filepath);
 
-  const file = await readFileBuffer(filepath);
+    // read image from raw data
+    // var tiff = dcraw(file, { exportAsTiff: true });
 
-  // read image from raw data
-  // var tiff = dcraw(file, { exportAsTiff: true });
+    const preview = dcraw(file, { extractThumbnail: true });
 
-  const preview = dcraw(file, { extractThumbnail: true });
-
-  log.timeEnd('preview');
-
-  return preview;
+    return preview;
+  });
 }
 
 async function imageUrl(filepath) {

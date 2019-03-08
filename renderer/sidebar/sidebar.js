@@ -12,9 +12,10 @@ module.exports = function ({ events }) {
   elem.className = name;
 
   async function loadInfo({ filepath }) {
-    log.time(`exif ${filepath}`);
-    const meta = await exiftool.readMeta(filepath);
-    log.timeEnd(`exif ${filepath}`);
+    const meta = await log.timing(
+      `exif ${filepath}`,
+      async () => await exiftool.readMeta(filepath)
+    );
 
     // Canon has a lower and upper focus distance, while
     // others have a single value

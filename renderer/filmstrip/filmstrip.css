@@ -27,7 +27,7 @@
   justify-content: center;
 
   flex: 0 0 auto;
-  margin: 0 5px;
+  margin: 0 3px;
   padding: 6px;
 
   border-radius: 3px;
@@ -41,6 +41,24 @@
   cursor: pointer;
 
   will-change: transform;
+}
+
+.filmstrip .thumbnail:first-of-type {
+  margin-left: 6px;
+}
+
+.filmstrip .thumbnail:last-of-type::before {
+  /* force a 6px margin on the right of the
+   * last element as well
+   */
+  content: "";
+  position: absolute;
+  top: 0;
+  right: -6px;
+  height: 100%;
+  width: 6px;
+  opacity: 0;
+  user-select: none;
 }
 
 .filmstrip .thumbnail.selected {

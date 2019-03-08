@@ -9,19 +9,16 @@ module.exports = function ({ events }) {
   function setRating(filepath, rating, toast = false) {
     log.info(`RATE ${rating} STARS for ${filepath}`);
 
-    log.time(`rating ${filepath}`);
-
-    exiftool.setRating(filepath, rating).then((meta) => {
-      log.timeEnd(`rating ${filepath}`);
-
+    log.timing(
+      `rating ${filepath}`,
+      async () => await exiftool.setRating(filepath, rating)
+    ).then(meta => {
       events.emit('image:rated', { filepath, rating, meta });
 
       if (toast) {
         events.emit('toast', { text: `set to ${rating} stars` });
       }
-    }).catch((err) => {
-      log.timeEnd(`rating ${filepath}`);
-
+    }).catch(err => {
       log.error(err);
       events.emit('error', err);
     });

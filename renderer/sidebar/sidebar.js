@@ -54,6 +54,11 @@ module.exports = function ({ events }) {
         `${meta.FocusDistanceLower} - ${meta.FocusDistanceUpper}`;
     }
 
+    // Sony sometimes has FocusDistance2 instead of FocusDistance
+    if (meta.FocusDistance2 && !meta.FocusDistance) {
+      derived.FocusDistance = meta.FocusDistance2;
+    }
+
     const allMeta = Object.assign({}, meta, derived);
 
     const fragment = document.createDocumentFragment();

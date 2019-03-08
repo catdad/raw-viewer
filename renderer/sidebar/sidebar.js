@@ -54,6 +54,10 @@ const derive = (meta) => {
     derived.Temperature = meta.CameraTemperature;
   }
 
+  // how to define this has changed over time... just use
+  // any of these
+  derived.Artist = meta.Artist || meta.Creator || meta.OwnerName || undefined;
+
   return derived;
 };
 
@@ -83,6 +87,7 @@ module.exports = function ({ events }) {
       { key: 'ImageSize', gui: 'Dimensions' }, // this is sensor size, pre-crop, maybe use DefaultCropSize
       { key: 'Orientation', gui: 'Orientation' },
       { key: 'Temperature', gui: 'Temperature' },
+      { key: 'Artist', gui: 'Artist' },
       { key: 'DateTimeOriginal', gui: 'Timestamp' },
       { key: 'Z-FileSize', gui: 'Size' },
     ].filter(({ key }) => !!allMeta[key]).map(({ key, gui }) => {

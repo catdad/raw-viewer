@@ -58,6 +58,7 @@ module.exports = function (elem) {
   render('image', elem);
   render('dropzone', elem);
   render('toast', elem);
+  render('modal', elem);
 
   events.on('config', function (data) {
     if (data.key === 'client.lastDirectory' && data.value) {

@@ -7,3 +7,12 @@
   margin: 0;
   line-height: 2;
 }
+
+.sidebar button {
+  color: currentColor;
+  background-color: #464646;
+  border: 1px solid #282828;
+  padding: 6px 12px;
+  border-radius: 3px;
+  margin: 12px 0px 12px 0;
+}

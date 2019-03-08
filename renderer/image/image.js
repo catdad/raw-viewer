@@ -52,7 +52,7 @@ function registerMouse(elem) {
 
 module.exports = function ({ events }) {
   const elem = document.createElement('div');
-  elem.className = name;
+  elem.className = `${name} scrollbar`;
 
   const { dom, load, zoom } = imageControl({ name, elem });
 

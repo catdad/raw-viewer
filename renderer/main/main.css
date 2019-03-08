@@ -68,3 +68,22 @@ body {
   width: 100%;
   height: 100%;
 }
+
+/* generic scrollbar that can be used throughout */
+.scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+.scrollbar::-webkit-scrollbar:horizontal {
+  height: 8px;
+}
+.scrollbar::-webkit-scrollbar-track {
+  background: #535353;
+}
+.scrollbar::-webkit-scrollbar-thumb {
+  background: #535353;
+  box-shadow: 0 0 12px #262626 inset;
+  border-radius: 8px;
+}
+.scrollbar::-webkit-scrollbar-corner {
+  background: #535353;
+}

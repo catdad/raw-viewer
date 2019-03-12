@@ -27,16 +27,16 @@ module.exports = function ({ events }) {
     name: 'rating',
     values: [
       { label: '★ all', value: { from: 0, to: 5 } },
-      { label: '★ 0',  value: { from: 0, to: 0 } },
-      { label: '★ 1',  value: { from: 1, to: 1 } },
-      { label: '★ 1+', value: { from: 1, to: 5 } },
-      { label: '★ 2',  value: { from: 2, to: 2 } },
-      { label: '★ 2+', value: { from: 2, to: 5 } },
-      { label: '★ 3',  value: { from: 3, to: 3 } },
-      { label: '★ 3+', value: { from: 3, to: 5 } },
-      { label: '★ 4',  value: { from: 4, to: 4 } },
-      { label: '★ 4+', value: { from: 4, to: 5 } },
-      { label: '★ 5',  value: { from: 5, to: 5 } }
+      { label: '★ 0',   value: { from: 0, to: 0 } },
+      { label: '★ 1',   value: { from: 1, to: 1 } },
+      { label: '★ 1+',  value: { from: 1, to: 5 } },
+      { label: '★ 2',   value: { from: 2, to: 2 } },
+      { label: '★ 2+',  value: { from: 2, to: 5 } },
+      { label: '★ 3',   value: { from: 3, to: 3 } },
+      { label: '★ 3+',  value: { from: 3, to: 5 } },
+      { label: '★ 4',   value: { from: 4, to: 4 } },
+      { label: '★ 4+',  value: { from: 4, to: 5 } },
+      { label: '★ 5',   value: { from: 5, to: 5 } }
     ]
   });
 

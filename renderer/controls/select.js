@@ -1,4 +1,5 @@
 const EventEmitter = require('events');
+const equal = require('fast-deep-equal');
 
 function setOptions(select, values) {
   select.innerHTML = '';
@@ -14,7 +15,7 @@ function setOptions(select, values) {
 
 function setOption(select, value) {
   for (let i = 0, l = select.options.length; i < l; i++) {
-    if (select.options[i].x_value === value) {
+    if (equal(select.options[i].x_value, value)) {
       select.selectedIndex = 0;
       return;
     }

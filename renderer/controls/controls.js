@@ -7,6 +7,9 @@ const select = require('./select.js');
 const name = 'controls';
 const style = fs.readFileSync(path.resolve(__dirname, `${name}.css`), 'utf8');
 
+const defaultRating = { from: 0, to: 5 };
+const defaultType = '*';
+
 module.exports = function ({ events }) {
   const elem = document.createElement('div');
   elem.className = name;
@@ -23,12 +26,17 @@ module.exports = function ({ events }) {
   const ratingFilter = select({
     name: 'rating',
     values: [
-      { label: '★ 0+', value: 0 },
-      { label: '★ 1+', value: 1 },
-      { label: '★ 2+', value: 2 },
-      { label: '★ 3+', value: 3 },
-      { label: '★ 4+', value: 4 },
-      { label: '★ 5', value: 5 }
+      { label: '★ all', value: { from: 0, to: 5 } },
+      { label: '★ 0',   value: { from: 0, to: 0 } },
+      { label: '★ 1',   value: { from: 1, to: 1 } },
+      { label: '★ 1+',  value: { from: 1, to: 5 } },
+      { label: '★ 2',   value: { from: 2, to: 2 } },
+      { label: '★ 2+',  value: { from: 2, to: 5 } },
+      { label: '★ 3',   value: { from: 3, to: 3 } },
+      { label: '★ 3+',  value: { from: 3, to: 5 } },
+      { label: '★ 4',   value: { from: 4, to: 4 } },
+      { label: '★ 4+',  value: { from: 4, to: 5 } },
+      { label: '★ 5',   value: { from: 5, to: 5 } }
     ]
   });
 
@@ -52,12 +60,16 @@ module.exports = function ({ events }) {
   elem.appendChild(typeFilter.elem);
 
   events.on('directory:discover', ({ files }) => {
-    ratingFilter.value = 0;
-    typeFilter.value = '*';
+    // reset values to default
+    ratingFilter.value = defaultRating;
+    typeFilter.value = defaultType;
 
     // setting the value of a select doesn't fire a change event
-    // not sure why... as Chrome
-    events.emit('image:filter', { rating: 0, type: '*' });
+    // not sure why...
+    events.emit('image:filter', {
+      rating: defaultRating,
+      type: defaultType
+    });
 
     const types = Array.from(new Set(files.map(file => file.type)))
       .filter(val => !!val)

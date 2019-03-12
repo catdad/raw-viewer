@@ -58,7 +58,7 @@ const filter = {
       return true;
     }
 
-    return actual >= expected;
+    return actual >= expected.from && actual <= expected.to;
   },
   type: (expected, actual) => {
     if (actual === undefined) {
@@ -74,7 +74,7 @@ const filter = {
 };
 
 module.exports = function ({ wrapper, displayImage, events }) {
-  let expectRating = 0;
+  let expectRating = { from: 0, to: 5 };
   let expectType = '*';
 
   function applyFilter(thumb) {

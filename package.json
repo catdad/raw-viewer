@@ -40,6 +40,7 @@
     "devtron": "^1.4.0",
     "electron-debug": "^2.1.0",
     "electron-rebuild": "^1.8.4",
+    "electronmon": "^0.2.0",
     "eslint": "^4.19.1"
   }
 }

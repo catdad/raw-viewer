@@ -8,7 +8,7 @@
     "postinstall": "electron-rebuild",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "electron .",
-    "dev": "npx electronmon .",
+    "dev": "electronmon .",
     "exif-kill": "taskkill /IM exiftool.exe /F",
     "exif-find": "tasklist | findstr exiftool"
   },

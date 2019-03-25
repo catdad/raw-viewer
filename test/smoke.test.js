@@ -1,33 +1,9 @@
-const path = require('path');
+const { expect } = require('chai');
 
-const { Application } = require('spectron');
-const electronPath = require('electron');
-
+const { start, stop, waitForVisible } = require('./app-provider.js');
 const config = require('./config-provider.js');
 
 describe('[smoke tests]', () => {
-  let app;
-
-  const start = async (configPath = '') => {
-    app = new Application({
-      path: electronPath,
-      args: ['.'],
-      env: {
-        'RAW_VIEWER_CONFIG_PATH': configPath
-      },
-      cwd: path.resolve(__dirname, '..')
-    });
-
-    await app.start();
-  };
-
-  const stop = async () => {
-    if (app && app.isRunning()) {
-      await app.stop();
-      app = null;
-    }
-  };
-
   const all = async (...promises) => {
     let err;
 
@@ -50,10 +26,12 @@ describe('[smoke tests]', () => {
   beforeEach(cleanup);
   afterEach(cleanup);
 
-  it('waits', async () => {
+  it('opens to the drag and drop screen', async () => {
     const configPath = config.create({});
-    await start(configPath);
+    const app = await start(configPath);
 
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await waitForVisible('.dropzone');
+
+    expect(await app.client.getText('.dropzone .container')).to.equal('drag and drop a folder to view');
   });
 });

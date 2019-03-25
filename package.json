@@ -7,6 +7,7 @@
   "scripts": {
     "postinstall": "electron-rebuild",
     "test": "mocha --timeout 10000 --slow 0 test/**.test.js",
+    "citest": "xvfb-maybe npm test",
     "start": "electron .",
     "dev": "electronmon .",
     "exif-kill": "taskkill /IM exiftool.exe /F",
@@ -45,6 +46,7 @@
     "eslint": "^4.19.1",
     "mocha": "^6.0.2",
     "spectron": "^5.0.0",
-    "tempy": "^0.2.1"
+    "tempy": "^0.2.1",
+    "xvfb-maybe": "^0.2.1"
   }
 }

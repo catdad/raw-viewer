@@ -43,6 +43,7 @@
     "electronmon": "^0.2.0",
     "eslint": "^4.19.1",
     "mocha": "^6.0.2",
-    "spectron": "^5.0.0"
+    "spectron": "^5.0.0",
+    "tempy": "^0.2.1"
   }
 }

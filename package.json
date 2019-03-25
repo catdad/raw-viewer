@@ -39,6 +39,7 @@
     "chalk": "^2.4.2",
     "devtron": "^1.4.0",
     "electron-debug": "^2.1.0",
+    "electron-mocha": "^6.0.4",
     "electron-rebuild": "^1.8.4",
     "electronmon": "^0.2.0",
     "eslint": "^4.19.1"

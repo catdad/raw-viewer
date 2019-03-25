@@ -1,0 +1,19 @@
+os:
+#  - linux
+  - osx
+
+language: node_js
+
+node_js:
+  - '10'
+
+addons:
+  apt:
+    packages:
+      - xvfb
+
+install:
+  - npm ci
+
+script:
+  - npm run citest

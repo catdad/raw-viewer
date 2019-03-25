@@ -6,7 +6,7 @@
   "main": "main.js",
   "scripts": {
     "postinstall": "electron-rebuild",
-    "lint": "eslint lib public renderer test",
+    "lint": "eslint main.js lib public renderer test",
     "test": "mocha --timeout 10000 --slow 0 test/**.test.js",
     "citest": "xvfb-maybe npm test && npm run -s lint",
     "start": "electron .",

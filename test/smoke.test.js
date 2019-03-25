@@ -28,15 +28,27 @@ describe('[smoke tests]', () => {
     }
   };
 
-  beforeEach(async () => {
-    await stop();
-    await config.cleanAll();
-  });
+  const all = async (...promises) => {
+    let err;
 
-  afterEach(async () => {
-    await stop();
-    await config.cleanAll();
-  });
+    await Promise.all(promises.map(p => p.catch(e => {
+      err = e;
+    })));
+
+    if (err) {
+      throw err;
+    }
+  };
+
+  const cleanup = async () => {
+    await all(
+      stop(),
+      config.cleanAll()
+    );
+  };
+
+  beforeEach(cleanup);
+  afterEach(cleanup);
 
   it('waits', async () => {
     const configPath = config.create({});

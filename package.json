@@ -6,7 +6,7 @@
   "main": "main.js",
   "scripts": {
     "postinstall": "electron-rebuild",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha --timeout 10000 --slow 0 test/**.test.js",
     "start": "electron .",
     "dev": "electronmon .",
     "exif-kill": "taskkill /IM exiftool.exe /F",
@@ -39,9 +39,10 @@
     "chalk": "^2.4.2",
     "devtron": "^1.4.0",
     "electron-debug": "^2.1.0",
-    "electron-mocha": "^6.0.4",
     "electron-rebuild": "^1.8.4",
     "electronmon": "^0.2.0",
-    "eslint": "^4.19.1"
+    "eslint": "^4.19.1",
+    "mocha": "^6.0.2",
+    "spectron": "^5.0.0"
   }
 }

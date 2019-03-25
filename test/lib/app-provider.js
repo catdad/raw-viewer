@@ -12,7 +12,7 @@ const start = async (configPath = '') => {
     env: {
       'RAW_VIEWER_CONFIG_PATH': configPath
     },
-    cwd: path.resolve(__dirname, '..'),
+    cwd: path.resolve(__dirname, '../..'),
     waitTimeout: 5000
   });
 

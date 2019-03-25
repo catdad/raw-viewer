@@ -1,7 +1,7 @@
 const { expect } = require('chai');
 
-const { start, stop, waitForVisible } = require('./app-provider.js');
-const config = require('./config-provider.js');
+const { start, stop, waitForVisible } = require('./lib/app-provider.js');
+const config = require('./lib/config-provider.js');
 
 describe('[smoke tests]', () => {
   const all = async (...promises) => {

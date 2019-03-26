@@ -7,6 +7,7 @@
   "scripts": {
     "postinstall": "electron-rebuild",
     "lint": "eslint main.js lib public renderer test",
+    "pretest": "node test/lib/downloader.js",
     "test": "mocha --timeout 10000 --slow 0 test/**.test.js",
     "citest": "xvfb-maybe npm test && npm run -s lint",
     "start": "electron .",
@@ -46,6 +47,8 @@
     "electronmon": "^0.2.0",
     "eslint": "^4.19.1",
     "mocha": "^6.0.2",
+    "node-fetch": "^2.3.0",
+    "rootrequire": "^1.0.0",
     "spectron": "^5.0.0",
     "tempy": "^0.2.1",
     "xvfb-maybe": "^0.2.1"

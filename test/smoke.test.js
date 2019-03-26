@@ -1,7 +1,12 @@
 const { expect } = require('chai');
 
-const { start, stop, waitForVisible } = require('./lib/app-provider.js');
+const {
+  start, stop,
+  waitForVisible, waitForElementCount,
+  elementAttribute
+} = require('./lib/app-provider.js');
 const config = require('./lib/config-provider.js');
+const { names, path: fixturePath } = require('./lib/fixtures.js');
 
 describe('[smoke tests]', () => {
   const all = async (...promises) => {
@@ -27,11 +32,32 @@ describe('[smoke tests]', () => {
   afterEach(cleanup);
 
   it('opens to the drag and drop screen', async () => {
-    const configPath = config.create({});
+    const configPath = await config.create({});
     const app = await start(configPath);
 
     await waitForVisible('.dropzone');
 
     expect(await app.client.getText('.dropzone .container')).to.equal('drag and drop a folder to view');
+  });
+
+  it('loads fixture images', async () => {
+    expect(names.length).to.be.above(0);
+
+    const configPath = await config.create({
+      client: {
+        lastDirectory: fixturePath()
+      }
+    });
+    await start(configPath);
+
+    const elements = await waitForElementCount('.filmstrip .thumbnail', names.length);
+
+    for (let i in names) {
+      const name = names[i];
+      const element = elements[i];
+
+      const filename = await elementAttribute(element, 'data-filename');
+      expect(filename).to.equal(name);
+    }
   });
 });

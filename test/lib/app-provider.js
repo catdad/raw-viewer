@@ -5,6 +5,8 @@ const electronPath = require('electron');
 
 let app;
 
+const sleep = time => new Promise(resolve => setTimeout(() => resolve(), time));
+
 const start = async (configPath = '') => {
   app = new Application({
     path: electronPath,
@@ -38,9 +40,29 @@ const ensureApp = (func) => (...args) => {
 
 const wrapWebdriver = (name) => ensureApp((...args) => app.client[name](...args));
 
+const waitForElementCount = ensureApp(async (selector, count) => {
+  let elements;
+
+  await app.client.waitUntil(async () => {
+    const { value } = await app.client.elements(selector);
+    elements = value;
+    return elements.length === count;
+  });
+
+  return elements;
+});
+
+const elementAttribute = ensureApp(async (element, attribute) => {
+  const { value } = await app.client.elementIdAttribute(element.ELEMENT, attribute);
+  return value;
+});
+
 module.exports = {
   start,
   stop,
   waitUntil: wrapWebdriver('waitUntil'),
-  waitForVisible: wrapWebdriver('waitForVisible')
+  waitForVisible: wrapWebdriver('waitForVisible'),
+  waitForElementCount,
+  elementAttribute,
+  sleep
 };

@@ -55,6 +55,7 @@ module.exports = function ({ events }) {
 
     [].slice.call(wrapper.children).forEach(elem => {
       elem.classList.remove('selected');
+      elem.classList.remove('selected-secondary');
     });
 
     thumb.classList.add('selected');
@@ -72,17 +73,27 @@ module.exports = function ({ events }) {
     }
   }
 
+  function ctrlSelect(thumb) {
+    thumb.classList.toggle('selected-secondary');
+  }
+
+  function shiftSelect(thumb) {
+    console.log('shift+click', thumb);
+  }
+
   function handleDisplay(thumb, { filepath, file }) {
     thumb.addEventListener('click', (ev = {}) => {
       if (ev.ctrlKey) {
-        console.log('ctrl+click', filepath);
-      } else if (ev.shiftKey) {
-        console.log('shift+click', filepath);
-      } else {
-        displayImage(thumb).catch(err => {
-          onError(err, `failed to load ${file}`);
-        });
+        return ctrlSelect(thumb);
       }
+
+      if (ev.shiftKey) {
+        return shiftSelect(thumb);
+      }
+
+      displayImage(thumb).catch(err => {
+        onError(err, `failed to load ${file}`);
+      });
     });
 
     dragDrop(thumb, filepath);

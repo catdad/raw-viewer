@@ -5,6 +5,7 @@ const log = require('../../lib/log.js')('filmstrip-nav');
 const keys = require('../tools/keyboard.js');
 
 const SELECTED = 'selected';
+const SELECTED_SECONDARY = 'selected-secondary';
 
 function show(thumb) {
   thumb.style.display = 'flex';
@@ -18,12 +19,24 @@ function ok(thumb) {
   return thumb.style.display !== 'none';
 }
 
-function findSelected(wrapper) {
+function findSelected(wrapper, includeSecondary = false) {
+  const result = [];
+  let selected, secondary;
+
   for (let elem of [].slice.call(wrapper.children)) {
-    if (elem.classList.contains(SELECTED)) {
+    secondary = elem.classList.contains(SELECTED_SECONDARY);
+    selected = elem.classList.contains(SELECTED);
+
+    if (selected && !includeSecondary) {
       return elem;
     }
+
+    if (selected || secondary) {
+      result.push(elem);
+    }
   }
+
+  return result;
 }
 
 function findNextTarget(wrapper, direction) {
@@ -155,12 +168,12 @@ module.exports = function ({ wrapper, displayImage, events }) {
     }
   }, 1, 200);
 
-  async function deleteCurrent() {
-    const selected = findSelected(wrapper);
+  async function deleteSelected() {
+    const selected = findSelected(wrapper, true);
     const target = findNextTarget(wrapper, 'right');
 
-    await trash([selected.x_filepath]);
-    wrapper.removeChild(selected);
+    await trash(selected.map(elem => elem.x_filepath));
+    selected.forEach(elem => wrapper.removeChild(elem));
 
     return { target };
   }
@@ -193,7 +206,7 @@ module.exports = function ({ wrapper, displayImage, events }) {
     const isDelete = keys.includes(keys.DELETE);
 
     if (isDelete) {
-      deleteCurrent()
+      deleteSelected()
         .then(({ target }) => {
           navigateTo(target);
         })

@@ -31,6 +31,11 @@ module.exports = function ({ events }) {
 
   elem.appendChild(wrapper);
 
+  function onError(err, msg = '') {
+    log.error('handled error:', err);
+    events.emit('error', msg || err);
+  }
+
   async function displayImage(thumb) {
     if (thumb.load) {
       await thumb.load();
@@ -67,9 +72,17 @@ module.exports = function ({ events }) {
     }
   }
 
-  function handleDisplay(thumb, { filepath }) {
-    thumb.addEventListener('click', () => {
-      displayImage(thumb);
+  function handleDisplay(thumb, { filepath, file }) {
+    thumb.addEventListener('click', (ev = {}) => {
+      if (ev.ctrlKey) {
+        console.log('ctrl+click', filepath);
+      } else if (ev.shiftKey) {
+        console.log('shift+click', filepath);
+      } else {
+        displayImage(thumb).catch(err => {
+          onError(err, `failed to load ${file}`);
+        });
+      }
     });
 
     dragDrop(thumb, filepath);
@@ -136,8 +149,7 @@ module.exports = function ({ events }) {
             filepath, file, type, meta
           });
         } catch (e) {
-          log.error('handled error:', e);
-          events.emit('error', `failed to load ${file}`);
+          onError(e, `failed to load ${file}`);
           img.src = '';
         }
 

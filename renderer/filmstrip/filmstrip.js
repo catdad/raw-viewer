@@ -9,6 +9,7 @@ const dragDrop = require('../tools/ipc-draganddrop.js');
 const readMetaAndDataUrl = require('./read-image.js');
 const navigation = require('./navigation.js');
 const rating = require('./rating.js');
+const { findSelected } = require('./selection-helpers.js');
 
 function isClippedLeft(containerBB, elBB) {
   return elBB.left < containerBB.left;
@@ -77,8 +78,30 @@ module.exports = function ({ events }) {
     thumb.classList.toggle('selected-secondary');
   }
 
-  function shiftSelect(/* thumb */) {
-    log.warn('shift+click is not implemented yet');
+  function shiftSelect(thumb) {
+    const children = [].slice.call(wrapper.children);
+    const selected = findSelected(wrapper) || children[0];
+
+    if (!selected) {
+      return;
+    }
+
+    const selectedIdx = children.indexOf(selected);
+    const clickedIdx = children.indexOf(thumb);
+    const lower = Math.min(selectedIdx, clickedIdx);
+    const higher = Math.max(selectedIdx, clickedIdx);
+
+    children.forEach((child, idx) => {
+      if (child === selected) {
+        return;
+      }
+
+      if (idx >= lower && idx <= higher) {
+        child.classList.add('selected-secondary');
+      } else {
+        child.classList.remove('selected-secondary');
+      }
+    });
   }
 
   function handleDisplay(thumb, { filepath, file }) {

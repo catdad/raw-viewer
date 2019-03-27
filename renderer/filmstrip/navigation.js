@@ -39,16 +39,21 @@ function findSelected(wrapper, includeSecondary = false) {
   return result;
 }
 
-function findNextTarget(wrapper, direction) {
+function findNextTarget(wrapper, direction, includeSelected = false) {
   const next = direction === 'left' ? 'previousSibling' : 'nextSibling';
 
-  let selected = findSelected(wrapper);
+  const mainSelected = findSelected(wrapper);
+  const allSelected = includeSelected ?
+    findSelected(wrapper, true) :
+    [mainSelected];
 
-  while (selected && selected[next]) {
-    selected = selected[next];
+  let target = mainSelected;
 
-    if (selected && ok(selected)) {
-      return selected;
+  while (target && target[next]) {
+    target = target[next];
+
+    if (target && ok(target) && !allSelected.includes(target)) {
+      return target;
     }
   }
 
@@ -170,7 +175,7 @@ module.exports = function ({ wrapper, displayImage, events }) {
 
   async function deleteSelected() {
     const selected = findSelected(wrapper, true);
-    const target = findNextTarget(wrapper, 'right');
+    const target = findNextTarget(wrapper, 'right', true);
 
     await trash(selected.map(elem => elem.x_filepath));
     selected.forEach(elem => wrapper.removeChild(elem));

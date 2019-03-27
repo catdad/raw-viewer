@@ -184,6 +184,8 @@ module.exports = function ({ wrapper, displayImage, events }) {
     }
 
     displayImage(target);
+
+    resolveVisible();
   }
 
   // handle scrolling

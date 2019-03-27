@@ -9,6 +9,7 @@ const dragDrop = require('../tools/ipc-draganddrop.js');
 const readMetaAndDataUrl = require('./read-image.js');
 const navigation = require('./navigation.js');
 const rating = require('./rating.js');
+const { findSelected, SELECTED, SELECTED_SECONDARY } = require('./selection-helpers.js');
 
 function isClippedLeft(containerBB, elBB) {
   return elBB.left < containerBB.left;
@@ -31,6 +32,11 @@ module.exports = function ({ events }) {
 
   elem.appendChild(wrapper);
 
+  function onError(err, msg = '') {
+    log.error('handled error:', err);
+    events.emit('error', msg || err);
+  }
+
   async function displayImage(thumb) {
     if (thumb.load) {
       await thumb.load();
@@ -49,10 +55,11 @@ module.exports = function ({ events }) {
     const thumbBB = thumb.getBoundingClientRect();
 
     [].slice.call(wrapper.children).forEach(elem => {
-      elem.classList.remove('selected');
+      elem.classList.remove(SELECTED);
+      elem.classList.remove(SELECTED_SECONDARY);
     });
 
-    thumb.classList.add('selected');
+    thumb.classList.add(SELECTED);
 
     events.emit('image:load', {
       filepath: filepath,
@@ -67,9 +74,49 @@ module.exports = function ({ events }) {
     }
   }
 
-  function handleDisplay(thumb, { filepath }) {
-    thumb.addEventListener('click', () => {
-      displayImage(thumb);
+  function ctrlSelect(thumb) {
+    thumb.classList.toggle(SELECTED_SECONDARY);
+  }
+
+  function shiftSelect(thumb) {
+    const children = [].slice.call(wrapper.children);
+    const selected = findSelected(wrapper) || children[0];
+
+    if (!selected) {
+      return;
+    }
+
+    const selectedIdx = children.indexOf(selected);
+    const clickedIdx = children.indexOf(thumb);
+    const lower = Math.min(selectedIdx, clickedIdx);
+    const higher = Math.max(selectedIdx, clickedIdx);
+
+    children.forEach((child, idx) => {
+      if (child === selected) {
+        return;
+      }
+
+      if (idx >= lower && idx <= higher) {
+        child.classList.add(SELECTED_SECONDARY);
+      } else {
+        child.classList.remove(SELECTED_SECONDARY);
+      }
+    });
+  }
+
+  function handleDisplay(thumb, { filepath, file }) {
+    thumb.addEventListener('click', (ev = {}) => {
+      if (ev.ctrlKey) {
+        return ctrlSelect(thumb);
+      }
+
+      if (ev.shiftKey) {
+        return shiftSelect(thumb);
+      }
+
+      displayImage(thumb).catch(err => {
+        onError(err, `failed to load ${file}`);
+      });
     });
 
     dragDrop(thumb, filepath);
@@ -136,8 +183,7 @@ module.exports = function ({ events }) {
             filepath, file, type, meta
           });
         } catch (e) {
-          log.error('handled error:', e);
-          events.emit('error', `failed to load ${file}`);
+          onError(e, `failed to load ${file}`);
           img.src = '';
         }
 

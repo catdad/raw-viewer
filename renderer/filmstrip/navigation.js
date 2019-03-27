@@ -3,44 +3,7 @@ const throttle = require('p-throttle');
 
 const log = require('../../lib/log.js')('filmstrip-nav');
 const keys = require('../tools/keyboard.js');
-
-const SELECTED = 'selected';
-
-function show(thumb) {
-  thumb.style.display = 'flex';
-}
-
-function hide(thumb) {
-  thumb.style.display = 'none';
-}
-
-function ok(thumb) {
-  return thumb.style.display !== 'none';
-}
-
-function findSelected(wrapper) {
-  for (let elem of [].slice.call(wrapper.children)) {
-    if (elem.classList.contains(SELECTED)) {
-      return elem;
-    }
-  }
-}
-
-function findNextTarget(wrapper, direction) {
-  const next = direction === 'left' ? 'previousSibling' : 'nextSibling';
-
-  let selected = findSelected(wrapper);
-
-  while (selected && selected[next]) {
-    selected = selected[next];
-
-    if (selected && ok(selected)) {
-      return selected;
-    }
-  }
-
-  return null;
-}
+const { findSelected, findNextTarget, show, hide, ok } = require('./selection-helpers.js');
 
 function isInView(containerBB, elBB) {
   return (!(
@@ -155,12 +118,12 @@ module.exports = function ({ wrapper, displayImage, events }) {
     }
   }, 1, 200);
 
-  async function deleteCurrent() {
-    const selected = findSelected(wrapper);
-    const target = findNextTarget(wrapper, 'right');
+  async function deleteSelected() {
+    const selected = findSelected(wrapper, true);
+    const target = findNextTarget(wrapper, 'right', true);
 
-    await trash([selected.x_filepath]);
-    wrapper.removeChild(selected);
+    await trash(selected.map(elem => elem.x_filepath));
+    selected.forEach(elem => wrapper.removeChild(elem));
 
     return { target };
   }
@@ -171,6 +134,8 @@ module.exports = function ({ wrapper, displayImage, events }) {
     }
 
     displayImage(target);
+
+    resolveVisible();
   }
 
   // handle scrolling
@@ -193,7 +158,7 @@ module.exports = function ({ wrapper, displayImage, events }) {
     const isDelete = keys.includes(keys.DELETE);
 
     if (isDelete) {
-      deleteCurrent()
+      deleteSelected()
         .then(({ target }) => {
           navigateTo(target);
         })

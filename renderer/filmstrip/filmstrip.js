@@ -9,7 +9,7 @@ const dragDrop = require('../tools/ipc-draganddrop.js');
 const readMetaAndDataUrl = require('./read-image.js');
 const navigation = require('./navigation.js');
 const rating = require('./rating.js');
-const { findSelected } = require('./selection-helpers.js');
+const { findSelected, SELECTED, SELECTED_SECONDARY } = require('./selection-helpers.js');
 
 function isClippedLeft(containerBB, elBB) {
   return elBB.left < containerBB.left;
@@ -55,11 +55,11 @@ module.exports = function ({ events }) {
     const thumbBB = thumb.getBoundingClientRect();
 
     [].slice.call(wrapper.children).forEach(elem => {
-      elem.classList.remove('selected');
-      elem.classList.remove('selected-secondary');
+      elem.classList.remove(SELECTED);
+      elem.classList.remove(SELECTED_SECONDARY);
     });
 
-    thumb.classList.add('selected');
+    thumb.classList.add(SELECTED);
 
     events.emit('image:load', {
       filepath: filepath,
@@ -75,7 +75,7 @@ module.exports = function ({ events }) {
   }
 
   function ctrlSelect(thumb) {
-    thumb.classList.toggle('selected-secondary');
+    thumb.classList.toggle(SELECTED_SECONDARY);
   }
 
   function shiftSelect(thumb) {
@@ -97,9 +97,9 @@ module.exports = function ({ events }) {
       }
 
       if (idx >= lower && idx <= higher) {
-        child.classList.add('selected-secondary');
+        child.classList.add(SELECTED_SECONDARY);
       } else {
-        child.classList.remove('selected-secondary');
+        child.classList.remove(SELECTED_SECONDARY);
       }
     });
   }

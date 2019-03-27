@@ -57,5 +57,6 @@ function findNextTarget(wrapper, direction, includeSelected = false) {
 module.exports = {
   findSelected,
   findNextTarget,
-  show, hide, ok
+  show, hide, ok,
+  SELECTED, SELECTED_SECONDARY
 };

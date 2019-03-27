@@ -77,8 +77,8 @@ module.exports = function ({ events }) {
     thumb.classList.toggle('selected-secondary');
   }
 
-  function shiftSelect(thumb) {
-    console.log('shift+click', thumb);
+  function shiftSelect(/* thumb */) {
+    log.warn('shift+click is not implemented yet');
   }
 
   function handleDisplay(thumb, { filepath, file }) {

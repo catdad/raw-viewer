@@ -22,6 +22,11 @@ function gid() {
   return Math.random().toString(36).substr(2);
 }
 
+function isPlainImage(filepath) {
+  const ext = path.extname(filepath).toLowerCase();
+  return ['.jpeg', '.jpg', '.png'].includes(ext);
+}
+
 function exiftool(name, data) {
   const id = gid() + gid();
 
@@ -81,6 +86,10 @@ async function readFilePart({ filepath, start, length }) {
   return buffer;
 }
 
+async function readFile(filepath) {
+  return await log.timing(`read file ${filepath}`, () => fs.readFile(filepath));
+}
+
 async function readJpegBufferFromMeta({ filepath, start, length }) {
   let buffer;
 
@@ -106,7 +115,11 @@ async function readJpegFromMeta({ filepath, start, length, url }) {
     return url;
   }
 
-  return bufferToUrl(await readJpegBufferFromMeta({ filepath, start, length }));
+  const buffer = isPlainImage(filepath) ?
+    await readFile(filepath) :
+    await readJpegBufferFromMeta({ filepath, start, length });
+
+  return bufferToUrl(buffer);
 }
 
 async function readThumbFromMeta(data) {
@@ -116,7 +129,9 @@ async function readThumbFromMeta(data) {
 
   let buffer;
 
-  if (data.thumbStart && data.thumbLength) {
+  if (isPlainImage(data.filepath)) {
+    buffer = await readFile(data.filepath);
+  } else if (data.thumbStart && data.thumbLength) {
     // sometimes, the raw file will store a full size preview
     // and a thumbnail, and in those cases, using the smaller
     // image will be faster... though the resize makes large
@@ -146,6 +161,7 @@ async function setRating(filepath, rating = 0) {
 }
 
 module.exports = {
+  isPlainImage,
   readMeta,
   readShortMeta,
   readJpegFromMeta,

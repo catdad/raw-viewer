@@ -5,10 +5,11 @@ const stream = require('stream');
 const pipeline = promisify(stream.pipeline);
 const path = require('path');
 const fs = require('fs-extra');
-const root = require('rootrequire');
 const fetch = require('node-fetch');
 const unzip = require('unzip');
 const tar = require('tar');
+
+const { exiftoolDir, platform } = require('../lib/third-party.js');
 
 const version = '11.33';
 
@@ -50,15 +51,15 @@ const unzipPromise = async (stream, outdir) => {
 };
 
 (async () => {
-  const platform = process.platform === 'win32' ? 'win' : 'linux';
-  const outdir = path.resolve(root, 'third-party/exiftool', platform);
-  await fs.ensureDir(outdir);
+  await fs.ensureDir(exiftoolDir);
 
   const archive = await responseStream(urls[platform]);
 
-  if (platform === 'linux') {
+  if (platform === 'win') {
+    await unzipPromise(archive, exiftoolDir);
+  } else {
     await pipeline(archive, tar.extract({
-      cwd: outdir,
+      cwd: exiftoolDir,
       strip: 1,
       preserveOwner: false,
       filter: path => {
@@ -73,8 +74,6 @@ const unzipPromise = async (stream, outdir) => {
         return false;
       }
     }));
-  } else {
-    await unzipPromise(archive, outdir);
   }
 })().then(() => {
   console.log('exiftool fetched successfully');

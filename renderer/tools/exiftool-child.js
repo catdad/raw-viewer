@@ -141,20 +141,8 @@ async function readThumbFromMeta(data) {
   return bufferToUrl(buffer);
 }
 
-function setRating(filepath, rating = 0) {
-  const id = gid() + gid();
-
-  return new Promise((resolve, reject) => {
-    ipc.once(`exiftool:callback:${id}`, (ev, data) => {
-      if (data.ok) {
-        return resolve(data.value);
-      }
-
-      return reject(new Error(data.err));
-    });
-
-    ipc.send('exiftool:set:rating', { filepath, id, rating });
-  });
+async function setRating(filepath, rating = 0) {
+  return await exiftool('set:rating', { filepath, rating });
 }
 
 module.exports = {

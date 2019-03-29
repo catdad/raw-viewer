@@ -141,24 +141,6 @@ async function readThumbFromMeta(data) {
   return bufferToUrl(buffer);
 }
 
-function readThumb(filepath) {
-  return readShortMeta(filepath)
-    .then((data) => {
-      return readThumbFromMeta(data).then(url => {
-        return Object.assign({}, data, { url });
-      });
-    });
-}
-
-function readJpeg(filepath) {
-  return readShortMeta(filepath)
-    .then((data) => {
-      return readJpegFromMeta(data).then(url => {
-        return Object.assign({}, data, { url });
-      });
-    });
-}
-
 function setRating(filepath, rating = 0) {
   const id = gid() + gid();
 
@@ -178,9 +160,7 @@ function setRating(filepath, rating = 0) {
 module.exports = {
   readMeta,
   readShortMeta,
-  readJpeg,
   readJpegFromMeta,
-  readThumb,
   readThumbFromMeta,
   setRating
 };

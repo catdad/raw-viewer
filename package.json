@@ -50,7 +50,9 @@
     "node-fetch": "^2.3.0",
     "rootrequire": "^1.0.0",
     "spectron": "^5.0.0",
+    "tar": "^4.4.8",
     "tempy": "^0.2.1",
+    "unzip": "^0.1.11",
     "xvfb-maybe": "^0.2.1"
   }
 }

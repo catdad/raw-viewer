@@ -60,6 +60,7 @@ const unzipPromise = async (stream, outdir) => {
     await pipeline(archive, tar.extract({
       cwd: outdir,
       strip: 1,
+      preserveOwner: false,
       filter: path => {
         if (path.indexOf(`Image-ExifTool-${version}/exiftool`) === 0) {
           return true;

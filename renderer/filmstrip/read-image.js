@@ -1,15 +1,15 @@
-const path = require('path');
-
 const exiftool = require('../tools/exiftool-child.js');
 
 async function readMetaAndDataUrl({ filepath, type = 'full', meta = null }) {
-  const ext = path.extname(filepath).toLowerCase();
-
   if (meta === null) {
     meta = await exiftool.readShortMeta(filepath);
   }
 
-  if (['.jpeg', '.jpg', '.png'].includes(ext)) {
+  // for some reason, when reading the jpeg to a dataUrl,
+  // the subsequent reading of meta happens slower... like 40ms -> 500ms
+  // this seems to be slow on the client, as exiftool in the main thread
+  // is still fast... so we're gonna keep this for fullsize images
+  if (type === 'full' && exiftool.isPlainImage(filepath)) {
     return {
       url: filepath,
       orientation: meta.orientation,
@@ -23,7 +23,7 @@ async function readMetaAndDataUrl({ filepath, type = 'full', meta = null }) {
     await exiftool.readThumbFromMeta(meta);
 
   return {
-    url:url,
+    url: url,
     orientation: meta.orientation,
     rotation: meta.rotation,
     meta: meta

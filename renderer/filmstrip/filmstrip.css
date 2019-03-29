@@ -63,6 +63,10 @@
 
 .filmstrip .thumbnail.selected {
   border-color: #eee;
+  background-color: #787878;
+}
+.filmstrip .thumbnail.selected-secondary {
+  border-color: #eee;
 }
 
 .filmstrip .thumbnail img {

@@ -46,7 +46,7 @@ module.exports = function ({ events }) {
     const meta = thumb.x_meta;
 
     const { url, rotation } = await log.timing(
-      `new data ${filepath}`,
+      `reading meta and full image ${filepath}`,
       async () => await readMetaAndDataUrl({ filepath, meta, type: 'full' })
     );
 

@@ -1,6 +1,7 @@
 const path = require('path');
 const fs = require('fs-extra');
 const sharp = require('sharp');
+const prettyBytes = require('pretty-bytes');
 const ipc = require('electron').ipcRenderer;
 
 const log = require('../../lib/log.js')('exiftool-child');
@@ -90,6 +91,33 @@ async function readFile(filepath) {
   return await log.timing(`read file ${filepath}`, () => fs.readFile(filepath));
 }
 
+async function resizeLargeJpeg({ filepath, buffer, length }) {
+  const before = buffer.length;
+
+  buffer = await log.timing(
+    `resize large jpeg for ${filepath}`,
+    async () => {
+      const { size: filebytes } = await fs.stat(filepath);
+
+      if (filebytes / 2 < length) {
+        // this jpeg was more than twice the size of the original
+        // raw file... something is off, so resize it... it's too big
+        return await sharp(buffer).toBuffer();
+      }
+
+      return buffer;
+    }
+  );
+
+  const diff = before - buffer.length;
+  const pretty = prettyBytes(diff * -1);
+  const percent = (1 - (buffer.length / before)) * 100;
+
+  log.info(`change in ${filepath} size: ${pretty}, ${percent.toFixed(1)}%`);
+
+  return buffer;
+}
+
 async function readJpegBufferFromMeta({ filepath, start, length }) {
   let buffer;
 
@@ -115,9 +143,16 @@ async function readJpegFromMeta({ filepath, start, length, url }) {
     return url;
   }
 
-  const buffer = isPlainImage(filepath) ?
+  let buffer = isPlainImage(filepath) ?
     await readFile(filepath) :
     await readJpegBufferFromMeta({ filepath, start, length });
+
+  if (length && length > 9999999) {
+    // this image is probably too big, something suspicious is happening
+    // ... it's probably a CR3 file, but I've seen it happen for other
+    // formats as well
+    buffer = await resizeLargeJpeg({ filepath, buffer, length });
+  }
 
   return bufferToUrl(buffer);
 }

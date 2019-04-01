@@ -87,6 +87,7 @@ module.exports = function ({ events }) {
       { key: 'ExposureMode', gui: 'Mode' },
       { key: 'FocusDistance', gui: 'Focus Distance' },
       { key: 'ImageSize', gui: 'Dimensions' }, // this is sensor size, pre-crop, maybe use DefaultCropSize
+      { key: 'Megapixels', gui: 'Megapixels' },
       { key: 'Orientation', gui: 'Orientation' },
       { key: 'Temperature', gui: 'Temperature' },
       { key: 'Artist', gui: 'Artist' },

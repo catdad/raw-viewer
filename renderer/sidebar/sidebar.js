@@ -58,6 +58,8 @@ const derive = (meta) => {
   // any of these
   derived.Artist = meta.Artist || meta.Creator || meta.OwnerName || undefined;
 
+  derived.Orientation = meta.Orientation || meta.AutoRotate;
+
   return derived;
 };
 

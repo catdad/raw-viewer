@@ -83,8 +83,11 @@ module.exports = ({ name, elem }) => {
     container.style.transform = `translate(${transformWidth}px, ${transformHeight}px)`;
 
     // scroll to same percentage as before the zoom
-    elem.scrollTop = (targetHeight * before.top) - (box.height * before.top);
-    elem.scrollLeft = (targetWidth * before.left) - (box.width * before.left);
+    // this math doesn't seem right... it is supposed to always be lockX/Y in the last element
+    // but for some reason, that breaks click to zoom... so I am leaving this and I will figure
+    // out the math later
+    elem.scrollTop = (targetHeight * before.top) - (box.height * (lockY === 0.5 ? 0.5 : before.top));
+    elem.scrollLeft = (targetWidth * before.left) - (box.width * (lockX === 0.5 ? 0.5 : before.left));
   }
 
   function zoomToBestFit() {

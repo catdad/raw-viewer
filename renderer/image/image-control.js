@@ -50,7 +50,7 @@ module.exports = ({ name, elem }) => {
     // JavaScript math sucks
     scale = Math.min(Number(toScale.toFixed(2)), 1);
 
-    log.info('zoom to', scale);
+    log.info(`zoom to scale: ${scale}, lockX: ${lockX}, lockY: ${lockY}, forceCenter: ${forceCenter}`);
 
     // calculate scroll percentage before the zoom operation
     const imgRect = img.getBoundingClientRect();

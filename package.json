@@ -14,7 +14,7 @@
     "dev": "electronmon .",
     "exif-kill": "taskkill /IM exiftool.exe /F",
     "exif-find": "tasklist | findstr exiftool",
-    "package-win": "electron-packager"
+    "package": "node scripts/build-package.js"
   },
   "repository": {
     "type": "git",

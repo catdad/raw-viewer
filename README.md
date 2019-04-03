@@ -1,4 +1,4 @@
-# 🖼 raw viewer
+# 📸 raw viewer
 
 [![travis][travis.svg]][travis.link]
 [![appveyor][appveyor.svg]][appveyor.link]

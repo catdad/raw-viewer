@@ -43,8 +43,8 @@ function createWindow () {
   config.read().then(function () {
     // Create the browser window.
     mainWindow = new BrowserWindow({
-      width: config.getProp('window.width') || 800,
-      height: config.getProp('window.height') || 600,
+      width: config.getProp('window.width') || 1000,
+      height: config.getProp('window.height') || 800,
       webPreferences: {
         nodeIntegration: true,
         nodeIntegrationInWorker: true

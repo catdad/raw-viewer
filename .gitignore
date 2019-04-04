@@ -39,3 +39,4 @@ coverage/
 .raw-viewer-config.json
 temp/
 third-party/exiftool/
+dist/

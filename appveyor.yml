@@ -14,8 +14,12 @@ test_script:
   - set FORCE_COLOR=1
   - npm test
 
-build_script:
+after_test:
+  - echo Building Windows package
   - npm run package
-
-after_build:
   - dir dist
+
+build: off
+
+artifacts:
+  - path: 'dist\*.zip'

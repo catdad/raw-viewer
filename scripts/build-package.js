@@ -7,6 +7,9 @@ const del = require('del');
 const root = require('rootrequire');
 const packager = require('electron-packager');
 const archiver = require('archiver');
+const argv = require('yargs-parser')(process.argv.slice(2));
+const version = argv.version || null;
+const tag = argv.tag ? `v${argv.tag}` : null;
 
 const pkg = require('../package.json');
 
@@ -17,6 +20,8 @@ const dirs = {
   darwin: path.resolve(root, `dist/${pkg.productName}-darwin-x64`),
   linux: path.resolve(root, `dist/${pkg.productName}-linux-x64`),
 };
+
+const name = `Raw-Viewer-${version || tag || `v${pkg.version}-DEV`}`;
 
 const wrapHook = hook => {
   return (buildPath, electronVersion, platform, arch, callback) => {
@@ -36,7 +41,7 @@ const ignore = [
 
 const winZip = async () => {
   console.log('Creating Windows portable zip');
-  const filepath = `dist/Raw-Viewer-v${pkg.version}-Windows-portable.zip`;
+  const filepath = `dist/${name}-Windows-portable.zip`;
   await fs.remove(filepath);
   await fs.ensureFile(filepath);
 

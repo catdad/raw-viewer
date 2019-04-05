@@ -40,8 +40,9 @@ const ignore = [
 ];
 
 const winZip = async () => {
-  console.log('Creating Windows portable zip');
   const filepath = `dist/${name}-Windows-portable.zip`;
+  console.log('Creating Windows portable zip', filepath);
+
   await fs.remove(filepath);
   await fs.ensureFile(filepath);
 

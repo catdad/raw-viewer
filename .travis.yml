@@ -17,9 +17,7 @@ install:
 
 script:
   - npm run citest
-  - npm run package -- --version $TRAVIS_COMMIT --tag $TRAVIS_TAG
+  - npm run package -- --version $TRAVIS_COMMIT --tag $TRAVIS_TAG --upload
 
 after_success:
   - ls -la dist
-  - 'curl -v -F "file=@$(echo dist/Raw-Viewer*.zip | head -n 1)" -o res.txt https://file.io/'
-  - cat res.txt

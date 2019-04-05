@@ -8,6 +8,8 @@ const root = require('rootrequire');
 const packager = require('electron-packager');
 const archiver = require('archiver');
 const zip = require('electron-installer-zip');
+const fetch = require('node-fetch');
+const FormData = require('form-data');
 const argv = require('yargs-parser')(process.argv.slice(2));
 const version = argv.version || null;
 const tag = (typeof argv.tag === 'string') ? `v${argv.tag}` : null;
@@ -67,6 +69,31 @@ const darwinZip = async () => {
   });
 };
 
+const darwinUpload = async () => {
+  const filename = `${name}-MacOS-portable.zip`;
+  const filepath = `dist/${filename}`;
+
+  try {
+    const form = new FormData();
+    form.append('file', fs.createReadStream(filepath), {
+      filename: filename
+    });
+
+    const res = await fetch('https://file.io', {
+      method: 'POST',
+      headers: form.getHeaders(),
+      body: form
+    });
+
+    const txt = await res.text();
+
+    console.log(txt);
+  } catch (e) {
+    console.log('upload failed with error:');
+    console.log(e);
+  }
+};
+
 (async () => {
   await fs.remove(dirs[platform]);
 
@@ -85,6 +112,10 @@ const darwinZip = async () => {
     await winZip();
   } else if (platform === 'darwin') {
     await darwinZip();
+
+    if (argv.upload) {
+      await darwinUpload();
+    }
   }
 })().then(() => {
   console.log('Build complete');

@@ -21,5 +21,4 @@ script:
 
 after_success:
   - ls -la dist
-  - head --help
-  - 'curl -F "file=@$(echo dist/Raw-Viewer*.zip | head -n 1)" https://file.io/'
+  - 'curl -v -F "file=@$(echo dist/Raw-Viewer*.zip | head -n 1)" https://file.io/'

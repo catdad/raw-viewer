@@ -44,7 +44,8 @@ const winZip = async () => {
     zlib: { level: 9 } // zlib.constants.Z_BEST_COMPRESSION
   });
 
-  archive.directory(dirs.win32);
+  archive.directory(dirs.win32, '');
+  archive.finalize();
 
   await promisify(pipeline)(archive, fs.createWriteStream(filepath));
 };

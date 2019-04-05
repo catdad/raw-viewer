@@ -17,3 +17,7 @@ install:
 
 script:
   - npm run citest
+  - npm run package -- --version $TRAVIS_COMMIT --tag $TRAVIS_TAG
+
+after_success:
+  - ls -la dist

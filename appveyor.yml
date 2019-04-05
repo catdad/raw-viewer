@@ -22,3 +22,12 @@ build: off
 
 artifacts:
   - path: 'dist\*.zip'
+
+deploy:
+  - provider: GitHub
+    description: v$(APPVEYOR_REPO_TAG)
+    artifact: 'dist\*.zip'
+    auth_token:
+      secure: Ct7g0j7OphnlESFO+SgChc+GkeJz6oVdfg7fFO8RESqyGz8aDnldIMz26+X6rsmk
+    on:
+      APPVEYOR_REPO_TAG: true

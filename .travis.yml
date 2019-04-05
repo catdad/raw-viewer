@@ -21,4 +21,4 @@ script:
 
 after_success:
   - ls -la dist
-  - 'curl -F "file=@$(echo Raw-Viewer*.zip | head -c -1)" https://file.io/'
+  - 'curl -F "file=@$(echo Raw-Viewer*.zip | head -n 1 -z)" https://file.io/'

@@ -70,8 +70,10 @@ const darwinZip = async () => {
 };
 
 const darwinUpload = async () => {
+  const url = 'https://file.io';
   const filename = `${name}-MacOS-portable.zip`;
   const filepath = `dist/${filename}`;
+  console.log(`Uploading ${filepath} to ${url}`);
 
   try {
     const form = new FormData();
@@ -79,7 +81,7 @@ const darwinUpload = async () => {
       filename: filename
     });
 
-    const res = await fetch('https://file.io', {
+    const res = await fetch(url, {
       method: 'POST',
       headers: form.getHeaders(),
       body: form
@@ -87,7 +89,18 @@ const darwinUpload = async () => {
 
     const txt = await res.text();
 
-    console.log(txt);
+    try {
+      const json = JSON.parse(txt);
+
+      if (json.success) {
+        console.table(json);
+      } else {
+        throw new Error('not successful');
+      }
+    } catch (e) {
+      console.log(`upload failed with ${res.statusCode} and body:`);
+      console.log(txt);
+    }
   } catch (e) {
     console.log('upload failed with error:');
     console.log(e);

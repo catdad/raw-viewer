@@ -7,6 +7,7 @@ const del = require('del');
 const root = require('rootrequire');
 const packager = require('electron-packager');
 const archiver = require('archiver');
+const zip = require('electron-installer-zip');
 const argv = require('yargs-parser')(process.argv.slice(2));
 const version = argv.version || null;
 const tag = (typeof argv.tag === 'string') ? `v${argv.tag}` : null;
@@ -56,6 +57,16 @@ const winZip = async () => {
   await promisify(pipeline)(archive, fs.createWriteStream(filepath));
 };
 
+const darwinZip = async () => {
+  const filepath = `dist/${name}-MacOS-portable.zip`;
+  console.log('Creating MacOS portable zip', filepath);
+
+  await promisify(zip)({
+    dir: path.resolve(dirs.darwin, 'Raw Viewer.app'),
+    out: filepath
+  });
+};
+
 (async () => {
   await fs.remove(dirs[platform]);
 
@@ -72,6 +83,8 @@ const winZip = async () => {
 
   if (platform === 'win32') {
     await winZip();
+  } else if (platform === 'darwin') {
+    await darwinZip();
   }
 })().then(() => {
   console.log('Build complete');

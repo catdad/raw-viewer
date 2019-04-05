@@ -9,7 +9,7 @@ const packager = require('electron-packager');
 const archiver = require('archiver');
 const argv = require('yargs-parser')(process.argv.slice(2));
 const version = argv.version || null;
-const tag = argv.tag ? `v${argv.tag}` : null;
+const tag = (typeof argv.tag === 'string') ? `v${argv.tag}` : null;
 
 const pkg = require('../package.json');
 
@@ -21,7 +21,7 @@ const dirs = {
   linux: path.resolve(root, `dist/${pkg.productName}-linux-x64`),
 };
 
-const name = `Raw-Viewer-${version || tag || `v${pkg.version}-DEV`}`;
+const name = `Raw-Viewer-${tag || version || `v${pkg.version}-DEV`}`;
 
 const wrapHook = hook => {
   return (buildPath, electronVersion, platform, arch, callback) => {

@@ -14,4 +14,10 @@ test_script:
   - set FORCE_COLOR=1
   - npm test
 
+build_script:
+  - npm run package
+
+after_build:
+  - dir dist
+
 build: off

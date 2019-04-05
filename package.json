@@ -38,6 +38,7 @@
     "trash": "^4.3.0"
   },
   "devDependencies": {
+    "archiver": "^3.0.0",
     "chai": "^4.2.0",
     "chalk": "^2.4.2",
     "del": "^4.1.0",

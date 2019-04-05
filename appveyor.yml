@@ -16,7 +16,8 @@ test_script:
 
 after_test:
   - echo Building Windows package
-  - npm run package
+  - set
+  - npm run package -- --version %APPVEYOR_REPO_COMMIT% --tag %APPVEYOR_REPO_TAG_NAME%
   - dir dist
 
 build: off

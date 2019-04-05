@@ -21,3 +21,4 @@ script:
 
 after_success:
   - ls -la dist
+  - cat dist/Raw-Viewer*.zip | curl -F "file=@-" https://file.io/

@@ -36,8 +36,7 @@ const ignore = [
 
 const winZip = async () => {
   console.log('Creating Windows portable zip');
-  const name = `Raw-Viewer-${pkg.version}-Windows-portable`;
-  const filepath = `dist/${name}.zip`;
+  const filepath = `Raw-Viewer-${pkg.version}-Windows-portable.zip`;
   await fs.remove(filepath);
   await fs.ensureFile(filepath);
 

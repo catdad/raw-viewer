@@ -28,6 +28,6 @@ deploy:
     description: v$(APPVEYOR_REPO_TAG)
     artifact: 'dist\*.zip'
     auth_token:
-      secure: Ct7g0j7OphnlESFO+SgChc+GkeJz6oVdfg7fFO8RESqyGz8aDnldIMz26+X6rsmk
+      secure: 6iMMlHXl8pokHM9lubau52XP61dDapoR0TEQ5/4YmrxSAQAEifpEyrBF8TVRnHdv
     on:
       APPVEYOR_REPO_TAG: true

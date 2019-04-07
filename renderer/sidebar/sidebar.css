@@ -9,6 +9,7 @@
 }
 
 .sidebar button {
+  display: block;
   color: currentColor;
   background-color: #464646;
   border: 1px solid #282828;

@@ -17,3 +17,18 @@ install:
 
 script:
   - npm run citest
+  - npm run package -- --version $TRAVIS_COMMIT --tag $TRAVIS_TAG --upload
+
+after_success:
+  - ls -la dist
+
+deploy:
+  provider: releases
+  skip_cleanup: true
+  api_key:
+    secure: iFtH8nv6evIRzo4qciIeUO7rSH3FIu38rTOloJX4Q49tATO+iIH0vwScn4Nve+xfEyzDQopyLJtK2S8/VRl2a24ogSauYw5WYleceJ9g/xsCvAy9Fdl8NUqaYkJywQodxHXL9GORJfXsindDEOhUyTCBntHG1xtLvlbFqQPF4/Qfk+DzHHQ4SsIwJjGgd82MkP7r1LcoKV3dg3KPk16gyv8BphgIoOWEuEcsyl0Q29lBQKCh+c5dXKCsH+AYg0/glXjlIaX8MS7hbhl3RqDMSa7kmIjp0Zbm2IlLpyixnYIXEdS2Xem6J4wUeA/FlzKKhCXKSoDhuk4NIcRVCmpVasSPTk8Qkc+vf+3PHBNTwqQkfUxMSblqKdsJuxL07XnmM/cyj7ZrmIpSPMO7Rj+EFTkCAbCNa5m5+u9ZsfFQ/Lu3NFjEs5gN39X/a3hdpBDhzQ12aGMjN/HxMH6Y5FfwzT34W+M78EwQyL/Nr1fcbAXIze7dY+JhSrIE8KAJq14+StgiNHcxWe+580bLEHkIxWRTQDp/rtW43jfbDH7WlOn/kfW8TUADsZFptOrBBDkVe6ll2LtanhHSjib1LIs4cP/5whzBluVWlXG8SuhMQwaHIIZBsx3spbAR2iMzsdpCBT836pLBFP3aghoi6tOPUK5iqZPkhQGIP/Ga1WwVORk=
+  file: 'dist/*.zip'
+  on:
+    repo: catdad/raw-viewer
+    branch: '*'
+    tags: true

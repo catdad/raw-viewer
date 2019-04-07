@@ -7,6 +7,9 @@ const del = require('del');
 const root = require('rootrequire');
 const packager = require('electron-packager');
 const archiver = require('archiver');
+const zip = require('electron-installer-zip');
+const fetch = require('node-fetch');
+const FormData = require('form-data');
 const argv = require('yargs-parser')(process.argv.slice(2));
 const version = argv.version || null;
 const tag = (typeof argv.tag === 'string') ? `v${argv.tag}` : null;
@@ -56,6 +59,54 @@ const winZip = async () => {
   await promisify(pipeline)(archive, fs.createWriteStream(filepath));
 };
 
+const darwinZip = async () => {
+  const filepath = `dist/${name}-MacOS-portable.zip`;
+  console.log('Creating MacOS portable zip', filepath);
+
+  await promisify(zip)({
+    dir: path.resolve(dirs.darwin, 'Raw Viewer.app'),
+    out: filepath
+  });
+};
+
+const darwinUpload = async () => {
+  const url = 'https://file.io';
+  const filename = `${name}-MacOS-portable.zip`;
+  const filepath = `dist/${filename}`;
+  console.log(`Uploading ${filepath} to ${url}`);
+
+  try {
+    const form = new FormData();
+    form.append('file', fs.createReadStream(filepath), {
+      filename: filename
+    });
+
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: form.getHeaders(),
+      body: form
+    });
+
+    const txt = await res.text();
+
+    try {
+      const json = JSON.parse(txt);
+
+      if (json.success) {
+        console.table(json);
+      } else {
+        throw new Error('not successful');
+      }
+    } catch (e) {
+      console.log(`upload failed with ${res.statusCode} and body:`);
+      console.log(txt);
+    }
+  } catch (e) {
+    console.log('upload failed with error:');
+    console.log(e);
+  }
+};
+
 (async () => {
   await fs.remove(dirs[platform]);
 
@@ -72,6 +123,12 @@ const winZip = async () => {
 
   if (platform === 'win32') {
     await winZip();
+  } else if (platform === 'darwin') {
+    await darwinZip();
+
+    if (argv.upload) {
+      await darwinUpload();
+    }
   }
 })().then(() => {
   console.log('Build complete');

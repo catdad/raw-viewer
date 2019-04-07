@@ -25,7 +25,7 @@ artifacts:
 
 deploy:
   - provider: GitHub
-    description: v$(APPVEYOR_REPO_TAG)
+    description: v$(APPVEYOR_REPO_TAG_NAME)
     artifact: 'dist\*.zip'
     auth_token:
       secure: 6iMMlHXl8pokHM9lubau52XP61dDapoR0TEQ5/4YmrxSAQAEifpEyrBF8TVRnHdv

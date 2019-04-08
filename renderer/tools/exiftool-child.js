@@ -195,11 +195,16 @@ async function setRating(filepath, rating = 0) {
   return await exiftool('set:rating', { filepath, rating });
 }
 
+async function copyExif(filepath, targetpath) {
+  return await exiftool('copy:exif', { filepath, targetpath });
+}
+
 module.exports = {
   isPlainImage,
   readMeta,
   readShortMeta,
   readJpegFromMeta,
   readThumbFromMeta,
-  setRating
+  setRating,
+  copyExif
 };

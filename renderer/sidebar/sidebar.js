@@ -68,7 +68,7 @@ module.exports = function ({ events }) {
   var elem = document.createElement('div');
   elem.className = name;
 
-  async function saveImage({ imageUrl, name }) {
+  async function saveImage({ filepath, imageUrl, name }) {
     const outfile = await dialog.showSaveDialog({
       defaultPath: name
     });
@@ -77,6 +77,8 @@ module.exports = function ({ events }) {
     const buffer = Buffer.from(base64, 'base64');
 
     await fs.outputFile(outfile, buffer);
+
+    await exiftool.copyExif(filepath, outfile);
   }
 
   async function loadInfo({ filepath, imageUrl }) {
@@ -123,7 +125,7 @@ module.exports = function ({ events }) {
     download.innerHTML = 'Save preview image';
     download.onclick = async () => {
       try {
-        await saveImage({ imageUrl, name });
+        await saveImage({ filepath, imageUrl, name });
       } catch (e) {
         events.emit('error', e);
       }

@@ -73,11 +73,24 @@ module.exports = function ({ events }) {
       defaultPath: name
     });
 
-    const base64 = imageUrl.split(';base64,').pop();
-    const buffer = Buffer.from(base64, 'base64');
+    if (imageUrl === filepath) {
+      await log.timing(
+        `copy jpeg to ${outfile}`,
+        async () => await fs.copy(filepath, outfile)
+      );
+      return;
+    }
 
-    await fs.outputFile(outfile, buffer);
-    await exiftool.copyExif(filepath, outfile);
+    await log.timing(
+      `save jpeg preview to ${outfile}`,
+      async () => {
+        const base64 = imageUrl.split(';base64,').pop();
+        const buffer = Buffer.from(base64, 'base64');
+
+        await fs.outputFile(outfile, buffer);
+        await exiftool.copyExif(filepath, outfile);
+      }
+    );
   }
 
   async function loadInfo({ filepath, imageUrl }) {

@@ -77,7 +77,6 @@ module.exports = function ({ events }) {
     const buffer = Buffer.from(base64, 'base64');
 
     await fs.outputFile(outfile, buffer);
-
     await exiftool.copyExif(filepath, outfile);
   }
 

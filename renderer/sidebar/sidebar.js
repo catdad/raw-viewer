@@ -1,5 +1,6 @@
 const path = require('path');
-const fs = require('fs');
+const fs = require('fs-extra');
+const { dialog } = require('electron').remote;
 
 const name = 'sidebar';
 const style = fs.readFileSync(path.resolve(__dirname, `${name}.css`), 'utf8');
@@ -67,7 +68,32 @@ module.exports = function ({ events }) {
   var elem = document.createElement('div');
   elem.className = name;
 
-  async function loadInfo({ filepath }) {
+  async function saveImage({ filepath, imageUrl, name }) {
+    const outfile = await dialog.showSaveDialog({
+      defaultPath: name
+    });
+
+    if (imageUrl === filepath) {
+      await log.timing(
+        `copy jpeg to ${outfile}`,
+        async () => await fs.copy(filepath, outfile)
+      );
+      return;
+    }
+
+    await log.timing(
+      `save jpeg preview to ${outfile}`,
+      async () => {
+        const base64 = imageUrl.split(';base64,').pop();
+        const buffer = Buffer.from(base64, 'base64');
+
+        await fs.outputFile(outfile, buffer);
+        await exiftool.copyExif(filepath, outfile);
+      }
+    );
+  }
+
+  async function loadInfo({ filepath, imageUrl }) {
     const meta = await log.timing(
       `exif ${filepath}`,
       async () => await exiftool.readMeta(filepath)
@@ -100,13 +126,25 @@ module.exports = function ({ events }) {
       return p;
     }).forEach(elem => fragment.appendChild(elem));
 
-    const button = document.createElement('button');
-    button.innerHTML = 'Show all metadata';
-    button.onclick = () => {
+    const showFullMeta = document.createElement('button');
+    showFullMeta.innerHTML = 'Show all metadata';
+    showFullMeta.onclick = () => {
       events.emit('modal', { content: render(meta) });
     };
 
-    fragment.appendChild(button);
+    const download = document.createElement('button');
+    const name = path.basename(filepath, path.extname(filepath)) + '.jpg';
+    download.innerHTML = 'Save preview image';
+    download.onclick = async () => {
+      try {
+        await saveImage({ filepath, imageUrl, name });
+      } catch (e) {
+        events.emit('error', e);
+      }
+    };
+
+    fragment.appendChild(showFullMeta);
+    fragment.appendChild(download);
 
     elem.innerHTML = '';
     elem.appendChild(fragment);

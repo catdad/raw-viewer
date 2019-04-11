@@ -17,6 +17,8 @@ RAW viewer is a desktop app which allows you to quickly cull your photos. You ca
 
 All ratings are saved directly to the RAW file, so when you are done culling, you can import the remaining photos into Lightroom (or any other software) and all the ratings will show up.
 
+Maybe you are under the impression that viewing RAW photos in your favorite program is already fast? Or maybe you've been told that RAW photos are really hard to work with and slow is just the nature of RAW photos? Well, RAW viewer is here to tell you that all of that is a lie and culling your photos can be fast!
+
 # Download
 
 You can get the latest Windows and MacOS versions here: https://github.com/catdad/raw-viewer/releases/latest
@@ -29,7 +31,7 @@ If you no longer wish to use this app, you can just delete the folder where you 
 
 # MacOS
 
-While a MacOS package is available, I do not currently have a Mac so I was not able to test the package (though the build system does run tests on a Mac). If you are able to test the app and improve the installation and uninstallation instructions here, please [open a new issue](https://github.com/catdad/raw-viewer/issues/new) or submit a pull request. All help is appreciated!
+While a MacOS package is available, I do not currently have a Mac so I was not able to fully test the package (though the build system does run tests on a Mac). If you are able to test the app and improve the installation and uninstallation instructions here, please [open a new issue](https://github.com/catdad/raw-viewer/issues/new) or submit a pull request. All help is appreciated!
 
 What _should_ work is simply unzipping the package anywhere and running `Raw Viewer.app`.
 

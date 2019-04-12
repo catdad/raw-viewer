@@ -199,6 +199,12 @@ async function copyExif(filepath, targetpath) {
   return await exiftool('copy:exif', { filepath, targetpath });
 }
 
+async function rawRender(filepath) {
+  const tiff = Buffer.from(await dcraw.exec('tiffBuffer', [filepath]));
+  const jpeg = await sharp(tiff).jpeg().toBuffer();
+  return bufferToUrl(jpeg);
+}
+
 module.exports = {
   isPlainImage,
   readMeta,
@@ -206,5 +212,6 @@ module.exports = {
   readJpegFromMeta,
   readThumbFromMeta,
   setRating,
-  copyExif
+  copyExif,
+  rawRender
 };

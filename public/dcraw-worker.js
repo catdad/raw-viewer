@@ -35,6 +35,22 @@ async function imageUrl(filepath) {
   return data;
 }
 
+async function tiffBuffer(filepath) {
+  return await log.timing('tiff', async () => {
+    const file = await readFileBuffer(filepath);
+
+    // read image from raw data
+    const tiff = dcraw(file, {
+      setNoAutoBrightnessMode: true,
+      useCameraWhiteBalance: true,
+      exportAsTiff: true,
+      setFourColorMode: true,
+    });
+
+    return tiff;
+  });
+}
+
 function exec(data) {
   function onDone(err, res) {
     const result = {
@@ -65,6 +81,10 @@ function exec(data) {
 
   if (data.name === 'imageUrl') {
     return execPromise(imageUrl(...data.args));
+  }
+
+  if (data.name === 'tiffBuffer') {
+    return execPromise(tiffBuffer(...data.args));
   }
 
   onDone(new Error(`${data.name} is an unknown worker command`));

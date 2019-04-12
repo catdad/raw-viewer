@@ -143,8 +143,23 @@ module.exports = function ({ events }) {
       }
     };
 
+    const rawRender = document.createElement('button');
+    rawRender.innerHTML = 'Render from RAW';
+    rawRender.onclick = async () => {
+      const raw = await exiftool.rawRender(filepath);
+
+      console.log(raw.slice(0, 100));
+
+      events.emit('image:load', {
+        filepath: filepath,
+        imageUrl: raw,
+        rotation: 0
+      });
+    };
+
     fragment.appendChild(showFullMeta);
     fragment.appendChild(download);
+    fragment.appendChild(rawRender);
 
     elem.innerHTML = '';
     elem.appendChild(fragment);

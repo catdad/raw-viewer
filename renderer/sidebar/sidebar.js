@@ -148,8 +148,6 @@ module.exports = function ({ events }) {
     rawRender.onclick = async () => {
       const raw = await exiftool.rawRender(filepath);
 
-      console.log(raw.slice(0, 100));
-
       events.emit('image:load', {
         filepath: filepath,
         imageUrl: raw,

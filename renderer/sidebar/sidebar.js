@@ -146,6 +146,21 @@ module.exports = function ({ events }) {
     fragment.appendChild(showFullMeta);
     fragment.appendChild(download);
 
+    if (process.env.RAW_VIEWER_DEV) {
+      const rawRender = document.createElement('button');
+      rawRender.innerHTML = 'Render from RAW';
+      rawRender.onclick = async () => {
+        const raw = await exiftool.rawRender(filepath);
+
+        events.emit('image:load', {
+          filepath: filepath,
+          imageUrl: raw,
+          rotation: 0
+        });
+      };
+      fragment.appendChild(rawRender);
+    }
+
     elem.innerHTML = '';
     elem.appendChild(fragment);
   }

@@ -6,6 +6,7 @@ const ipc = require('electron').ipcRenderer;
 
 const log = require('../../lib/log.js')('exiftool-child');
 const dcraw = require('./dcraw.js')(2);
+const dcrawBin = require('./dcraw-bin.js');
 const bufferToUrl = require('./bufferToUrl.js');
 
 const unknown = (function () {
@@ -199,6 +200,13 @@ async function copyExif(filepath, targetpath) {
   return await exiftool('copy:exif', { filepath, targetpath });
 }
 
+async function rawRender(filepath) {
+  return await log.timing(`render ${filepath} from RAW`, async () => {
+    const jpeg = await dcrawBin(filepath, { type: 'raw' });
+    return bufferToUrl(jpeg);
+  });
+}
+
 module.exports = {
   isPlainImage,
   readMeta,
@@ -206,5 +214,6 @@ module.exports = {
   readJpegFromMeta,
   readThumbFromMeta,
   setRating,
-  copyExif
+  copyExif,
+  rawRender
 };

@@ -22,7 +22,7 @@ const responseStream = async url => {
   const res = await fetch(url);
 
   if (!res.ok) {
-    throw new Error(`failed response ${res.statusCode} ${res.statusMessage}`);
+    throw new Error(`failed response: ${res.status} ${res.statusText}`);
   }
 
   return res.body;
@@ -76,9 +76,9 @@ const unzipPromise = async (stream, outdir) => {
     }));
   }
 })().then(() => {
-  console.log('exiftool fetched successfully');
+  console.log(`exiftool v${version} fetched successfully`);
 }).catch(err => {
-  console.error('error fetching exiftool');
+  console.error(`error fetching exiftool v${version}`);
   console.error(err);
   process.exitCode = 1;
 });

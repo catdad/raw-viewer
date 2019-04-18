@@ -18,6 +18,9 @@ ipc.on('message', function (ev, data) {
     case data.type === 'config-read':
       events.emit('config', data);
       break;
+    case data.type === 'event':
+      events.emit(data.name, data.data);
+      break;
   }
 });
 

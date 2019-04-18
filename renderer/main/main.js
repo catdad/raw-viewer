@@ -59,6 +59,7 @@ module.exports = function (elem) {
   render('sidebar', elem);
   render('controls', elem);
   render('image', elem);
+  render('about', elem);
   render('dropzone', elem);
   render('toast', elem);
   render('modal', elem);

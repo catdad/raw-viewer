@@ -7,10 +7,30 @@ const div = (className) => {
 
 const text = (str) => document.createTextNode(str);
 
+const p = (str) => {
+  const el = document.createElement('p');
+  el.appendChild(text(str));
+  return el;
+};
+
 const h1 = (str) => {
   const el = document.createElement('h1');
   el.appendChild(text(str));
 
+  return el;
+};
+
+const link = (str, href) => {
+  const a = document.createElement('a');
+  a.href = href;
+  a.appendChild(text(str));
+
+  return a;
+};
+
+const linkBlock = (className, str, href) => {
+  const el = div(className);
+  el.appendChild(link(str, href));
   return el;
 };
 
@@ -23,6 +43,9 @@ const empty = (elem) => {
 module.exports = {
   div,
   text,
+  p,
   h1,
+  link,
+  linkBlock,
   empty
 };

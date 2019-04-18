@@ -9,13 +9,16 @@ try {
 const path = require('path');
 const url = require('url');
 
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow, Menu, ipcMain } = require('electron');
 
 const config = require('./lib/config.js');
+const menu = require('./lib/menu.js');
 const exiftool = require('./lib/exiftool.js');
 const log = require('./lib/log.js')('main');
 
 log.info(`electron node version: ${process.version}`);
+
+Menu.setApplicationMenu(menu);
 
 let mainWindow;
 

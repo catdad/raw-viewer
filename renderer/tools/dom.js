@@ -1,3 +1,5 @@
+const { shell } = require('electron');
+
 const div = (className) => {
   const el = document.createElement('div');
   el.className = className;
@@ -24,6 +26,11 @@ const link = (str, href) => {
   const a = document.createElement('a');
   a.href = href;
   a.appendChild(text(str));
+
+  a.onclick = (ev) => {
+    ev.preventDefault();
+    shell.openExternal(href);
+  };
 
   return a;
 };

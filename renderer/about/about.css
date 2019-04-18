@@ -13,7 +13,13 @@
 }
 
 .modal .about a {
-  color: #9eeaf9;
+  color: #ffda00;
+  text-decoration: none;
+  opacity: 0.9;
+}
+.modal .about a:hover {
+  opacity: 1;
+  text-decoration: underline;
 }
 
 .modal .about .head,

@@ -22,9 +22,9 @@ module.exports = ({ events }) => {
   body.appendChild(dom.p('Powered by the fine open source projects:'));
 
   [
+    dom.linkBlock('credit', 'Electron', 'https://electronjs.org/'),
     dom.linkBlock('credit', 'DCRAW', 'https://www.cybercom.net/~dcoffin/dcraw/'),
     dom.linkBlock('credit', 'ExifTool', 'https://www.sno.phy.queensu.ca/~phil/exiftool/'),
-    dom.linkBlock('credit', 'Electron', 'https://electronjs.org/'),
   ].forEach(link => body.appendChild(link));
 
   [

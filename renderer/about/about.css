@@ -1,5 +1,10 @@
 .modal .about {
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  min-height: 100%;
 }
 
 .modal .about .credit {
@@ -9,4 +14,13 @@
 
 .modal .about a {
   color: #9eeaf9;
+}
+
+.modal .about .head,
+.modal .about .foot {
+  flex: 0;
+}
+
+.modal .about .body {
+  flex: auto;
 }

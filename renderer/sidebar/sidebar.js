@@ -73,6 +73,11 @@ module.exports = function ({ events }) {
       defaultPath: name
     });
 
+    if (!outfile) {
+      // user probably pressed Cancel, so do nothing
+      return;
+    }
+
     if (imageUrl === filepath) {
       await log.timing(
         `copy jpeg to ${outfile}`,

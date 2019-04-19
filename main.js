@@ -8,6 +8,8 @@ try {
 
 const path = require('path');
 const url = require('url');
+const EventEmitter = require('events');
+const events = new EventEmitter();
 
 const { app, BrowserWindow, Menu, ipcMain } = require('electron');
 
@@ -18,7 +20,7 @@ const log = require('./lib/log.js')('main');
 
 log.info(`electron node version: ${process.version}`);
 
-Menu.setApplicationMenu(menu);
+Menu.setApplicationMenu(menu(events));
 
 let mainWindow;
 
@@ -85,6 +87,13 @@ function createWindow () {
       mainWindow.webContents.openDevTools();
     }
 
+    events.on('ipcevent', ({ name, data = null }) => {
+      mainWindow.webContents.send('message', {
+        type: 'event',
+        name, data
+      });
+    });
+
     exiftool.open(
       ipcMain.on.bind(ipcMain),
       mainWindow.webContents.send.bind(mainWindow.webContents)
@@ -118,7 +127,9 @@ app.on('ready', createWindow);
 app.on('window-all-closed', function () {
   // On OS X it is common for applications and their menu bar
   // to stay active until the user quits explicitly with Cmd + Q
-  if (process.platform !== 'darwin') {
+  if (process.platform === 'darwin') {
+    events.removeAllListeners();
+  } else {
     app.quit();
   }
 });

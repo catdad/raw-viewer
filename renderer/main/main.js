@@ -18,6 +18,9 @@ ipc.on('message', function (ev, data) {
     case data.type === 'config-read':
       events.emit('config', data);
       break;
+    case data.type === 'event':
+      events.emit(data.name, data.data);
+      break;
   }
 });
 
@@ -56,6 +59,7 @@ module.exports = function (elem) {
   render('sidebar', elem);
   render('controls', elem);
   render('image', elem);
+  render('about', elem);
   render('dropzone', elem);
   render('toast', elem);
   render('modal', elem);

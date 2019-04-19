@@ -1,0 +1,32 @@
+.modal .about {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  min-height: 100%;
+}
+
+.modal .about .credit {
+  font-size: 1.6rem;
+  margin: 10px auto;
+}
+
+.modal .about a {
+  color: #ffda00;
+  text-decoration: none;
+  opacity: 0.9;
+}
+.modal .about a:hover {
+  opacity: 1;
+  text-decoration: underline;
+}
+
+.modal .about .head,
+.modal .about .foot {
+  flex: 0;
+}
+
+.modal .about .body {
+  flex: auto;
+}

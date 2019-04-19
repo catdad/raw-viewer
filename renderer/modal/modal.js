@@ -5,23 +5,11 @@ const name = 'modal';
 const style = fs.readFileSync(path.resolve(__dirname, `${name}.css`), 'utf8');
 
 const log = require('../../lib/log.js')(name);
-
-const div = (className) => {
-  const el = document.createElement('div');
-  el.className = className;
-
-  return el;
-};
-
-const empty = (elem) => {
-  while (elem.firstChild) {
-    elem.removeChild(elem.firstChild);
-  }
-};
+const dom = require('../tools/dom.js');
 
 module.exports = ({ events }) => {
-  const elem = div(`${name} hidden`);
-  const container = div(`${name}-container scrollbar`);
+  const elem = dom.div(`${name} hidden`);
+  const container = dom.div(`${name}-container scrollbar`);
   elem.appendChild(container);
 
   elem.addEventListener('click', () => {
@@ -33,7 +21,7 @@ module.exports = ({ events }) => {
   });
 
   events.on('modal', ({ content = document.createDocumentFragment(), str }) => {
-    empty(container);
+    dom.empty(container);
 
     if (str) {
       content = document.createDocumentFragment();

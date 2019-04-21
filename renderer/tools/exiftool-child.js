@@ -5,7 +5,6 @@ const prettyBytes = require('pretty-bytes');
 const ipc = require('electron').ipcRenderer;
 
 const log = require('../../lib/log.js')('exiftool-child');
-const dcraw = require('./dcraw.js')(2);
 const dcrawBin = require('./dcraw-bin.js');
 const bufferToUrl = require('./bufferToUrl.js');
 
@@ -120,23 +119,17 @@ async function resizeLargeJpeg({ filepath, buffer, length }) {
 }
 
 async function readJpegBufferFromMeta({ filepath, start, length }) {
-  let buffer;
-
   if (start && length) {
     // we can get a fast jpeg image
-    buffer = await log.timing(
-      `read jpeg ${filepath}`,
+    return await log.timing(
+      `read preview ${filepath}`,
       async () => await readFilePart({ filepath, start, length })
-    );
-  } else {
-    // we should fall back to dcraw - e.g. Canon 30D
-    buffer = await log.timing(
-      `read dcraw ${filepath}`,
-      async () => Buffer.from(await dcraw.exec('imageUint8Array', [filepath]))
     );
   }
 
-  return buffer;
+  return await log.timing(`dcraw extract preview ${filepath}`, async () => {
+    return await dcrawBin(filepath, { type: 'preview' });
+  });
 }
 
 async function readJpegFromMeta({ filepath, start, length, url }) {

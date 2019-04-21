@@ -124,6 +124,7 @@ module.exports = function ({ events }) {
       { key: 'Artist', gui: 'Artist' },
       { key: 'DateTimeOriginal', gui: 'Timestamp' },
       { key: 'Z-FileSize', gui: 'Size' },
+      { key: 'Z-JpgTagName', gui: 'Preview Tag' }
     ].filter(({ key }) => !!allMeta[key]).map(({ key, gui }) => {
       const p = document.createElement('p');
       p.appendChild(document.createTextNode(`${gui}: ${allMeta[key]}`));

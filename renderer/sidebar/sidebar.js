@@ -64,6 +64,11 @@ const derive = (meta) => {
   return derived;
 };
 
+const urlToBuffer = url => {
+  const base64 = url.split(';base64,').pop();
+  return Buffer.from(base64, 'base64');
+};
+
 module.exports = function ({ events }) {
   var elem = document.createElement('div');
   elem.className = name;
@@ -89,8 +94,7 @@ module.exports = function ({ events }) {
     await log.timing(
       `save jpeg preview to ${outfile}`,
       async () => {
-        const base64 = imageUrl.split(';base64,').pop();
-        const buffer = Buffer.from(base64, 'base64');
+        const buffer = urlToBuffer(imageUrl);
 
         await fs.outputFile(outfile, buffer);
         await exiftool.copyExif(filepath, outfile);

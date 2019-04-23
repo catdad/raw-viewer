@@ -1,6 +1,7 @@
 const path = require('path');
 const fs = require('fs-extra');
 const sharp = require('sharp');
+const tempy = require('tempy');
 const prettyBytes = require('pretty-bytes');
 const ipc = require('electron').ipcRenderer;
 
@@ -200,6 +201,21 @@ async function rawRender(filepath) {
   });
 }
 
+async function writePreview(filepath, buffer) {
+  const jpeg = tempy.file({ extension: 'jpg' });
+  await fs.writeFile(jpeg, buffer);
+
+  try {
+    await log.timing(`write preview to ${filepath}`, async () => {
+      return await exiftool('set:preview', { filepath, jpeg });
+    });
+  } catch (e) {
+    throw e;
+  } finally {
+    await fs.remove(jpeg);
+  }
+}
+
 module.exports = {
   isPlainImage,
   readMeta,
@@ -208,5 +224,6 @@ module.exports = {
   readThumbFromMeta,
   setRating,
   copyExif,
-  rawRender
+  rawRender,
+  writePreview
 };

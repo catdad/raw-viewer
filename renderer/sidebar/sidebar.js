@@ -162,6 +162,8 @@ module.exports = function ({ events }) {
       rawRender.onclick = async () => {
         const raw = await exiftool.rawRender(filepath);
 
+        await exiftool.writePreview(filepath, urlToBuffer(raw));
+
         events.emit('image:load', {
           filepath: filepath,
           imageUrl: raw,

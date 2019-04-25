@@ -46,7 +46,7 @@ jobs:
       install:
         - docker pull $IMAGE
         # leave the container running, we'll modify and reuse the same instance
-        - docker run -v $(pwd):/rv -w /rv --name agent $IMAGE bash > log.txt 2>&1
+        - docker run -v $(pwd):/rv -w /rv --name agent $IMAGE tail -f /dev/null > log.txt 2>&1
         # TODO don't sleep
         - sleep 10s
         - docker ps -a

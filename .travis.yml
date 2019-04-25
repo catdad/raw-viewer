@@ -47,8 +47,13 @@ jobs:
         - docker pull $IMAGE
         # leave the container running, we'll modify and reuse the same instance
         - docker run -v $(pwd):/rv -w /rv --name agent $IMAGE bash > log.txt 2>&1
+        # TODO don't sleep
+        - sleep 10s
+        - docker ps -a
         - docker exec agent cat /etc/*release
         - docker exec agent npm ci
       script:
         - docker exec agent npm test
         - docker exec agent npm lint
+      after_script:
+        - docker kill agent

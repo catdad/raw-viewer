@@ -1,6 +1,6 @@
 FROM ubuntu:18.04
 
-COPY . .
+COPY . /app
 
 ENV DEBIAN_FRONTEND noninteractive
 
@@ -13,6 +13,9 @@ RUN curl -sL https://deb.nodesource.com/setup_10.x | bash \
 
 RUN node -v
 RUN npm -v
+
+RUN cd /app
+RUN ls
 
 RUN npm ci
 RUN npm run citest

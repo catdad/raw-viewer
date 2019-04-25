@@ -5,13 +5,14 @@ COPY . .
 ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt update
-RUN wget -qO- https://deb.nodesource.com/setup_10.x | bash
-RUN apt install --yes build-essential gdebi-core wget xvfb nodejs
+RUN apt install --yes -q build-essential gdebi-core wget xvfb curl gnupg
 RUN wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 RUN gdebi --non-interactive google-chrome-stable_current_amd64.deb
+RUN curl -sL https://deb.nodesource.com/setup_10.x | bash \
+    && apt install --yes nodejs
 
-RUN echo node version $(node -v)
-RUN echo npm version $(npm -v)
+RUN node -v
+RUN npm -v
 
 RUN npm ci
 RUN npm run citest

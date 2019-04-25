@@ -48,4 +48,5 @@ jobs:
         - docker run $IMAGE cat /etc/*release
         - docker run -v $(pwd):/rv -w /rv $IMAGE npm ci
       script:
-        - docker run -v $(pwd):/rv -w /rv $IMAGE npm run citest
+        - docker run -v $(pwd):/rv -w /rv $IMAGE npm test
+        - docker run -v $(pwd):/rv -w /rv $IMAGE npm lint

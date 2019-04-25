@@ -13,7 +13,7 @@ addons:
       - xvfb
 
 env:
-  - IMAGE=electronuserland/builder
+  - IMAGE=node:10
 
 install:
   - npm ci
@@ -45,8 +45,10 @@ jobs:
         - docker
       install:
         - docker pull $IMAGE
-        - docker run $IMAGE cat /etc/*release
-        - docker run -v $(pwd):/rv -w /rv $IMAGE npm ci
+        # leave the container running, we'll modify and reuse the same instance
+        - docker run -v $(pwd):/rv -w /rv --name agent $IMAGE bash > log.txt 2>&1
+        - docker exec agent cat /etc/*release
+        - docker exec agent npm ci
       script:
-        - docker run -v $(pwd):/rv -w /rv $IMAGE npm test
-        - docker run -v $(pwd):/rv -w /rv $IMAGE npm lint
+        - docker exec agent npm test
+        - docker exec agent npm lint

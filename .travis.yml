@@ -44,14 +44,6 @@ jobs:
       services:
         - docker
       install:
-        - docker pull $IMAGE
-        # leave the container running, we'll modify and reuse the same instance
-        - docker run -v $(pwd):/rv -w /rv --name agent -d $IMAGE tail -f /dev/null
-        - docker ps -a
-        - docker exec agent cat /etc/*release
-        - docker exec agent npm ci
+        - echo .dockerbuild
       script:
-        - docker exec agent npm test
-        - docker exec agent npm lint
-      after_script:
-        - docker kill agent
+        - docker build -t raw-viewer-build - < .dockerbuild

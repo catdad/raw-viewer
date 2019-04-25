@@ -1,0 +1,16 @@
+FROM ubuntu:18.04
+
+COPY . .
+
+RUN apt-get install --yes build-essential gdebi-core
+RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+RUN gdebi --non-interactive google-chrome-stable_current_amd64.deb
+RUN wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash
+RUN nvm install 10
+
+RUN node -v
+RUN npm -v
+
+RUN npm ci
+RUN npm test
+RUN npm run lint

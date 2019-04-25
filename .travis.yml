@@ -33,3 +33,16 @@ deploy:
     repo: catdad/raw-viewer
     branch: '*'
     tags: true
+
+jobs:
+  include:
+    - name: linux-docker
+      os: linux
+      services:
+        - docker
+      before_script:
+        - docker pull electronuserland/builder
+        - docker run electronuserland/builder lsb_release -a
+        - docker run -v $(pwd):/rv -w /rv electronuserland/builder npm ci
+      script:
+        - docker run -v $(pwd):/rv -w /rv electronuserland/builder npm run citest

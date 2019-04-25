@@ -3,13 +3,19 @@ FROM ubuntu:18.04
 COPY . .
 
 ENV DEBIAN_FRONTEND noninteractive
+ENV NVM_DIR         /usr/local/nvm
+ENV NODE_VERSION    10.15.0
 
 RUN apt update
 RUN apt install --yes build-essential gdebi-core wget xvfb
 RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 RUN gdebi --non-interactive google-chrome-stable_current_amd64.deb
-RUN wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash
-RUN nvm install 10
+RUN wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash \
+    && source source $NVM_DIR/nvm.sh \
+    && nvm install $NODE_VERSION
+
+ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
+ENV PATH      $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
 
 RUN echo node version $(node -v)
 RUN echo npm version $(npm -v)

@@ -44,6 +44,6 @@ jobs:
       services:
         - docker
       install:
-        - echo .dockerbuild
+        - cat .dockerbuild
       script:
         - docker build -t raw-viewer-build - < .dockerbuild

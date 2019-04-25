@@ -46,4 +46,4 @@ jobs:
       install:
         - cat .dockerbuild
       script:
-        - docker build -t raw-viewer-build - < .dockerbuild
+        - docker build -t raw-viewer-build . -f- < .dockerbuild

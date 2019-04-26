@@ -7,6 +7,8 @@ let app;
 
 const sleep = time => new Promise(resolve => setTimeout(() => resolve(), time));
 
+const log = (...args) => console.log(...args); // eslint-disable-line no-console
+
 const start = async (configPath = '') => {
   app = new Application({
     path: electronPath,
@@ -27,9 +29,9 @@ const stop = async () => {
   if (app && app.isRunning()) {
     try {
       const logs = await app.client.log('browser');
-      console.log(logs); // eslint-disable-line no-console
+      log(logs);
     } catch (e) {
-      console.log(e);
+      log(e);
     }
 
     await app.stop();

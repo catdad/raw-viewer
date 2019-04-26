@@ -4,7 +4,6 @@ ARG TRAVIS_COMMIT
 ARG TRAVIS_TAG
 
 COPY . /app
-WORKDIR /app
 
 ENV DEBIAN_FRONTEND noninteractive
 ENV FORCE_COLOR 1
@@ -28,6 +27,8 @@ RUN curl -sL https://deb.nodesource.com/setup_10.x | bash \
 
 RUN node -v
 RUN npm -v
+
+WORKDIR /app
 
 RUN npm ci --unsafe-perm
 RUN npm run citest

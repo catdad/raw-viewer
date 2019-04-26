@@ -39,8 +39,10 @@ const ignore = [
   'dist/**',
   'scripts/**',
   'temp/**',
+  'test/**',
   '.raw-viewer-config.json',
-  './.*'
+  './.*',
+  'appveyor.yml'
 ];
 
 const winZip = async () => {

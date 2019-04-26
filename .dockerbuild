@@ -17,5 +17,5 @@ RUN npm -v
 WORKDIR /app
 RUN ls
 
-RUN npm ci
+RUN npm ci --unsafe-perm
 RUN npm run citest

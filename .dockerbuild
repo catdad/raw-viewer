@@ -4,6 +4,16 @@ COPY . /app
 
 ENV DEBIAN_FRONTEND noninteractive
 
+# dependecies:
+# - build-essential: compiling with node-gyp
+# - gdebi-core: installing chrome
+# - wget: to get stuff, duh
+# - curl: also to get stuff
+# - xvfb: to run headless electron tests
+# - gnupg: apparently needed to run node
+# - chrome: too lazy to figure out electron dependencies
+# - node: for testing things
+
 RUN apt update -q
 RUN apt install --yes -q build-essential gdebi-core wget xvfb curl gnupg
 RUN wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb

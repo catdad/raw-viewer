@@ -25,6 +25,13 @@ const start = async (configPath = '') => {
 
 const stop = async () => {
   if (app && app.isRunning()) {
+    try {
+      const logs = await app.client.log('browser');
+      console.log(logs); // eslint-disable-line no-console
+    } catch (e) {
+      console.log(e);
+    }
+
     await app.stop();
     app = null;
   }

@@ -10,6 +10,7 @@ jobs:
         - cat .dockerbuild
       script:
         - docker build --build-arg TRAVIS_COMMIT --build-arg TRAVIS_TAG -t raw-viewer-build . -f- < .dockerbuild
+        - docker images
     - name: darwin
       os: osx
       node_js: '10'

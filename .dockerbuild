@@ -29,3 +29,8 @@ RUN ls
 
 RUN npm ci --unsafe-perm
 RUN npm run citest
+RUN npm run package -- --version $TRAVIS_COMMIT --tag $TRAVIS_TAG --upload
+
+FROM ubuntu:18.04
+
+COPY --from=0 /app/dist /dist

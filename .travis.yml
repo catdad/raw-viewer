@@ -1,3 +1,5 @@
+language: node_js
+
 jobs:
   include:
     - name: linux-docker
@@ -7,10 +9,13 @@ jobs:
       install:
         - cat .dockerbuild
       script:
-        - docker build -t raw-viewer-build . -f- < .dockerbuild
-    - name: osx
+        - docker build --build-arg TRAVIS_COMMIT --build-arg TRAVIS_TAG -t raw-viewer-build . -f- < .dockerbuild
+    - name: darwin
       os: osx
       node_js: '10'
+      before_install:
+        - node -v
+        - npm -v
       install:
         - npm ci
       script:

@@ -12,8 +12,7 @@ jobs:
         - docker build --build-arg TRAVIS_COMMIT --build-arg TRAVIS_TAG -t raw-viewer-build . -f- < .dockerbuild
         - docker images
         - docker run -d --rm --name rv raw-viewer-build  tail -f /dev/null
-        - mkdir dist
-        - docker cp rv:/dist /dist
+        - docker cp rv:/dist dist
         - docker kill rv
       after_success:
         - ls -la dist

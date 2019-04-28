@@ -73,6 +73,14 @@ function createWindow () {
       config.setProp('window.height', size[1]);
     });
 
+    mainWindow.on('maximize', function () {
+      config.setProp('window.maximized', true);
+    });
+
+    mainWindow.on('unmaximize', function () {
+      config.setProp('window.maximized', false);
+    });
+
     ipcMain.on('message', onIpc);
 
     mainWindow.webContents.on('devtools-opened', () => {

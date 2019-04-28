@@ -50,11 +50,17 @@ function createWindow () {
     mainWindow = new BrowserWindow({
       width: config.getProp('window.width') || 1000,
       height: config.getProp('window.height') || 800,
+      backgroundColor: '#262626',
+      darkTheme: true,
       webPreferences: {
         nodeIntegration: true,
         nodeIntegrationInWorker: true
       }
     });
+
+    if (config.getProp('window.maximized')) {
+      mainWindow.maximize();
+    }
 
     mainWindow.loadURL(url.format({
       pathname: path.join(__dirname, 'public', 'index.html'),
@@ -71,6 +77,14 @@ function createWindow () {
 
       config.setProp('window.width', size[0]);
       config.setProp('window.height', size[1]);
+    });
+
+    mainWindow.on('maximize', function () {
+      config.setProp('window.maximized', true);
+    });
+
+    mainWindow.on('unmaximize', function () {
+      config.setProp('window.maximized', false);
     });
 
     ipcMain.on('message', onIpc);

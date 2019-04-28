@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 const { promisify } = require('util');
 const { pipeline } = require('stream');
+const { execFile } = require('child_process');
 const path = require('path');
 const fs = require('fs-extra');
 const del = require('del');
@@ -38,8 +39,10 @@ const ignore = [
   'dist/**',
   'scripts/**',
   'temp/**',
+  'test/**',
   '.raw-viewer-config.json',
-  './.*'
+  './.*',
+  'appveyor.yml'
 ];
 
 const winZip = async () => {
@@ -69,9 +72,17 @@ const darwinZip = async () => {
   });
 };
 
-const darwinUpload = async () => {
+const linuxTar = async () => {
+  await promisify(execFile)('tar', [
+    'cfz',
+    `dist/${name}-Linux-portable.tar.gz`,
+    '-C', dirs.linux,
+    '.'
+  ]);
+};
+
+const upload = async (filename) => {
   const url = 'https://file.io';
-  const filename = `${name}-MacOS-portable.zip`;
   const filepath = `dist/${filename}`;
   console.log(`Uploading ${filepath} to ${url}`);
 
@@ -127,7 +138,13 @@ const darwinUpload = async () => {
     await darwinZip();
 
     if (argv.upload) {
-      await darwinUpload();
+      await upload(`${name}-MacOS-portable.zip`);
+    }
+  } else if (platform === 'linux') {
+    await linuxTar();
+
+    if (argv.upload) {
+      await upload(`${name}-Linux-portable.tar.gz`);
     }
   }
 })().then(() => {

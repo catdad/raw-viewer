@@ -56,6 +56,10 @@ function createWindow () {
       }
     });
 
+    if (config.getProp('window.maximized')) {
+      mainWindow.maximize();
+    }
+
     mainWindow.loadURL(url.format({
       pathname: path.join(__dirname, 'public', 'index.html'),
       protocol: 'file:',
@@ -71,6 +75,14 @@ function createWindow () {
 
       config.setProp('window.width', size[0]);
       config.setProp('window.height', size[1]);
+    });
+
+    mainWindow.on('maximize', function () {
+      config.setProp('window.maximized', true);
+    });
+
+    mainWindow.on('unmaximize', function () {
+      config.setProp('window.maximized', false);
     });
 
     ipcMain.on('message', onIpc);

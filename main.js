@@ -56,6 +56,10 @@ function createWindow () {
       }
     });
 
+    if (config.getProp('window.maximized')) {
+      mainWindow.maximize();
+    }
+
     mainWindow.loadURL(url.format({
       pathname: path.join(__dirname, 'public', 'index.html'),
       protocol: 'file:',

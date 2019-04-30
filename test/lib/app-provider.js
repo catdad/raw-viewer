@@ -28,8 +28,10 @@ const start = async (configPath = '') => {
 const stop = async () => {
   if (app && app.isRunning()) {
     try {
-      const logs = await app.client.log('browser');
-      log(logs);
+      const mainLogs = await app.client.getMainProcessLogs();
+      log(mainLogs);
+      const clientLogs = await app.client.getRenderProcessLogs();
+      log(clientLogs);
     } catch (e) {
       log(e);
     }

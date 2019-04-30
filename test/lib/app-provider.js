@@ -22,6 +22,8 @@ const start = async (configPath = '') => {
 
   await app.start();
 
+  await app.client.waitUntilWindowLoaded();
+
   return app;
 };
 
@@ -38,6 +40,8 @@ const stop = async () => {
 
     await app.stop();
     app = null;
+  } else {
+    log('stop called while app is not running');
   }
 };
 

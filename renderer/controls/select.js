@@ -54,7 +54,7 @@ module.exports = ({ values }) => {
     values: {
       configurable: false,
       enumetable: true,
-      get: () => {},
+      get: () => [],
       set: (values) => setOptions(select, values)
     }
   });

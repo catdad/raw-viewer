@@ -8,6 +8,31 @@ const style = fs.readFileSync(path.resolve(__dirname, `${name}.css`), 'utf8');
 const exiftool = require('../tools/exiftool-child.js');
 const log = require('../../lib/log.js')(name);
 
+//const keyWhitelist = [
+//  'Model',
+//  'LensID',
+//  'FocalLength',
+//  'FNumber',
+//  'ExposureTime',
+//  'ISO',
+//  'ExposureMode',
+//  'FocusDistance',
+//  'ImageSize',
+//  'Megapixels',
+//  'Orientation',
+//  'Temperature',
+//  'Artist',
+//  'DateTimeOriginal',
+//  'FocusDistanceLower',
+//  'FocusDistanceUpper',
+//  'FocusDistance2',
+//  'CameraTemperature',
+//  'Artist',
+//  'Creator',
+//  'OwnerName',
+//  'AutoRotate',
+//];
+
 const renderKeyValue = ({ key, value }) => {
   const p = document.createElement('p');
   const keySpan = document.createElement('span');

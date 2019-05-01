@@ -33,6 +33,10 @@ function exiftool(name, data) {
 
   return new Promise((resolve, reject) => {
     ipc.once(`exiftool:callback:${id}`, (ev, result) => {
+      const threadPenalty = Date.now() - result.threadTimestamp;
+
+      log.info(`thread penalty: ${threadPenalty}ms`);
+
       if (result.ok) {
         return resolve(result.value);
       }
@@ -79,12 +83,14 @@ async function readShortMeta(filepath) {
 }
 
 async function readFilePart({ filepath, start, length }) {
-  let buffer = Buffer.alloc(length);
-  const fd = await fs.open(filepath, 'r');
-  await fs.read(fd, buffer, 0, length, start);
-  await fs.close(fd);
+  return log.timing(`read file part ${filepath}`, async () => {
+    let buffer = Buffer.alloc(length);
+    const fd = await fs.open(filepath, 'r');
+    await fs.read(fd, buffer, 0, length, start);
+    await fs.close(fd);
 
-  return buffer;
+    return buffer;
+  });
 }
 
 async function readFile(filepath) {

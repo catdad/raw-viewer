@@ -1,5 +1,6 @@
 const path = require('path');
 const fs = require('fs-extra');
+const exiftool = require('../tools/exiftool-child.js');
 
 //  const name = 'directory';
 
@@ -24,6 +25,8 @@ module.exports = function ({ events }) {
   }
 
   events.on('directory:load', ({ dir }) => {
+    exiftool.resetCache();
+
     ondir(dir).then((result) => {
       events.emit('directory:discover', result);
     }).catch((err) => {

@@ -230,5 +230,6 @@ module.exports = {
   readThumbFromMeta,
   setRating,
   copyExif,
-  rawRender
+  rawRender,
+  resetCache: () => metacache.reset()
 };

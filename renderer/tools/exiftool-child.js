@@ -52,6 +52,10 @@ async function readMeta(filepath) {
   return await exiftool('read:fullmeta', { filepath });
 }
 
+async function queryMeta(filepath, keys) {
+  return await exiftool('query:meta', { filepath, keys });
+}
+
 async function readShortMeta(filepath) {
   const placeholder = {
     disabled: true,
@@ -209,6 +213,7 @@ async function rawRender(filepath) {
 module.exports = {
   isPlainImage,
   readMeta,
+  queryMeta,
   readShortMeta,
   readJpegFromMeta,
   readThumbFromMeta,

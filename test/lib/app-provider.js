@@ -22,20 +22,26 @@ const start = async (configPath = '') => {
 
   await app.start();
 
+  await app.client.waitUntilWindowLoaded();
+
   return app;
 };
 
 const stop = async () => {
   if (app && app.isRunning()) {
     try {
-      const logs = await app.client.log('browser');
-      log(logs);
+      const mainLogs = await app.client.getMainProcessLogs();
+      log(mainLogs);
+      const clientLogs = await app.client.getRenderProcessLogs();
+      log(clientLogs);
     } catch (e) {
       log(e);
     }
 
     await app.stop();
     app = null;
+  } else {
+    log('stop called while app is not running');
   }
 };
 

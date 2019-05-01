@@ -79,9 +79,7 @@ module.exports = function ({ events }) {
     await log.timing(`display image ${filepath}`, async () => {
       await load({ imageUrl, rotation });
     });
-  });
 
-  events.on('image:load', ({ imageUrl, filepath }) => {
     events.emit('meta:load', { filepath, imageUrl });
   });
 

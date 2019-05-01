@@ -27,6 +27,7 @@
   },
   "homepage": "https://github.com/catdad/raw-viewer#readme",
   "dependencies": {
+    "chokidar": "^3.0.0",
     "dcraw": "^1.0.3",
     "dcraw-vendored-darwin": "^9.28.1",
     "dcraw-vendored-linux": "^9.28.1",

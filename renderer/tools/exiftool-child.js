@@ -7,6 +7,7 @@ const ipc = require('electron').ipcRenderer;
 const log = require('../../lib/log.js')('exiftool-child');
 const dcrawBin = require('./dcraw-bin.js');
 const bufferToUrl = require('./bufferToUrl.js');
+const metacache = require('./file-cache.js');
 
 const unknown = (function () {
   const svg = fs.readFileSync(path.resolve(__dirname, 'unknown.svg'), 'utf8');
@@ -49,7 +50,16 @@ function exiftool(name, data) {
 }
 
 async function readMeta(filepath) {
-  return await exiftool('read:fullmeta', { filepath });
+  const existing = metacache.get(filepath);
+
+  if (existing) {
+    return existing;
+  }
+
+  const result = await exiftool('read:fullmeta', { filepath });
+  metacache.add(filepath, result);
+
+  return result;
 }
 
 async function queryMeta(filepath, keys) {
@@ -196,6 +206,7 @@ async function readThumbFromMeta(data) {
 }
 
 async function setRating(filepath, rating = 0) {
+  metacache.remove(filepath);
   return await exiftool('set:rating', { filepath, rating });
 }
 

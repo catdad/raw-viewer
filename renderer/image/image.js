@@ -3,6 +3,7 @@ const path = require('path');
 
 const name = 'image';
 const style = fs.readFileSync(path.resolve(__dirname, `${name}.css`), 'utf8');
+const log = require('../../lib/log.js')(name);
 
 const keys = require('../tools/keyboard.js');
 const imageControl = require('./image-control.js');
@@ -74,7 +75,11 @@ module.exports = function ({ events }) {
 
   events.on('image:zoom', ({ scale }) => zoom(scale, { forceCenter: true }));
 
-  events.on('image:load', ({ imageUrl, rotation }) => load({ imageUrl, rotation }));
+  events.on('image:load', async ({ imageUrl, rotation, filepath }) => {
+    await log.timing(`display image ${filepath}`, async () => {
+      await load({ imageUrl, rotation });
+    });
+  });
 
   events.on('image:load', ({ imageUrl, filepath }) => {
     events.emit('meta:load', { filepath, imageUrl });

@@ -132,7 +132,7 @@ module.exports = ({ name, elem }) => {
     }
   }
 
-  function load({ imageUrl, rotation }) {
+  async function load({ imageUrl, rotation }) {
     width = img.width;
     height = img.height;
     rotateStyle = rotation === 0 ? '' : `rotate(${rotation}deg)`;
@@ -140,26 +140,31 @@ module.exports = ({ name, elem }) => {
 
     refreshBox();
 
-    img.onload = function () {
-      if (isRotated) {
-        width = img.naturalHeight;
-        height = img.naturalWidth;
-      } else {
-        width = img.naturalWidth;
-        height = img.naturalHeight;
-      }
-
-      if (zoomType === 'fit') {
-        zoomToBestFit();
-      } else {
-        zoomToScale(scale);
-      }
-    };
+    container.removeChild(img);
+    img.src = '';
 
     elem.onclick = onclick;
 
     img.style.transform = '';
     img.src = imageUrl;
+
+    await img.decode();
+
+    container.appendChild(img);
+
+    if (isRotated) {
+      width = img.naturalHeight;
+      height = img.naturalWidth;
+    } else {
+      width = img.naturalWidth;
+      height = img.naturalHeight;
+    }
+
+    if (zoomType === 'fit') {
+      zoomToBestFit();
+    } else {
+      zoomToScale(scale);
+    }
   }
 
   return {

@@ -49,7 +49,7 @@ function exiftool(name, data) {
 }
 
 async function readMeta(filepath) {
-  return await exiftool('read:fullmeta', { filepath });
+  return await exiftool('read:meta', { filepath });
 }
 
 async function queryMeta(filepath, keys) {
@@ -200,7 +200,7 @@ async function setRating(filepath, rating = 0) {
 }
 
 async function copyExif(filepath, targetpath) {
-  return await exiftool('copy:exif', { filepath, targetpath });
+  return await exiftool('copy:meta', { filepath, targetpath });
 }
 
 async function rawRender(filepath) {

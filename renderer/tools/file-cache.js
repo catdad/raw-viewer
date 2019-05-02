@@ -1,16 +1,18 @@
+const { get, set } = require('lodash');
 const chokidar = require('chokidar');
 const watcher = chokidar.watch('');
 const log = require('../../lib/log.js')('file-cache');
 
 const cache = {};
 
-function get(filepath) {
-  return cache[filepath] || null;
+function read(filepath, key) {
+  return get(cache[filepath] || {}, key);
 }
 
-function add(filepath, data) {
+function add(filepath, key, data) {
   watcher.add(filepath);
-  cache[filepath] = data;
+  cache[filepath] = {};
+  set(cache[filepath], key, data);
   log.info(`caching ${filepath}`);
 }
 
@@ -32,4 +34,4 @@ watcher.on('change', filepath => {
   remove(filepath);
 });
 
-module.exports = { get, add, remove, reset };
+module.exports = { read, add, remove, reset };

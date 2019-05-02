@@ -50,14 +50,15 @@ function exiftool(name, data) {
 }
 
 async function readMeta(filepath) {
-  const existing = metacache.get(filepath);
+  const name = 'fullmeta';
+  const existing = metacache.read(filepath, name);
 
   if (existing) {
     return existing;
   }
 
   const result = await exiftool('read:meta', { filepath });
-  metacache.add(filepath, result);
+  metacache.add(filepath, name, result);
 
   return result;
 }
@@ -67,6 +68,13 @@ async function queryMeta(filepath, keys) {
 }
 
 async function readShortMeta(filepath) {
+  const name = 'shortmeta';
+  const existing = metacache.read(filepath, name);
+
+  if (existing) {
+    return existing;
+  }
+
   const placeholder = {
     disabled: true,
     url: unknown,
@@ -90,10 +98,14 @@ async function readShortMeta(filepath) {
     return placeholder;
   }
 
-  return Object.assign(value, {
+  const result = Object.assign(value, {
     filepath,
     rotation: ROTATION[value.orientation] || 0
   });
+
+  metacache.add(filepath, name, result);
+
+  return result;
 }
 
 async function readFilePart({ filepath, start, length }) {

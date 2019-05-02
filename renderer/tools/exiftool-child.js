@@ -56,7 +56,7 @@ async function readMeta(filepath) {
     return existing;
   }
 
-  const result = await exiftool('read:fullmeta', { filepath });
+  const result = await exiftool('read:meta', { filepath });
   metacache.add(filepath, result);
 
   return result;
@@ -211,7 +211,7 @@ async function setRating(filepath, rating = 0) {
 }
 
 async function copyExif(filepath, targetpath) {
-  return await exiftool('copy:exif', { filepath, targetpath });
+  return await exiftool('copy:meta', { filepath, targetpath });
 }
 
 async function rawRender(filepath) {

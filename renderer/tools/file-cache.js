@@ -11,8 +11,7 @@ function read(filepath, key) {
 
 function add(filepath, key, data) {
   watcher.add(filepath);
-  cache[filepath] = {};
-  set(cache[filepath], key, data);
+  cache[filepath] = set(cache[filepath] || {}, key, data);
   log.info(`caching ${filepath}`);
 }
 

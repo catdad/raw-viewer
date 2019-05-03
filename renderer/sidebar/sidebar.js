@@ -182,13 +182,18 @@ module.exports = function ({ events }) {
       const rawRender = document.createElement('button');
       rawRender.innerHTML = 'Render from RAW';
       rawRender.onclick = async () => {
-        const raw = await exiftool.rawRender(filepath);
+        try {
+          const raw = await exiftool.rawRender(filepath);
 
-        events.emit('image:load', {
-          filepath: filepath,
-          imageUrl: raw,
-          rotation: 0
-        });
+          events.emit('image:load', {
+            filepath: filepath,
+            imageUrl: raw,
+            rotation: 0
+          });
+        } catch (e) {
+          log.error('render from RAW error:', e);
+          events.emit('error', new Error('RAW image is unsupported'));
+        }
       };
       fragment.appendChild(rawRender);
     }

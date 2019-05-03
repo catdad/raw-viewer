@@ -7,6 +7,7 @@ const ipc = require('electron').ipcRenderer;
 const log = require('../../lib/log.js')('exiftool-child');
 const dcrawBin = require('./dcraw-bin.js');
 const bufferToUrl = require('./bufferToUrl.js');
+const metacache = require('./file-cache.js');
 
 const unknown = (function () {
   const svg = fs.readFileSync(path.resolve(__dirname, 'unknown.svg'), 'utf8');
@@ -49,7 +50,17 @@ function exiftool(name, data) {
 }
 
 async function readMeta(filepath) {
-  return await exiftool('read:meta', { filepath });
+  const name = 'fullmeta';
+  const existing = metacache.read(filepath, name);
+
+  if (existing) {
+    return existing;
+  }
+
+  const result = await exiftool('read:meta', { filepath });
+  metacache.add(filepath, name, result);
+
+  return result;
 }
 
 async function queryMeta(filepath, keys) {
@@ -57,6 +68,13 @@ async function queryMeta(filepath, keys) {
 }
 
 async function readShortMeta(filepath) {
+  const name = 'shortmeta';
+  const existing = metacache.read(filepath, name);
+
+  if (existing) {
+    return existing;
+  }
+
   const placeholder = {
     disabled: true,
     url: unknown,
@@ -80,10 +98,14 @@ async function readShortMeta(filepath) {
     return placeholder;
   }
 
-  return Object.assign(value, {
+  const result = Object.assign(value, {
     filepath,
     rotation: ROTATION[value.orientation] || 0
   });
+
+  metacache.add(filepath, name, result);
+
+  return result;
 }
 
 async function readFilePart({ filepath, start, length }) {
@@ -196,6 +218,7 @@ async function readThumbFromMeta(data) {
 }
 
 async function setRating(filepath, rating = 0) {
+  metacache.remove(filepath);
   return await exiftool('set:rating', { filepath, rating });
 }
 
@@ -219,5 +242,6 @@ module.exports = {
   readThumbFromMeta,
   setRating,
   copyExif,
-  rawRender
+  rawRender,
+  resetCache: () => metacache.reset()
 };

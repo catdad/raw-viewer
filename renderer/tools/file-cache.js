@@ -1,5 +1,5 @@
 const { get, set } = require('lodash');
-const watcher = require('./dirty-watcher.js')();
+const watcher = require('fs-watch-file')();
 const log = require('../../lib/log.js')('file-cache');
 
 const cache = {};

@@ -1,5 +1,6 @@
 const path = require('path');
 const fs = require('fs-extra');
+const config = require('../../lib/config.js');
 
 const name = 'dropzone';
 const style = fs.readFileSync(path.resolve(__dirname, `${name}.css`), 'utf8');
@@ -41,7 +42,7 @@ module.exports = function ({ events }) {
       }
 
       events.emit('directory:load', { dir: dirpath });
-      events.emit('config:directory', { value: dirpath });
+      await config.setProp('client.lastDirectory', dirpath);
     } catch(e) {
       return events.emit('error', e);
     }

@@ -2,31 +2,16 @@ const path = require('path');
 const fs = require('fs');
 const EventEmitter = require('events');
 
-const ipc = require('electron').ipcRenderer;
+const name = 'main';
+const config = require('../../lib/config.js');
+const log = require('../../lib/log.js')(name);
+const style = fs.readFileSync(path.resolve(__dirname, `${name}.css`), 'utf8');
 
 const events = new EventEmitter();
 // allow infinite amount of listeners, since this
 // will be used quite a lot
 events.setMaxListeners(0);
 events.off = events.removeListener;
-
-const name = 'main';
-const style = fs.readFileSync(path.resolve(__dirname, `${name}.css`), 'utf8');
-
-ipc.on('message', function (ev, data) {
-  switch (true) {
-    case data.type === 'config-read':
-      events.emit('config', data);
-      break;
-    case data.type === 'event':
-      events.emit(data.name, data.data);
-      break;
-  }
-});
-
-events.on('ipc:send', function (data) {
-  ipc.send('message', data);
-});
 
 function applyStyle(css) {
   var elem = document.createElement('style');
@@ -48,6 +33,14 @@ function render(name, parentElem) {
   }
 }
 
+async function initialize() {
+  const lastDirectory = await config.getProp('client.lastDirectory');
+
+  if (lastDirectory) {
+    events.emit('directory:load', { dir: lastDirectory });
+  }
+}
+
 module.exports = function (elem) {
   applyStyle(style);
 
@@ -64,29 +57,16 @@ module.exports = function (elem) {
   render('toast', elem);
   render('modal', elem);
 
-  events.on('config', function (data) {
-    if (data.key === 'client.lastDirectory' && data.value) {
-      events.emit('directory:load', { dir: data.value });
-    }
-  });
-
-  events.emit('ipc:send', {
-    type: 'config-get',
-    key: 'client.lastDirectory'
-  });
-
-  events.on('config:directory', function (data) {
-    events.emit('ipc:send', {
-      type: 'config-set',
-      key: 'client.lastDirectory',
-      value: data.value
-    });
-  });
-
   events.on('error', (err) => {
     events.emit('toast:error', {
       title: 'App Error:',
       text: err.toString()
     });
+  });
+
+  initialize().then(() => {
+    log.info('initialized');
+  }).catch(err => {
+    events.emit('error', err);
   });
 };

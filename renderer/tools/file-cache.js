@@ -1,6 +1,6 @@
 const { get, set } = require('lodash');
 const chokidar = require('chokidar');
-const watcher = chokidar.watch('');
+const watcher = chokidar.watch('.', { disableGlobbing: true });
 const log = require('../../lib/log.js')('file-cache');
 
 const cache = {};

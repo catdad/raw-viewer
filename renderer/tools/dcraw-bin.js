@@ -17,7 +17,7 @@ const exec = async (args, size) => {
     });
     return stdout;
   } catch (e) {
-    return new Error(`dcraw error: ${e.errno || e.code}`);
+    throw new Error(`dcraw error: ${e.errno || e.code}`);
   }
 };
 

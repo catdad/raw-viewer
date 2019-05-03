@@ -7,6 +7,7 @@ const style = fs.readFileSync(path.resolve(__dirname, `${name}.css`), 'utf8');
 
 const exiftool = require('../tools/exiftool-child.js');
 const log = require('../../lib/log.js')(name);
+const config = require('../../lib/config.js');
 
 //const keyWhitelist = [
 //  'Model',
@@ -128,6 +129,7 @@ module.exports = function ({ events }) {
       `exif ${filepath}`,
       async () => await exiftool.readMeta(filepath)
     );
+    const renderFromRaw = await config.getProp('experiments.renderFromRaw');
 
     const allMeta = Object.assign({}, meta, derive(meta));
 
@@ -176,7 +178,7 @@ module.exports = function ({ events }) {
     fragment.appendChild(showFullMeta);
     fragment.appendChild(download);
 
-    if (process.env.RAW_VIEWER_DEV) {
+    if (renderFromRaw) {
       const rawRender = document.createElement('button');
       rawRender.innerHTML = 'Render from RAW';
       rawRender.onclick = async () => {

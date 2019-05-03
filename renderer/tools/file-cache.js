@@ -1,6 +1,5 @@
 const { get, set } = require('lodash');
-const chokidar = require('chokidar');
-const watcher = chokidar.watch('.', { disableGlobbing: true });
+const watcher = require('./dirty-watcher.js')();
 const log = require('../../lib/log.js')('file-cache');
 
 const cache = {};
@@ -16,7 +15,7 @@ function add(filepath, key, data) {
 }
 
 function remove(filepath) {
-  watcher.unwatch(filepath);
+  watcher.remove(filepath);
   delete cache[filepath];
   log.info(`removing ${filepath}`);
 }

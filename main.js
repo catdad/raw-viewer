@@ -20,7 +20,6 @@ const log = require('./lib/log.js')('main');
 
 log.info(`electron node version: ${process.version}`);
 
-Menu.setApplicationMenu(menu(events));
 
 let mainWindow;
 
@@ -44,8 +43,11 @@ function onIpc(ev, data) {
   }
 }
 
+
 function createWindow () {
   config.read().then(function () {
+    Menu.setApplicationMenu(menu(events, config.getProp('experiments')));
+
     // Create the browser window.
     mainWindow = new BrowserWindow({
       width: config.getProp('window.width') || 1000,

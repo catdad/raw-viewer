@@ -1,5 +1,5 @@
 const path = require('path');
-const fs = require('fs');
+const fs = require('fs-extra');
 const EventEmitter = require('events');
 const ipc = require('electron').ipcRenderer;
 
@@ -41,8 +41,21 @@ function render(name, parentElem) {
 async function initialize() {
   const lastDirectory = await config.getProp('client.lastDirectory');
 
-  if (lastDirectory) {
-    events.emit('directory:load', { dir: lastDirectory });
+  if (!lastDirectory) {
+    return;
+  }
+
+  try {
+    const stat = await fs.stat(lastDirectory);
+
+    if (stat.isDirectory()) {
+      events.emit('directory:load', { dir: lastDirectory });
+    } else {
+      throw new Error(`"${lastDirectory}" is not a directory`);
+    }
+  } catch (e) {
+    log.error(e);
+    events.emit('error', new Error(`could not open "${lastDirectory}"`));
   }
 }
 

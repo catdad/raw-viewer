@@ -22,7 +22,13 @@ module.exports = function ({ events }) {
   elem.className = name;
   let hasDir = false;
 
-  elem.appendChild(dropzoneContent());
+  const container = dropzoneContent();
+  container.onclick = (ev) => {
+    ev.preventDefault();
+    events.emit('directory:open');
+  };
+
+  elem.appendChild(container);
 
   function open() {
     elem.style.display = 'flex';

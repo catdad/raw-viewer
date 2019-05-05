@@ -6,7 +6,7 @@
 .dropzone .container {
   display: flex;
   margin: auto;
-  pointer-events: none;
+  user-select: none;
 
   width: 50%;
   height: 50%;

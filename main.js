@@ -104,10 +104,7 @@ function createWindow () {
     }
 
     events.on('ipcevent', ({ name, data = null }) => {
-      mainWindow.webContents.send('message', {
-        type: 'event',
-        name, data
-      });
+      mainWindow.webContents.send('ipcevent', { name, data });
     });
 
     exiftool.open(

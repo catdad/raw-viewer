@@ -1,6 +1,7 @@
 const path = require('path');
 const fs = require('fs');
 const EventEmitter = require('events');
+const ipc = require('electron').ipcRenderer;
 
 const name = 'main';
 const config = require('../../lib/config.js');
@@ -12,6 +13,10 @@ const events = new EventEmitter();
 // will be used quite a lot
 events.setMaxListeners(0);
 events.off = events.removeListener;
+
+ipc.on('ipcevent', (ev, { name, data }) => {
+  events.emit(name, data);
+});
 
 function applyStyle(css) {
   var elem = document.createElement('style');

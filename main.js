@@ -106,11 +106,6 @@ function createWindow () {
     events.on('ipcevent', ({ name, data = null }) => {
       mainWindow.webContents.send('ipcevent', { name, data });
     });
-
-    exiftool.open(
-      ipcMain.on.bind(ipcMain),
-      mainWindow.webContents.send.bind(mainWindow.webContents)
-    );
   }).catch(function (err) {
     throw err;
   });

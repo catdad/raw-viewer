@@ -20,7 +20,6 @@ const log = require('./lib/log.js')('main');
 
 log.info(`electron node version: ${process.version}`);
 
-
 let mainWindow;
 
 function onIpc(ev, data) {
@@ -42,7 +41,6 @@ function onIpc(ev, data) {
       });
   }
 }
-
 
 function createWindow () {
   config.read().then(function () {

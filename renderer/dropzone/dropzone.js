@@ -1,6 +1,5 @@
 const path = require('path');
 const fs = require('fs-extra');
-const config = require('../../lib/config.js');
 
 const name = 'dropzone';
 const style = fs.readFileSync(path.resolve(__dirname, `${name}.css`), 'utf8');
@@ -23,7 +22,13 @@ module.exports = function ({ events }) {
   elem.className = name;
   let hasDir = false;
 
-  elem.appendChild(dropzoneContent());
+  const container = dropzoneContent();
+  container.onclick = (ev) => {
+    ev.preventDefault();
+    events.emit('directory:open');
+  };
+
+  elem.appendChild(container);
 
   function open() {
     elem.style.display = 'flex';
@@ -42,7 +47,6 @@ module.exports = function ({ events }) {
       }
 
       events.emit('directory:load', { dir: dirpath });
-      await config.setProp('client.lastDirectory', dirpath);
     } catch(e) {
       return events.emit('error', e);
     }

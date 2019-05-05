@@ -1,12 +1,16 @@
 const path = require('path');
 const fs = require('fs-extra');
+const { dialog } = require('electron').remote;
 const exiftool = require('../tools/exiftool-child.js');
+const config = require('../../lib/config.js');
 
 //  const name = 'directory';
 
 module.exports = function ({ events }) {
 
   async function ondir(dir) {
+    exiftool.resetCache();
+    await config.setProp('client.lastDirectory', dir);
     const list = (await fs.readdir(dir)).sort((a, b) => a.localeCompare(b));
 
     const files = list.map((file) => {
@@ -24,9 +28,19 @@ module.exports = function ({ events }) {
     };
   }
 
-  events.on('directory:load', ({ dir }) => {
-    exiftool.resetCache();
+  events.on('directory:open', () => {
+    const result = dialog.showOpenDialog({
+      properties: ['openDirectory']
+    });
 
+    if (!result) {
+      return;
+    }
+
+    events.emit('directory:load', { dir: result[0] });
+  });
+
+  events.on('directory:load', ({ dir }) => {
     ondir(dir).then((result) => {
       events.emit('directory:discover', result);
     }).catch((err) => {

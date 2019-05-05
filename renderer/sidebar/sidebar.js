@@ -119,7 +119,7 @@ module.exports = function ({ events }) {
         const buffer = Buffer.from(base64, 'base64');
 
         await fs.outputFile(outfile, buffer);
-        await exiftool.copyExif(filepath, outfile);
+        await exiftool.copyMeta(filepath, outfile);
       }
     );
   }
@@ -127,7 +127,7 @@ module.exports = function ({ events }) {
   async function loadInfo({ filepath, imageUrl }) {
     const meta = await log.timing(
       `exif ${filepath}`,
-      async () => await exiftool.readMeta(filepath)
+      async () => await exiftool.readFullMeta(filepath)
     );
     const renderFromRaw = await config.getProp('experiments.renderFromRaw');
 

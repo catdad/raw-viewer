@@ -26,7 +26,7 @@ function isPlainImage(filepath) {
   return ['.jpeg', '.jpg', '.png'].includes(ext);
 }
 
-async function readMeta(filepath) {
+async function readFullMeta(filepath) {
   const name = 'fullmeta';
   const existing = metacache.read(filepath, name);
 
@@ -196,10 +196,10 @@ async function readThumbFromMeta(data) {
 
 async function setRating(filepath, rating = 0) {
   metacache.remove(filepath);
-  return await exiftool.upsertRating(filepath, rating);
+  return await exiftool.setRating(filepath, rating);
 }
 
-async function copyExif(filepath, targetpath) {
+async function copyMeta(filepath, targetpath) {
   return await exiftool.copyMeta(filepath, targetpath);
 }
 
@@ -211,14 +211,14 @@ async function rawRender(filepath) {
 }
 
 module.exports = {
-  isPlainImage,
-  readMeta,
-  queryMeta,
+  readFullMeta,
   readShortMeta,
+  queryMeta,
+  copyMeta,
+  setRating,
   readJpegFromMeta,
   readThumbFromMeta,
-  setRating,
-  copyExif,
+  isPlainImage,
   rawRender,
   resetCache: () => metacache.reset()
 };

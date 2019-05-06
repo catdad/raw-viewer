@@ -20,7 +20,6 @@ const log = require('./lib/log.js')('main');
 
 log.info(`electron node version: ${process.version}`);
 
-
 let mainWindow;
 
 function onIpc(ev, data) {
@@ -43,9 +42,11 @@ function onIpc(ev, data) {
   }
 }
 
-
 function createWindow () {
-  config.read().then(function () {
+  Promise.all([
+    config.read(),
+    exiftool.open()
+  ]).then(function () {
     Menu.setApplicationMenu(menu(events, config.getProp('experiments')));
 
     // Create the browser window.
@@ -106,11 +107,6 @@ function createWindow () {
     events.on('ipcevent', ({ name, data = null }) => {
       mainWindow.webContents.send('ipcevent', { name, data });
     });
-
-    exiftool.open(
-      ipcMain.on.bind(ipcMain),
-      mainWindow.webContents.send.bind(mainWindow.webContents)
-    );
   }).catch(function (err) {
     throw err;
   });

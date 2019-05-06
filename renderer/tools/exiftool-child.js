@@ -2,12 +2,13 @@ const path = require('path');
 const fs = require('fs-extra');
 const sharp = require('sharp');
 const prettyBytes = require('pretty-bytes');
-const ipc = require('electron').ipcRenderer;
 
 const log = require('../../lib/log.js')('exiftool-child');
 const dcrawBin = require('./dcraw-bin.js');
 const bufferToUrl = require('./bufferToUrl.js');
 const metacache = require('./file-cache.js');
+
+const exiftool = require('../../lib/exiftool.js');
 
 const unknown = (function () {
   const svg = fs.readFileSync(path.resolve(__dirname, 'unknown.svg'), 'utf8');
@@ -20,36 +21,12 @@ const ROTATION = {
   'Rotate 270 CW': 270
 };
 
-function gid() {
-  return Math.random().toString(36).substr(2);
-}
-
 function isPlainImage(filepath) {
   const ext = path.extname(filepath).toLowerCase();
   return ['.jpeg', '.jpg', '.png'].includes(ext);
 }
 
-function exiftool(name, data) {
-  const id = gid() + gid();
-
-  return new Promise((resolve, reject) => {
-    ipc.once(`exiftool:callback:${id}`, (ev, result) => {
-      const threadPenalty = Date.now() - result.threadTimestamp;
-
-      log.info(`thread penalty: ${threadPenalty}ms`);
-
-      if (result.ok) {
-        return resolve(result.value);
-      }
-
-      return reject(new Error(result.err));
-    });
-
-    ipc.send(`exiftool:${name}`, Object.assign({}, data, { id }));
-  });
-}
-
-async function readMeta(filepath) {
+async function readFullMeta(filepath) {
   const name = 'fullmeta';
   const existing = metacache.read(filepath, name);
 
@@ -57,14 +34,14 @@ async function readMeta(filepath) {
     return existing;
   }
 
-  const result = await exiftool('read:meta', { filepath });
+  const result = await exiftool.readFullMeta(filepath);
   metacache.add(filepath, name, result);
 
   return result;
 }
 
 async function queryMeta(filepath, keys) {
-  return await exiftool('query:meta', { filepath, keys });
+  return await exiftool.queryMeta(filepath, keys);
 }
 
 async function readShortMeta(filepath) {
@@ -91,7 +68,7 @@ async function readShortMeta(filepath) {
 
   const value = await log.timing(
     `read short meta ${filepath}`,
-    async () => await exiftool('read:shortmeta', { filepath })
+    async () => await exiftool.readShortMeta(filepath)
   );
 
   if (value.error) {
@@ -219,11 +196,11 @@ async function readThumbFromMeta(data) {
 
 async function setRating(filepath, rating = 0) {
   metacache.remove(filepath);
-  return await exiftool('set:rating', { filepath, rating });
+  return await exiftool.setRating(filepath, rating);
 }
 
-async function copyExif(filepath, targetpath) {
-  return await exiftool('copy:meta', { filepath, targetpath });
+async function copyMeta(filepath, targetpath) {
+  return await exiftool.copyMeta(filepath, targetpath);
 }
 
 async function rawRender(filepath) {
@@ -234,14 +211,14 @@ async function rawRender(filepath) {
 }
 
 module.exports = {
-  isPlainImage,
-  readMeta,
-  queryMeta,
+  readFullMeta,
   readShortMeta,
+  queryMeta,
+  copyMeta,
+  setRating,
   readJpegFromMeta,
   readThumbFromMeta,
-  setRating,
-  copyExif,
+  isPlainImage,
   rawRender,
   resetCache: () => metacache.reset()
 };

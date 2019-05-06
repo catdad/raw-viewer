@@ -43,7 +43,10 @@ function onIpc(ev, data) {
 }
 
 function createWindow () {
-  config.read().then(function () {
+  Promise.all([
+    config.read(),
+    exiftool.open()
+  ]).then(function () {
     Menu.setApplicationMenu(menu(events, config.getProp('experiments')));
 
     // Create the browser window.

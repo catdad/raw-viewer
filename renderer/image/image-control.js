@@ -46,19 +46,22 @@ module.exports = ({ name, elem }) => {
     refreshBox();
   });
 
-  function zoomToScale(toScale, { forceCenter = false, lockX = 0.5, lockY = 0.5 } = {}) {
+  function calculateBeforeScrollOffset({ forceCenter = false, lockX = 0.5, lockY = 0.5, imgRect = img.getBoundingClientRect() } = {}) {
+    return {
+      // TODO doesn't work when the image is smaller than the viewport
+      top: forceCenter ? 0.5 : (elem.scrollTop + (box.height * lockY)) / imgRect.height,
+      left: forceCenter ? 0.5 : (elem.scrollLeft + (box.width * lockX)) / imgRect.width
+    };
+  }
+
+  function zoomToScale(toScale, { forceCenter = false, lockX = 0.5, lockY = 0.5, explicitBefore = null } = {}) {
     // JavaScript math sucks
     scale = Math.min(Number(toScale.toFixed(2)), 1);
 
     log.info(`zoom to scale: ${scale}, lockX: ${lockX}, lockY: ${lockY}, forceCenter: ${forceCenter}`);
 
     // calculate scroll percentage before the zoom operation
-    const imgRect = img.getBoundingClientRect();
-    const before = {
-      // TODO doesn't work when the image is smaller than the viewport
-      top: forceCenter ? 0.5 : (elem.scrollTop + (box.height * lockY)) / imgRect.height,
-      left: forceCenter ? 0.5 : (elem.scrollLeft + (box.width * lockX)) / imgRect.width
-    };
+    const before = explicitBefore || calculateBeforeScrollOffset({ forceCenter, lockX, lockY });
 
     const targetWidth = evenInt(width * scale);
     const targetHeight = evenInt(height * scale);
@@ -140,6 +143,8 @@ module.exports = ({ name, elem }) => {
 
     refreshBox();
 
+    const explicitBefore = calculateBeforeScrollOffset();
+
     container.removeChild(img);
     img.src = '';
 
@@ -163,7 +168,7 @@ module.exports = ({ name, elem }) => {
     if (zoomType === 'fit') {
       zoomToBestFit();
     } else {
-      zoomToScale(scale);
+      zoomToScale(scale, { explicitBefore });
     }
   }
 

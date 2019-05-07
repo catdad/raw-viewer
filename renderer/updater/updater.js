@@ -18,7 +18,7 @@ const get = async (url) => {
   });
 
   if (!res.ok) {
-    throw new Error(`unexpected response ${res.statusCode} ${res.statusMessage}`);
+    throw new Error(`unexpected response: ${res.status} ${res.statusText}`);
   }
 
   return await res.json();

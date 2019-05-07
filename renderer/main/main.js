@@ -71,6 +71,7 @@ module.exports = function (elem) {
   render('controls', elem);
   render('image', elem);
   render('about', elem);
+  render('updater', elem);
   render('dropzone', elem);
   render('toast', elem);
   render('modal', elem);

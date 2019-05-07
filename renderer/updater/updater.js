@@ -1,9 +1,7 @@
 const fs = require('fs');
 const path = require('path');
-const https = require('https');
-const { promisify } = require('util');
-const { finished } = require('stream');
 const semver = require('semver');
+const fetch = require('node-fetch');
 
 const name = 'updater';
 const style = fs.readFileSync(path.resolve(__dirname, `${name}.css`), 'utf8');
@@ -12,25 +10,18 @@ const log = require('../../lib/log.js')(name);
 const pkg = require('../../package.json');
 const dom = require('../tools/dom.js');
 const appName = pkg.productName || pkg.name;
-const appVersion = pkg.version;
+const appVersion = '1.0.0-beta1'; //pkg.version;
 
 const get = async (url) => {
-  const res = await new Promise((resolve, reject) => {
-    https.get(url, {
-      headers: { 'user-agent': `Raw-Viewer-v${appVersion}` }
-    }, res => resolve(res)).on('error', err => reject(err));
+  const res = await fetch(url, {
+    headers: { 'user-agent': `Raw-Viewer-v${appVersion}` }
   });
 
-  if (res.statusCode !== 200) {
+  if (!res.ok) {
     throw new Error(`unexpected response ${res.statusCode} ${res.statusMessage}`);
   }
 
-  const chunks = [];
-  res.on('data', chunk => chunks.push(chunk));
-
-  await promisify(finished)(res);
-
-  return Buffer.concat(chunks);
+  return await res.json();
 };
 
 module.exports = ({ events }) => {
@@ -54,8 +45,7 @@ module.exports = ({ events }) => {
     const body = dom.div('body');
 
     try {
-      const latestStr = await get('https://api.github.com/repos/catdad/raw-viewer/releases/latest');
-      const latest = JSON.parse(latestStr.toString());
+      const latest = await get('https://api.github.com/repos/catdad/raw-viewer/releases/latest');
 
       if (semver.gt(latest.tag_name, appVersion)) {
         body.appendChild(dom.p(`There is an update to Raw Viewer ${latest.tag_name}`));

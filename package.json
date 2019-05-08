@@ -35,8 +35,10 @@
     "fs-extra": "^7.0.1",
     "fs-watch-file": "^1.0.0",
     "lodash": "^4.17.11",
+    "node-fetch": "^2.4.1",
     "p-throttle": "^3.1.0",
     "pretty-bytes": "^5.2.0",
+    "semver": "^6.0.0",
     "sharp": "^0.22.1",
     "trash": "^5.2.0"
   },
@@ -55,7 +57,6 @@
     "eslint": "^5.16.0",
     "form-data": "^2.3.3",
     "mocha": "^6.1.4",
-    "node-fetch": "^2.4.1",
     "rootrequire": "^1.0.0",
     "spectron": "^5.0.0",
     "tar": "^4.4.8",

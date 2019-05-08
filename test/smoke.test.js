@@ -21,12 +21,14 @@ describe('[smoke tests]', () => {
     }
   };
 
-  const cleanup = async () => {
+  async function cleanup() {
+    const includeLogs = this.currentTest.state === 'failed';
+
     await all(
-      stop(),
+      stop(includeLogs),
       config.cleanAll()
     );
-  };
+  }
 
   beforeEach(cleanup);
   afterEach(cleanup);

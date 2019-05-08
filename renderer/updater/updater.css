@@ -29,4 +29,20 @@
 
 .modal .updater .body {
   flex: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-bottom: 30px;
+}
+
+.modal .updater .icon {
+  font-size: 7rem;
+  padding-bottom: 30px;
+  color: currentColor;
+}
+
+.modal .updater .body a {
+  margin: 10px 0;
+  font-size: 1.2rem;
+  font-weight: bold;
 }

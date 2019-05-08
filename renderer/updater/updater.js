@@ -10,7 +10,7 @@ const log = require('../../lib/log.js')(name);
 const pkg = require('../../package.json');
 const dom = require('../tools/dom.js');
 const appName = pkg.productName || pkg.name;
-const appVersion = '1.0.0-beta1'; //pkg.version;
+const appVersion = pkg.version;
 
 const get = async (url) => {
   const res = await fetch(url, {
@@ -47,9 +47,15 @@ module.exports = ({ events }) => {
     try {
       const latest = await get('https://api.github.com/repos/catdad/raw-viewer/releases/latest');
 
+      const icon = dom.div('icon');
+      body.appendChild(icon);
+
       if (semver.gt(latest.tag_name, appVersion)) {
+        icon.appendChild(dom.text('🎁'));
         body.appendChild(dom.p(`There is an update to Raw Viewer ${latest.tag_name}`));
+        body.appendChild(dom.link('Download', latest.html_url));
       } else {
+        icon.appendChild(dom.text('🚀'));
         body.appendChild(dom.p('You are already using the latest version of Raw Viewer.'));
       }
     } catch (e) {
@@ -57,6 +63,8 @@ module.exports = ({ events }) => {
       body.appendChild(dom.p('Something went wrong when checking for an update.'));
       body.appendChild(dom.p('Please check again later.'));
     }
+
+    body.appendChild(dom.link('Visit the website', 'https://github.com/catdad/raw-viewer'));
 
     elem.appendChild(body);
     elem.appendChild(foot);

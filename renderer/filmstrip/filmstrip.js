@@ -213,6 +213,10 @@ module.exports = function ({ events }) {
     await resolveVisible();
   }
 
+  events.on('window:resize', () => {
+    resolveVisible();
+  });
+
   events.on('directory:discover', function ({ files }) {
     log.timing('load thumbs', async () => await loadThumbnails({ files }));
   });

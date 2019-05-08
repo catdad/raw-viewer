@@ -9,7 +9,7 @@ jobs:
       install:
         - cat .dockerbuild
       script:
-        - docker build --build-arg TRAVIS_COMMIT --build-arg TRAVIS_TAG -t raw-viewer-build . -f- < .dockerbuild
+        - docker build --build-arg TRAVIS_COMMIT --build-arg TRAVIS_TAG -t raw-viewer-build . -f- < .build-linux.dockerfile
         - docker images
         - docker run -d --rm --name rv raw-viewer-build  tail -f /dev/null
         - docker cp rv:/dist dist

@@ -27,21 +27,29 @@ const start = async (configPath = '') => {
   return app;
 };
 
-const stop = async () => {
+const printLogs = async () => {
+  log('\n---- start failure logs ----\n');
+
+  try {
+    const mainLogs = await app.client.getMainProcessLogs();
+    log(mainLogs);
+    const clientLogs = await app.client.getRenderProcessLogs();
+    log(clientLogs);
+  } catch (e) {
+    log(e);
+  }
+
+  log('\n---- end failure logs ----\n');
+};
+
+const stop = async (logs) => {
   if (app && app.isRunning()) {
-    try {
-      const mainLogs = await app.client.getMainProcessLogs();
-      log(mainLogs);
-      const clientLogs = await app.client.getRenderProcessLogs();
-      log(clientLogs);
-    } catch (e) {
-      log(e);
+    if (logs) {
+      await printLogs();
     }
 
     await app.stop();
     app = null;
-  } else {
-    log('stop called while app is not running');
   }
 };
 

@@ -1,3 +1,4 @@
+const { debounce } = require('lodash');
 const log = require('../../lib/log.js')('image-control');
 const keys = require('../tools/keyboard.js');
 
@@ -11,7 +12,7 @@ function evenInt(num) {
   return i % 2 ? i - 1 : i;
 }
 
-module.exports = ({ name, elem }) => {
+module.exports = ({ name, elem, events }) => {
   let box;
   let scale = 1;
   let width = 0;
@@ -40,11 +41,6 @@ module.exports = ({ name, elem }) => {
   }
 
   refreshBox();
-
-  window.addEventListener('resize', () => {
-    // TODO don't do this on every single event
-    refreshBox();
-  });
 
   function calculateBeforeScrollOffset({ forceCenter = false, lockX = 0.5, lockY = 0.5, imgRect = img.getBoundingClientRect() } = {}) {
     return {
@@ -171,6 +167,16 @@ module.exports = ({ name, elem }) => {
       zoomToScale(scale, { explicitBefore });
     }
   }
+
+  const debouncedZoomToBestFit = debounce(zoomToBestFit, 100);
+
+  events.on('window:resize', () => {
+    refreshBox();
+
+    if (zoomType === 'fit') {
+      debouncedZoomToBestFit();
+    }
+  });
 
   return {
     dom: container,

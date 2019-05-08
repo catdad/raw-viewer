@@ -1,19 +1,20 @@
 # Auto detect text files and perform LF normalization
 * text=auto
 
-*.js     text eol=lf
-*.jsx    text eol=lf
-*.json   text eol=lf
-*.html   text eol=lf
-*.md     text eol=lf
-*.yml    text eol=lf
-*.css    text eol=lf
-*.less   text eol=lf
-*.scss   text eol=lf
-*.sass   text eol=lf
-*.svg    text eol=lf
-*.xml    text eol=lf
-*.sh     text eol=lf
+*.js          text eol=lf
+*.jsx         text eol=lf
+*.json        text eol=lf
+*.html        text eol=lf
+*.md          text eol=lf
+*.yml         text eol=lf
+*.css         text eol=lf
+*.less        text eol=lf
+*.scss        text eol=lf
+*.sass        text eol=lf
+*.svg         text eol=lf
+*.xml         text eol=lf
+*.sh          text eol=lf
+*.dockerfile  text eol=lf
 
 # Custom for Visual Studio
 *.cs     diff=csharp
@@ -29,3 +30,6 @@
 *.PDF    diff=astextplain
 *.rtf    diff=astextplain
 *.RTF    diff=astextplain
+
+# Custom languages
+*.dockerfile linguist-language=dockerfile

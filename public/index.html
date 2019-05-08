@@ -5,15 +5,9 @@
   <title>Raw Viewer</title>
 
   <style>
-    html, body {
+    html, body, #main {
       padding: 0;
       margin: 0;
-      background: #eee;
-      height: 100%;
-    }
-
-    #main {
-      width: 100%;
       height: 100%;
     }
   </style>
@@ -22,8 +16,7 @@
   <div id="main"></div>
 
   <script>
-    var main = document.querySelector('#main');
-    require('../renderer/index.js')(main);
+    require('../renderer/index.js')(document.querySelector('#main'));
   </script>
 </body>
 </html>

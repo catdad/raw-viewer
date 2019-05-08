@@ -15,5 +15,8 @@
     "language.fileNames": {
         "Jenkinsfile": "groovy",
         ".dockerbuild": "dockerfile"
+    },
+    "language.fileExtensions": {
+        "dockerfile": "dockerfile"
     }
 }

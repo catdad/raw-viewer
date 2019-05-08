@@ -2,6 +2,7 @@ const path = require('path');
 const fs = require('fs-extra');
 const EventEmitter = require('events');
 const ipc = require('electron').ipcRenderer;
+const { throttle } = require('lodash');
 
 const name = 'main';
 const config = require('../../lib/config.js');
@@ -82,6 +83,10 @@ module.exports = function (elem) {
       text: err.toString()
     });
   });
+
+  window.addEventListener('resize', throttle(() => {
+    events.emit('window:resize');
+  }, 50));
 
   initialize().then(() => {
     log.info('initialized');

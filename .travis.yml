@@ -6,6 +6,7 @@ jobs:
       os: linux
       services:
         - docker
+      install: skip
       script:
         - docker build --build-arg TRAVIS_COMMIT --build-arg TRAVIS_TAG -t raw-viewer-build . -f- < .build-linux.dockerfile
         - docker images

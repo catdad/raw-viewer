@@ -10,18 +10,21 @@ ENV FORCE_COLOR 1
 
 # dependecies:
 # - build-essential: compiling with node-gyp
-# - gdebi-core: installing chrome
 # - wget: to get stuff, duh
 # - curl: also to get stuff
 # - xvfb: to run headless electron tests
 # - gnupg: apparently needed to run node
-# - chrome: too lazy to figure out electron dependencies
+# - everything else: chromium dependencies (taken from puppeteer dockerfile)
 # - node: for testing things
 
 RUN apt update -qq
-RUN apt install --yes -qq build-essential gdebi-core wget xvfb curl gnupg
-RUN wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-RUN gdebi --non-interactive --quiet google-chrome-stable_current_amd64.deb
+RUN apt install --yes -qq build-essential wget xvfb curl gnupg \
+    gconf-service libasound2 libatk1.0-0 libc6 libcairo2 libcups2 \
+    libdbus-1-3 libexpat1 libfontconfig1 libgcc1 libgconf-2-4 libgdk-pixbuf2.0-0 libglib2.0-0 \
+    libgtk-3-0 libnspr4 libpango-1.0-0 libpangocairo-1.0-0 libstdc++6 libx11-6 libx11-xcb1 libxcb1 \
+    libxcomposite1 libxcursor1 libxdamage1 libxext6 libxfixes3 libxi6 libxrandr2 libxrender1 libxss1 \
+    libxtst6 ca-certificates fonts-liberation libappindicator1 libnss3 lsb-release xdg-utils
+
 RUN curl -sL https://deb.nodesource.com/setup_10.x | bash \
     && apt install --yes nodejs
 

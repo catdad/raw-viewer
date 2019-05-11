@@ -63,6 +63,6 @@
     "tempy": "^0.3.0",
     "unzip": "^0.1.11",
     "xvfb-maybe": "^0.2.1",
-    "yargs-parser": "^13.0.0"
+    "yargs-parser": "^13.1.0"
   }
 }

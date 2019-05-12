@@ -9,10 +9,14 @@ const sleep = time => new Promise(resolve => setTimeout(() => resolve(), time));
 
 const log = (...args) => console.log(...args); // eslint-disable-line no-console
 
+const args = process.env.UNSAFE_CI ?
+  ['--no-sandbox', '--disable-setuid-sandbox', '.'] :
+  ['.'];
+
 const start = async (configPath = '') => {
   app = new Application({
     path: electronPath,
-    args: ['.'],
+    args: args,
     env: {
       'RAW_VIEWER_CONFIG_PATH': configPath
     },

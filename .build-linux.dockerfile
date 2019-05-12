@@ -34,7 +34,7 @@ RUN npm -v
 WORKDIR /app
 
 RUN npm ci --unsafe-perm
-RUN npm run citest
+RUN UNSAFE_CI=1 npm run citest
 RUN npm run package -- --version $TRAVIS_COMMIT --tag $TRAVIS_TAG --upload
 
 FROM ubuntu:18.04

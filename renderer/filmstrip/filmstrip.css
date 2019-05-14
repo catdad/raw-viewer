@@ -90,13 +90,14 @@
   position: absolute;
   top: 0;
   z-index: 1;
-  font-size: 1.2rem;
+  font-size: 1.4rem;
+  line-height: 1.2;
   text-shadow: 0 0 10px var(--main-background);
 }
 
 .filmstrip .rating [data-rate="0"] {
   padding: 0 2px;
-  opacity: 0.7;
+  opacity: 0.8;
 }
 
 .filmstrip .rating .★ {
@@ -104,7 +105,7 @@
 }
 
 .filmstrip .rating .☆ {
-  opacity: 0.8;
+  opacity: 0.9;
 }
 
 .filmstrip .thumbnail::after {

@@ -95,7 +95,7 @@
 }
 
 .filmstrip .rating .★ {
-  color: #ffda00;
+  color: var(--accent-yellow);
 }
 
 .filmstrip .rating .☆ {

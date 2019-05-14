@@ -7,6 +7,8 @@
 
   --scroll-track: var(--main-bg-color-light);
   --scroll-thumb: var(--border-light);
+
+  --accent-yellow: #ffda00;
 }
 
 * {

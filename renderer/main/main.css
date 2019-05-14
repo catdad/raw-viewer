@@ -4,6 +4,9 @@
   --border-light: rgba(158, 158, 158, 0.3);
 
   --text-main: #dfdfdf;
+
+  --scroll-track: var(--main-bg-color-light);
+  --scroll-thumb: var(--border-light);
 }
 
 * {
@@ -85,13 +88,13 @@ body {
   height: 8px;
 }
 .scrollbar::-webkit-scrollbar-track {
-  background: #535353;
+  background: var(--scroll-track);
 }
 .scrollbar::-webkit-scrollbar-thumb {
-  background: #535353;
-  box-shadow: 0 0 12px var(--main-bg-color) inset;
+  background: var(--scroll-track);
+  box-shadow: 0 0 12px var(--scroll-thumb) inset;
   border-radius: 8px;
 }
 .scrollbar::-webkit-scrollbar-corner {
-  background: #535353;
+  background: var(--scroll-track);
 }

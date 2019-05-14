@@ -11,8 +11,8 @@
 .sidebar button {
   display: block;
   color: currentColor;
-  background-color: #464646;
-  border: 1px solid #282828;
+  background-color: var(--main-bg-color);
+  border: 1px solid var(--border-light);
   padding: 6px 12px;
   border-radius: 3px;
   margin: 12px 0px 12px 0;

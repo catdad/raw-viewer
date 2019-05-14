@@ -25,8 +25,8 @@
   padding: 16px;
 
   border-radius: 3px;
-  background-color: #464646;
-  border: 1px solid #282828;
+  background-color: var(--main-bg-color-light);
+  border: 1px solid rgba(158, 158, 158, 0.3);
 
   overflow: auto;
 }

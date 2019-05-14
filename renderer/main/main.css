@@ -1,15 +1,23 @@
+:root {
+  --main-bg-color: #121212;
+  --main-bg-color-light: #292929;
+  --border-light: rgba(158, 158, 158, 0.3);
+
+  --text-main: #dfdfdf;
+}
+
 * {
   box-sizing: border-box;
 }
 
 body {
   font-family: sans-serif;
-  color: #eee;
+  color: var(--text-main);
   font-size: 10pt;
 }
 
 .main {
-  background-color: #464646;
+  background-color: var(--main-bg-color-light);
 }
 
 .image {
@@ -19,7 +27,7 @@ body {
   bottom: 200px;
   right: 280px;
 
-  background-color: #262626;
+  background-color: var(--main-bg-color);
 }
 
 .sidebar {
@@ -29,7 +37,7 @@ body {
   width: 280px;
   bottom: 240px;
 
-  border-left: 1px solid #282828;
+  border-left: 1px solid var(--border-light);
 }
 
 .controls {
@@ -39,8 +47,8 @@ body {
   height: 40px;
   width: 280px;
 
-  border-top: 1px solid #282828;
-  border-left: 1px solid #282828;
+  border-top: 1px solid var(--border-light);
+  border-left: 1px solid var(--border-light);
 }
 
 .filmstrip {
@@ -50,7 +58,7 @@ body {
   width: 100%;
   height: 200px;
 
-  border-top: 1px solid #282828;
+  border-top: 1px solid var(--border-light);
 }
 
 .toast {
@@ -81,7 +89,7 @@ body {
 }
 .scrollbar::-webkit-scrollbar-thumb {
   background: #535353;
-  box-shadow: 0 0 12px #262626 inset;
+  box-shadow: 0 0 12px var(--main-bg-color) inset;
   border-radius: 8px;
 }
 .scrollbar::-webkit-scrollbar-corner {

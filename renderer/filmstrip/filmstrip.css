@@ -1,6 +1,6 @@
 .filmstrip {
   padding: 0;
-  background: #464646;
+  background: var(--main-bg-color-light);
 
   display: flex;
   align-items: center;
@@ -62,11 +62,11 @@
 }
 
 .filmstrip .thumbnail.selected {
-  border-color: #eee;
+  border-color: var(--text-main);
   background-color: #787878;
 }
 .filmstrip .thumbnail.selected-secondary {
-  border-color: #eee;
+  border-color: var(--text-main);
 }
 
 .filmstrip .thumbnail img {
@@ -86,7 +86,7 @@
   top: 0;
   z-index: 1;
   font-size: 1.2rem;
-  text-shadow: 0 0 10px #262626;
+  text-shadow: 0 0 10px var(--main-bg-color);
 }
 
 .filmstrip .rating [data-rate="0"] {
@@ -109,7 +109,7 @@
   left: 0;
   bottom: 5px;
   text-align: center;
-  text-shadow: 0 0 10px #262626;
+  text-shadow: 0 0 10px var(--main-bg-color);
   font-weight: bold;
   word-wrap: break-word;
 

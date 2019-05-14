@@ -1,5 +1,6 @@
 .controls {
-  padding: 6px;
+  padding: var(--main-pad);
+  padding-bottom: 0px;
   line-height: 1;
 
   display: flex;
@@ -15,7 +16,7 @@
   border: 1px solid var(--main-border);
   border-radius: 3px;
   overflow: hidden;
-  margin-right: 6px;
+  margin-right: var(--main-pad);
 }
 
 .controls .toggle:after {
@@ -63,7 +64,7 @@
   -webkit-padding-start: 5px;
   -webkit-padding-end: 5px;
 
-  margin-right: 6px;
+  margin-right: var(--main-pad);
 }
 
 .controls .select .label {

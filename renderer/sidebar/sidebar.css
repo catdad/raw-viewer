@@ -11,7 +11,7 @@
 .sidebar button {
   display: block;
   color: var(--text-main);
-  background-color: var(--main-background);
+  background-color: var(--main-surface-pop);
   border: 1px solid var(--main-border-pop);
   padding: 6px 12px;
   border-radius: 3px;

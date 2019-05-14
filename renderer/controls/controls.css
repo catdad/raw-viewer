@@ -49,7 +49,7 @@
 }
 
 .controls input[type=radio]:checked:after {
-  color: var(--accent-yellow);
+  color: var(--accent-yellow-bright);
 }
 
 /* select control */

@@ -7,8 +7,8 @@
 
   --film-fill: var(--main-surface-pop);
   --film-border: var(--film-fill);
-  --film-fill-active: var(--film-border);
-  --film-border-active: var(--text-main);
+  --film-fill-active: var(--main-border);
+  --film-border-active: var(--main-border-pop);
 }
 
 .filmstrip-wrapper {
@@ -100,7 +100,7 @@
 }
 
 .filmstrip .rating .★ {
-  color: var(--accent-yellow);
+  color: var(--accent-yellow-bright);
 }
 
 .filmstrip .rating .☆ {

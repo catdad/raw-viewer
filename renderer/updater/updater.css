@@ -13,7 +13,7 @@
 }
 
 .modal .updater a {
-  color: var(--accent-yellow);
+  color: var(--accent-yellow-bright);
   text-decoration: none;
   opacity: 0.9;
 }

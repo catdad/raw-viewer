@@ -1,13 +1,11 @@
 .filmstrip {
   padding: 0;
-  background: var(--main-surface);
-
   display: flex;
   align-items: center;
 
   --film-fill: var(--main-surface-pop);
   --film-border: var(--film-fill);
-  --film-fill-active: var(--main-border);
+  --film-fill-active: var(--main-surface-top);
   --film-border-active: var(--main-border-pop);
 }
 

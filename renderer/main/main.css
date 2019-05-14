@@ -22,7 +22,8 @@
   --main-background: var(--00dp);
   --main-surface: var(--03dp);
   --main-surface-pop: var(--12dp);
-  --main-border: var(--24dp);
+  --main-surface-top: var(--32dp);
+  --main-border: var(--96dp);
   --main-border-pop: var(--256dp);
 
   --text-main: #dfdfdf;

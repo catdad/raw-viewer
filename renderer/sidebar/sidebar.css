@@ -12,7 +12,7 @@
   display: block;
   color: var(--text-main);
   background-color: var(--main-surface-pop);
-  border: 1px solid var(--main-border-pop);
+  border: 1px solid var(--main-border);
   padding: 6px 12px;
   border-radius: 3px;
   margin: 12px 0px 12px 0;

@@ -82,7 +82,7 @@ body {
   width: 280px;
 }
 .controls::after {
-  --size: 10px;
+  --size: 8px;
   --color: var(--main-surface);
 
   content: "";

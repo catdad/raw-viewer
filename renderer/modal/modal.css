@@ -25,7 +25,7 @@
   padding: 16px;
 
   border-radius: 3px;
-  background-color: var(--main-bg-color-light);
+  background-color: var(--main-surface-pop);
   border: 1px solid rgba(158, 158, 158, 0.3);
 
   overflow: auto;

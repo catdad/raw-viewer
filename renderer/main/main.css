@@ -1,12 +1,14 @@
 :root {
-  --main-bg-color: #121212;
-  --main-bg-color-light: #292929;
-  --border-light: rgba(158, 158, 158, 0.3);
+  --main-background: #121212;
+  --main-surface: #1e1e1e;
+  --main-surface-pop: #2a2a2a;
+  --main-border: rgba(137, 137, 137, 0.4);
+  --main-border-pop: rgba(158, 158, 158, 0.3);
 
   --text-main: #dfdfdf;
 
-  --scroll-track: var(--main-bg-color-light);
-  --scroll-thumb: var(--border-light);
+  --scroll-track: var(--main-background);
+  --scroll-thumb: var(--main-border-pop);
 
   --accent-yellow: #ffda00;
 }
@@ -22,7 +24,7 @@ body {
 }
 
 .main {
-  background-color: var(--main-bg-color-light);
+  background-color: var(--main-surface);
 }
 
 .image {
@@ -32,7 +34,7 @@ body {
   bottom: 200px;
   right: 280px;
 
-  background-color: var(--main-bg-color);
+  background-color: var(--main-background);
 }
 
 .sidebar {
@@ -42,7 +44,7 @@ body {
   width: 280px;
   bottom: 240px;
 
-  border-left: 1px solid var(--border-light);
+  border-left: 1px solid var(--main-border-pop);
 }
 
 .controls {
@@ -52,8 +54,8 @@ body {
   height: 40px;
   width: 280px;
 
-  border-top: 1px solid var(--border-light);
-  border-left: 1px solid var(--border-light);
+  border-top: 1px solid var(--main-border-pop);
+  border-left: 1px solid var(--main-border-pop);
 }
 
 .filmstrip {
@@ -63,7 +65,7 @@ body {
   width: 100%;
   height: 200px;
 
-  border-top: 1px solid var(--border-light);
+  border-top: 1px solid var(--main-border-pop);
 }
 
 .toast {

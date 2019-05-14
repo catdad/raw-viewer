@@ -1,9 +1,14 @@
 .filmstrip {
   padding: 0;
-  background: var(--main-bg-color-light);
+  background: var(--main-surface);
 
   display: flex;
   align-items: center;
+
+  --film-fill: var(--main-surface-pop);
+  --film-border: var(--film-fill);
+  --film-fill-active: var(--film-border);
+  --film-border-active: var(--text-main);
 }
 
 .filmstrip-wrapper {
@@ -31,8 +36,8 @@
   padding: 6px;
 
   border-radius: 3px;
-  border: 1px solid #787878;
-  background-color: #535353;
+  border: 1px solid var(--film-border);
+  background-color: var(--film-fill);
   background-size: contain;
   background-repeat: no-repeat;
   background-origin: content-box;
@@ -62,11 +67,11 @@
 }
 
 .filmstrip .thumbnail.selected {
-  border-color: var(--text-main);
-  background-color: #787878;
+  border-color: var(--film-border-active);
+  background-color: var(--film-fill-active);
 }
 .filmstrip .thumbnail.selected-secondary {
-  border-color: var(--text-main);
+  border-color: var(--film-border-active);
 }
 
 .filmstrip .thumbnail img {
@@ -86,7 +91,7 @@
   top: 0;
   z-index: 1;
   font-size: 1.2rem;
-  text-shadow: 0 0 10px var(--main-bg-color);
+  text-shadow: 0 0 10px var(--main-background);
 }
 
 .filmstrip .rating [data-rate="0"] {
@@ -109,7 +114,7 @@
   left: 0;
   bottom: 5px;
   text-align: center;
-  text-shadow: 0 0 10px var(--main-bg-color);
+  text-shadow: 0 0 10px var(--main-background);
   font-weight: bold;
   word-wrap: break-word;
 

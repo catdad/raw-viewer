@@ -1,11 +1,8 @@
-const fs = require('fs');
-const path = require('path');
-
 const toggle = require('./toggle.js');
 const select = require('./select.js');
 
 const name = 'controls';
-const style = fs.readFileSync(path.resolve(__dirname, `${name}.css`), 'utf8');
+const style = true;
 
 const defaultRating = { from: 0, to: 5 };
 const defaultType = '*';

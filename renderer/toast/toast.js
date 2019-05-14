@@ -1,8 +1,5 @@
-const fs = require('fs');
-const path = require('path');
-
 const name = 'toast';
-const style = fs.readFileSync(path.resolve(__dirname, `${name}.css`), 'utf8');
+const style = true;
 
 function createMsg({ text, type, title = null }) {
   const div = document.createElement('div');

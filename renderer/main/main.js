@@ -7,7 +7,7 @@ const { throttle } = require('lodash');
 const name = 'main';
 const config = require('../../lib/config.js');
 const log = require('../../lib/log.js')(name);
-const style = fs.readFileSync(path.resolve(__dirname, `${name}.css`), 'utf8');
+const stylepath = path.resolve(__dirname, `${name}.css`);
 
 const events = new EventEmitter();
 // allow infinite amount of listeners, since this
@@ -19,6 +19,15 @@ ipc.on('ipcevent', (ev, { name, data }) => {
   events.emit(name, data);
 });
 
+function linkStyle(csspath) {
+  const elem = document.createElement('link');
+  elem.setAttribute('rel', 'stylesheet');
+  elem.setAttribute('type', 'text/css');
+  elem.setAttribute('href', csspath);
+
+  document.head.appendChild(elem);
+}
+
 function applyStyle(css) {
   var elem = document.createElement('style');
   elem.type = 'text/css';
@@ -28,9 +37,12 @@ function applyStyle(css) {
 }
 
 function render(name, parentElem) {
-  const mod = require(path.resolve(__dirname, '..', name, `${name}.js`))({ events });
+  const modname = path.resolve(__dirname, '..', name, `${name}`);
+  const mod = require(`${modname}.js`)({ events });
 
-  if (mod.style) {
+  if (mod.style === true) {
+    linkStyle(`${modname}.css`);
+  } else if (mod.style) {
     applyStyle(mod.style);
   }
 
@@ -61,7 +73,7 @@ async function initialize() {
 }
 
 module.exports = function (elem) {
-  applyStyle(style);
+  linkStyle(stylepath);
 
   elem.classList.add(name);
 

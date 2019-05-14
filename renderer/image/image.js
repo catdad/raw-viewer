@@ -1,8 +1,5 @@
-const fs = require('fs');
-const path = require('path');
-
 const name = 'image';
-const style = fs.readFileSync(path.resolve(__dirname, `${name}.css`), 'utf8');
+const style = true;
 const log = require('../../lib/log.js')(name);
 
 const keys = require('../tools/keyboard.js');

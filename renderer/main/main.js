@@ -1,12 +1,14 @@
+const name = 'main';
+const log = require('../../lib/log.js')(name);
+const startup = log.timer('startup');
+
 const path = require('path');
 const fs = require('fs-extra');
 const EventEmitter = require('events');
 const ipc = require('electron').ipcRenderer;
 const { throttle } = require('lodash');
 
-const name = 'main';
 const config = require('../../lib/config.js');
-const log = require('../../lib/log.js')(name);
 const stylepath = path.resolve(__dirname, `${name}.css`);
 
 const events = new EventEmitter();
@@ -101,6 +103,7 @@ module.exports = function (elem) {
   }, 50));
 
   initialize().then(() => {
+    startup.done();
     log.info('initialized');
   }).catch(err => {
     events.emit('error', err);

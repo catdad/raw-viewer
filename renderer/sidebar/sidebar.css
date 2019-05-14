@@ -10,7 +10,7 @@
 
 .sidebar button {
   display: block;
-  color: currentColor;
+  color: var(--text-main);
   background-color: var(--main-background);
   border: 1px solid var(--main-border-pop);
   padding: 6px 12px;

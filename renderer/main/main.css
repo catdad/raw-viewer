@@ -1,16 +1,34 @@
 :root {
-  --main-background: #121212;
-  --main-surface: #1e1e1e;
-  --main-surface-pop: #2a2a2a;
-  --main-border: rgba(137, 137, 137, 0.4);
-  --main-border-pop: rgba(158, 158, 158, 0.3);
+  --00dp: #121212;
+  --01dp: #1d1d1d;
+  --02dp: #212121;
+  --03dp: #252525;
+  --04dp: #272727;
+  --06dp: #2d2d2d;
+  --08dp: #2e2e2e;
+  --12dp: #323232;
+  --16dp: #353535;
+  --24dp: #383838;
+
+  --main-background: var(--00dp);
+  --main-surface: var(--03dp);
+  --main-surface-pop: var(--12dp);
+  --main-border: #383838;
+  --main-border-pop: #9e9e9e;
 
   --text-main: #dfdfdf;
 
   --scroll-track: var(--main-background);
   --scroll-thumb: var(--main-border-pop);
 
-  --accent-yellow: #ffda00;
+  --accent-pink: #ff7598;
+  --accent-green: #75ff98;
+  --accent-blue: #7598ff;
+  --accent-purple: #dd75ff;
+  --accent-yellow: #ffdd75;
+
+  --accent-yellow-bright: #ffda00;
+  --accent-purple-dark: #332940;
 }
 
 * {
@@ -44,7 +62,7 @@ body {
   width: 280px;
   bottom: 240px;
 
-  border-left: 1px solid var(--main-border-pop);
+  border-left: 1px solid var(--main-border);
 }
 
 .controls {
@@ -54,8 +72,8 @@ body {
   height: 40px;
   width: 280px;
 
-  border-top: 1px solid var(--main-border-pop);
-  border-left: 1px solid var(--main-border-pop);
+  border-top: 1px solid var(--main-border);
+  border-left: 1px solid var(--main-border);
 }
 
 .filmstrip {
@@ -65,7 +83,7 @@ body {
   width: 100%;
   height: 200px;
 
-  border-top: 1px solid var(--main-border-pop);
+  border-top: 1px solid var(--main-border);
 }
 
 .toast {

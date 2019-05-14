@@ -133,7 +133,7 @@ body {
 }
 .scrollbar::-webkit-scrollbar-thumb {
   background: var(--scroll-track);
-  box-shadow: 0 0 12px var(--scroll-thumb) inset;
+  box-shadow: 0 0 8px var(--scroll-thumb) inset;
   border-radius: 8px;
 }
 .scrollbar::-webkit-scrollbar-corner {

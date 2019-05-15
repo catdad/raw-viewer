@@ -36,13 +36,12 @@ const config = require('../../lib/config.js');
 
 const renderKeyValue = ({ key, value }) => {
   const p = document.createElement('p');
+  p.className = `${name}-remote`;
   const keySpan = document.createElement('span');
-  keySpan.style.opacity = 0.8;
-  keySpan.style.fontSize = '0.9em';
+  keySpan.className = 'metalabel';
   keySpan.appendChild(document.createTextNode(key));
   const valueSpan = document.createElement('span');
-  valueSpan.style.fontWeight = 'bold';
-  valueSpan.style.fontSize = '1.1em';
+  valueSpan.className = 'metavalue';
   valueSpan.appendChild(document.createTextNode(value));
 
   p.appendChild(keySpan);

@@ -2,7 +2,10 @@ const { shell } = require('electron');
 
 const div = (className) => {
   const el = document.createElement('div');
-  el.className = className;
+
+  if (className) {
+    el.className = className;
+  }
 
   return el;
 };
@@ -11,7 +14,21 @@ const text = (str) => document.createTextNode(str);
 
 const p = (str) => {
   const el = document.createElement('p');
-  el.appendChild(text(str));
+
+  if (str !== undefined) {
+    el.appendChild(text(str));
+  }
+
+  return el;
+};
+
+const span = (str) => {
+  const el = document.createElement('span');
+
+  if (str !== undefined) {
+    el.appendChild(text(str));
+  }
+
   return el;
 };
 
@@ -41,6 +58,19 @@ const linkBlock = (className, str, href) => {
   return el;
 };
 
+const classname = (el, className) => {
+  el.className = className;
+  return el;
+};
+
+const children = (el, ...childs) => {
+  for (let child of childs) {
+    el.appendChild(child);
+  }
+
+  return el;
+};
+
 const empty = (elem) => {
   while (elem.firstChild) {
     elem.removeChild(elem.firstChild);
@@ -51,8 +81,11 @@ module.exports = {
   div,
   text,
   p,
+  span,
   h1,
   link,
   linkBlock,
+  classname,
+  children,
   empty
 };

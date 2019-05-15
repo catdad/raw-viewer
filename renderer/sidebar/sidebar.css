@@ -18,14 +18,12 @@
   margin: 12px 0px 12px 0;
 }
 
-.sidebar .metalabel,
-.sidebar-remote .metalabel {
+.sidebar-kv .metalabel {
   opacity: 0.8;
   font-size: 0.9em;
 }
 
-.sidebar .metavalue,
-.sidebar-remote .metavalue {
+.sidebar-kv .metavalue {
   font-size: 1.1em;
   line-height: 1;
 }

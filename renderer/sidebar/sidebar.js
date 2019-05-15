@@ -36,20 +36,11 @@ const config = require('../../lib/config.js');
 //];
 
 const renderKeyValue = ({ key, value }) => {
-  const p = document.createElement('p');
-  p.className = `${name}-remote`;
-  const keySpan = document.createElement('span');
-  keySpan.className = 'metalabel';
-  keySpan.appendChild(document.createTextNode(key));
-  const valueSpan = document.createElement('span');
-  valueSpan.className = 'metavalue';
-  valueSpan.appendChild(document.createTextNode(value));
-
-  p.appendChild(keySpan);
-  p.appendChild(document.createTextNode(': '));
-  p.appendChild(valueSpan);
-
-  return p;
+  return dom.children(
+    dom.classname(dom.p(), `${name}-kv`),
+    dom.classname(dom.span(`${key}: `), 'metalabel'),
+    dom.classname(dom.span(value), 'metavalue')
+  );
 };
 
 const render = (meta) => {
@@ -151,11 +142,7 @@ module.exports = function ({ events }) {
       { key: 'DateTimeOriginal', gui: 'Timestamp' },
       { key: 'Z-FileSize', gui: 'Size' },
     ].filter(({ key }) => !!allMeta[key]).map(({ key, gui }) => {
-      return dom.children(
-        dom.p(),
-        dom.classname(dom.span(`${gui}: `), 'metalabel'),
-        dom.classname(dom.span(allMeta[key]), 'metavalue')
-      );
+      return renderKeyValue({ key: gui, value: allMeta[key] });
     }).forEach(elem => fragment.appendChild(elem));
 
     const showFullMeta = document.createElement('button');

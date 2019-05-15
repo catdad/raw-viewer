@@ -1,6 +1,7 @@
 .dropzone {
   display: flex;
   background: rgba(128, 128, 128, 0.85);
+  z-index: 200;
 }
 
 .dropzone .container {

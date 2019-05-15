@@ -1,6 +1,7 @@
 .dropzone {
   display: flex;
   background: rgba(128, 128, 128, 0.85);
+  z-index: 200;
 }
 
 .dropzone .container {
@@ -15,7 +16,7 @@
   text-align: center;
 
   background: rgba(70, 70, 70, 0.6);
-  border: 5px dashed #eee;
+  border: 5px dashed var(--text-main);
   border-radius: 20px;
 }
 

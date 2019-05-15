@@ -1,15 +1,59 @@
+:root {
+  --00dp: #121212;  /*  0% opacity */
+  --01dp: #1d1d1d;  /*  5% opacity */
+  --02dp: #212121;  /*  7% opacity */
+  --03dp: #252525;  /*  8% opacity */
+  --04dp: #272727;  /*  9% opacity */
+  --06dp: #2d2d2d;  /* 11% opacity */
+  --08dp: #2e2e2e;  /* 12% opacity */
+  --12dp: #323232;  /* 14% opacity */
+  --16dp: #353535;  /* 15% opacity */
+  --24dp: #383838;  /* 16% opacity */
+  --32dp: #3d3d3d;  /* 18% opacity */
+  --48dp: #414141;  /* 20% opacity */
+  --64dp: #464646;  /* 22% opacity */
+  --96dp: #4d4d4d;  /* 25% opacity */
+  --128dp: #5a5a5a; /* 30% opacity */
+  --192dp: #656565; /* 35% opacity */
+  --256dp: #717171; /* 40% opacity */
+  --384dp: #7d7d7d; /* 45% opacity */
+  --512dp: #898989; /* 50% opacity */
+
+  --main-background: var(--00dp);
+  --main-surface: var(--03dp);
+  --main-surface-pop: var(--12dp);
+  --main-surface-top: var(--32dp);
+  --main-border: var(--96dp);
+  --main-border-pop: var(--256dp);
+
+  --text-main: #dfdfdf;
+
+  --scroll-track: var(--main-background);
+  --scroll-thumb: var(--main-border-pop);
+
+  --accent-pink: #ff7598;
+  --accent-green: #75ff98;
+  --accent-blue: #7598ff;
+  --accent-purple: #dd75ff;
+  --accent-yellow: #ffdd75;
+
+  --accent-yellow-bright: #f6c304;
+  --accent-purple-dark: #332940;
+
+  --main-pad: 8px;
+}
+
 * {
   box-sizing: border-box;
 }
 
 body {
-  font-family: sans-serif;
-  color: #eee;
+  color: var(--text-main);
   font-size: 10pt;
 }
 
 .main {
-  background-color: #464646;
+  background-color: var(--main-surface);
 }
 
 .image {
@@ -19,7 +63,7 @@ body {
   bottom: 200px;
   right: 280px;
 
-  background-color: #262626;
+  background-color: var(--main-background);
 }
 
 .sidebar {
@@ -28,8 +72,6 @@ body {
   right: 0;
   width: 280px;
   bottom: 240px;
-
-  border-left: 1px solid #282828;
 }
 
 .controls {
@@ -38,9 +80,21 @@ body {
   bottom: 200px;
   height: 40px;
   width: 280px;
+}
+.controls::after {
+  --size: 8px;
+  --color: var(--main-surface);
 
-  border-top: 1px solid #282828;
-  border-left: 1px solid #282828;
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 0;
+  bottom: 0;
+  left: calc((var(--size)) * -1);
+  border-bottom: var(--size) solid var(--color);
+  border-left: var(--size) solid transparent;
+  z-index: 1;
+  user-select: none;
 }
 
 .filmstrip {
@@ -49,8 +103,6 @@ body {
   left: 0;
   width: 100%;
   height: 200px;
-
-  border-top: 1px solid #282828;
 }
 
 .toast {
@@ -77,13 +129,13 @@ body {
   height: 8px;
 }
 .scrollbar::-webkit-scrollbar-track {
-  background: #535353;
+  background: var(--scroll-track);
 }
 .scrollbar::-webkit-scrollbar-thumb {
-  background: #535353;
-  box-shadow: 0 0 12px #262626 inset;
+  background: var(--scroll-track);
+  box-shadow: 0 0 8px var(--scroll-thumb) inset;
   border-radius: 8px;
 }
 .scrollbar::-webkit-scrollbar-corner {
-  background: #535353;
+  background: var(--scroll-track);
 }

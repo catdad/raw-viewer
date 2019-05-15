@@ -1,10 +1,8 @@
-const fs = require('fs');
-const path = require('path');
 const semver = require('semver');
 const fetch = require('node-fetch');
 
 const name = 'updater';
-const style = fs.readFileSync(path.resolve(__dirname, `${name}.css`), 'utf8');
+const style = true;
 const log = require('../../lib/log.js')(name);
 
 const pkg = require('../../package.json');

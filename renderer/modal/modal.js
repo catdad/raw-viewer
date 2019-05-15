@@ -1,8 +1,5 @@
-const path = require('path');
-const fs = require('fs');
-
 const name = 'modal';
-const style = fs.readFileSync(path.resolve(__dirname, `${name}.css`), 'utf8');
+const style = true;
 
 const log = require('../../lib/log.js')(name);
 const dom = require('../tools/dom.js');

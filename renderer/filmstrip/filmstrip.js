@@ -1,8 +1,5 @@
-const fs = require('fs-extra');
-const path = require('path');
-
 const name = 'filmstrip';
-const style = fs.readFileSync(path.resolve(__dirname, `${name}.css`), 'utf8');
+const style = true;
 
 const log = require('../../lib/log.js')(name);
 const dragDrop = require('../tools/ipc-draganddrop.js');

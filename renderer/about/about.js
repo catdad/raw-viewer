@@ -1,8 +1,5 @@
-const fs = require('fs');
-const path = require('path');
-
 const name = 'about';
-const style = fs.readFileSync(path.resolve(__dirname, `${name}.css`), 'utf8');
+const style = true;
 
 const pkg = require('../../package.json');
 const dom = require('../tools/dom.js');

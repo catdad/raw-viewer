@@ -53,7 +53,7 @@ function createWindow () {
     mainWindow = new BrowserWindow({
       width: config.getProp('window.width') || 1000,
       height: config.getProp('window.height') || 800,
-      backgroundColor: '#262626',
+      backgroundColor: '#121212',
       darkTheme: true,
       webPreferences: {
         nodeIntegration: true,

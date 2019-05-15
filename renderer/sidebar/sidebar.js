@@ -3,7 +3,7 @@ const fs = require('fs-extra');
 const { dialog } = require('electron').remote;
 
 const name = 'sidebar';
-const style = fs.readFileSync(path.resolve(__dirname, `${name}.css`), 'utf8');
+const style = true;
 
 const exiftool = require('../tools/exiftool-child.js');
 const log = require('../../lib/log.js')(name);

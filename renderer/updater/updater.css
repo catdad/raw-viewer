@@ -13,7 +13,7 @@
 }
 
 .modal .updater a {
-  color: #ffda00;
+  color: var(--accent-yellow-bright);
   text-decoration: none;
   opacity: 0.9;
 }
@@ -38,7 +38,7 @@
 .modal .updater .icon {
   font-size: 7rem;
   padding-bottom: 30px;
-  color: currentColor;
+  color: var(--text-main);
 }
 
 .modal .updater .body a {

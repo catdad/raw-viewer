@@ -1,8 +1,7 @@
-const path = require('path');
 const fs = require('fs-extra');
 
 const name = 'dropzone';
-const style = fs.readFileSync(path.resolve(__dirname, `${name}.css`), 'utf8');
+const style = true;
 
 function dropzoneContent() {
   const container = document.createElement('div');

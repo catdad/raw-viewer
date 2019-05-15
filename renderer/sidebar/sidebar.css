@@ -17,3 +17,14 @@
   border-radius: 3px;
   margin: 12px 0px 12px 0;
 }
+
+.sidebar-kv .metalabel {
+  opacity: 0.8;
+  font-size: 0.9em;
+  padding-right: 2px;
+}
+
+.sidebar-kv .metavalue {
+  font-size: 1.1em;
+  line-height: 1;
+}

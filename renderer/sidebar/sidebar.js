@@ -6,6 +6,7 @@ const name = 'sidebar';
 const style = true;
 
 const exiftool = require('../tools/exiftool-child.js');
+const dom = require('../tools/dom.js');
 const log = require('../../lib/log.js')(name);
 const config = require('../../lib/config.js');
 
@@ -35,21 +36,11 @@ const config = require('../../lib/config.js');
 //];
 
 const renderKeyValue = ({ key, value }) => {
-  const p = document.createElement('p');
-  const keySpan = document.createElement('span');
-  keySpan.style.opacity = 0.8;
-  keySpan.style.fontSize = '0.9em';
-  keySpan.appendChild(document.createTextNode(key));
-  const valueSpan = document.createElement('span');
-  valueSpan.style.fontWeight = 'bold';
-  valueSpan.style.fontSize = '1.1em';
-  valueSpan.appendChild(document.createTextNode(value));
-
-  p.appendChild(keySpan);
-  p.appendChild(document.createTextNode(': '));
-  p.appendChild(valueSpan);
-
-  return p;
+  return dom.children(
+    dom.classname(dom.p(), `${name}-kv`),
+    dom.classname(dom.span(`${key}: `), 'metalabel'),
+    dom.classname(dom.span(value), 'metavalue')
+  );
 };
 
 const render = (meta) => {
@@ -91,8 +82,7 @@ const derive = (meta) => {
 };
 
 module.exports = function ({ events }) {
-  var elem = document.createElement('div');
-  elem.className = name;
+  const elem = dom.div(name);
 
   async function saveImage({ filepath, imageUrl, name }) {
     const outfile = await dialog.showSaveDialog({
@@ -152,10 +142,7 @@ module.exports = function ({ events }) {
       { key: 'DateTimeOriginal', gui: 'Timestamp' },
       { key: 'Z-FileSize', gui: 'Size' },
     ].filter(({ key }) => !!allMeta[key]).map(({ key, gui }) => {
-      const p = document.createElement('p');
-      p.appendChild(document.createTextNode(`${gui}: ${allMeta[key]}`));
-
-      return p;
+      return renderKeyValue({ key: gui, value: allMeta[key] });
     }).forEach(elem => fragment.appendChild(elem));
 
     const showFullMeta = document.createElement('button');

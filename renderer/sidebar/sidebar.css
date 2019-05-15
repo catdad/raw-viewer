@@ -21,13 +21,11 @@
 .sidebar .metalabel,
 .sidebar-remote .metalabel {
   opacity: 0.8;
-}
-
-.sidebar-remote .metavalue {
-  font-weight: bold;
-  font-size: 1.1em;
-}
-
-.sidebar-remote .metalabel {
   font-size: 0.9em;
+}
+
+.sidebar .metavalue,
+.sidebar-remote .metavalue {
+  font-size: 1.1em;
+  line-height: 1;
 }

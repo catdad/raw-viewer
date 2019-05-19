@@ -107,6 +107,10 @@ function createWindow () {
     events.on('ipcevent', ({ name, data = null }) => {
       mainWindow.webContents.send('ipcevent', { name, data });
     });
+
+    events.on('reload', () => {
+      mainWindow.reload();
+    });
   }).catch(function (err) {
     throw err;
   });

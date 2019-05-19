@@ -108,6 +108,34 @@ body {
   height: 200px;
 }
 
+/* experiment filmstripOnLeft */
+.experiment-filmstrip-left {
+  --controls-size-exp: calc(var(--main-pad) + 40px);
+}
+.experiment-filmstrip-left .image {
+  top: 0;
+  bottom: 0;
+  left: 200px;
+}
+.experiment-filmstrip-left .sidebar {
+  bottom: var(--controls-size-exp);
+}
+.experiment-filmstrip-left .controls {
+  bottom: 0;
+  height: var(--controls-size-exp);
+  padding-bottom: var(--main-pad);
+
+}
+.experiment-filmstrip-left .controls::after {
+  display: none;
+}
+.experiment-filmstrip-left .filmstrip {
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 200px;
+}
+
 .toast {
   position: absolute;
   top: 0;

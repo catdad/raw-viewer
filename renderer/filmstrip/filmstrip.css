@@ -67,9 +67,12 @@
 .filmstrip .thumbnail:first-of-type {
   margin-left: var(--spacing);
 }
+.experiment-filmstrip-left .filmstrip .thumbnail:first-of-type {
+  margin-top: var(--spacing);
+}
 
 .filmstrip .thumbnail:last-of-type::before {
-  /* force a 6px margin on the right of the
+  /* force a the correct margin on the right of the
    * last element as well
    */
   content: "";
@@ -80,7 +83,15 @@
   width: var(--spacing);
   opacity: 0;
   user-select: none;
-  background-color: red;
+}
+
+.experiment-filmstrip-left .filmstrip .thumbnail:last-of-type::before {
+  top: unset;
+  right: 0;
+  height: unset;
+  width: 100%;
+  bottom: calc(0px - (var(--spacing)));
+  height: var(--spacing);
 }
 
 .filmstrip .thumbnail.selected {

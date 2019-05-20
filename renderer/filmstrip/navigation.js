@@ -36,7 +36,7 @@ const filter = {
   }
 };
 
-module.exports = function ({ wrapper, displayImage, events }) {
+module.exports = function ({ wrapper, displayImage, direction, events }) {
   let expectRating = { from: 0, to: 5 };
   let expectType = '*';
 
@@ -138,11 +138,13 @@ module.exports = function ({ wrapper, displayImage, events }) {
     resolveVisible();
   }
 
-  // handle scrolling
-  wrapper.addEventListener('mousewheel', function (ev) {
-    wrapper.scrollLeft -= ev.wheelDeltaY;
-    ev.preventDefault();
-  });
+  if (direction === 'horizontal') {
+    // translate vertical scrolling to horizontal
+    wrapper.addEventListener('mousewheel', function (ev) {
+      wrapper.scrollLeft -= ev.wheelDeltaY;
+      ev.preventDefault();
+    });
+  }
 
   wrapper.addEventListener('scroll', () => {
     resolveVisible().catch(err => {

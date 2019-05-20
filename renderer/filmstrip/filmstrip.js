@@ -20,7 +20,9 @@ function isClipped(containerBB, elBB) {
   return isClippedLeft(containerBB, elBB) || isClippedRight(containerBB, elBB);
 }
 
-module.exports = function ({ events }) {
+module.exports = function ({ events }, opts) {
+  const direction = opts.experiments.filmstripOnLeft ? 'vertical' : 'horizontal';
+
   const elem = document.createElement('div');
   elem.className = name;
 
@@ -130,7 +132,7 @@ module.exports = function ({ events }) {
     return { imgWrap, img };
   }
 
-  const { resolveVisible } = navigation({ wrapper, displayImage, events });
+  const { resolveVisible } = navigation({ wrapper, displayImage, direction, events });
 
   async function loadThumbnails({ files }) {
     wrapper.innerHTML = '';

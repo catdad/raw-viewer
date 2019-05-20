@@ -155,8 +155,8 @@ module.exports = function ({ wrapper, displayImage, direction, events }) {
 
   // handle keyboard navigation
   keys.on('change', () => {
-    const isLeft = keys.includes(keys.LEFT);
-    const isRight = keys.includes(keys.RIGHT);
+    const isPrev = keys.includes(keys.LEFT) || keys.includes(keys.UP);
+    const isNext = keys.includes(keys.RIGHT) || keys.includes(keys.DOWN);
     const isDelete = keys.includes(keys.DELETE);
 
     if (isDelete) {
@@ -171,8 +171,8 @@ module.exports = function ({ wrapper, displayImage, direction, events }) {
       return;
     }
 
-    if (isLeft || isRight) {
-      navigateTo(findNextTarget(wrapper, isLeft ? 'left' : 'right'));
+    if (isPrev || isNext) {
+      navigateTo(findNextTarget(wrapper, isPrev ? 'left' : 'right'));
     }
   });
 

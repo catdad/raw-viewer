@@ -16,8 +16,19 @@ function isClippedRight(containerBB, elBB) {
   return elBB.right > containerBB.right;
 }
 
+function isClippedUp(containerBB, elBB) {
+  return elBB.top < containerBB.top;
+}
+
+function isClippedBottom(containerBB, elBB) {
+  return elBB.bottom > containerBB.bottom;
+}
+
 function isClipped(containerBB, elBB) {
-  return isClippedLeft(containerBB, elBB) || isClippedRight(containerBB, elBB);
+  return isClippedLeft(containerBB, elBB) ||
+    isClippedRight(containerBB, elBB) ||
+    isClippedUp(containerBB, elBB) ||
+    isClippedBottom(containerBB, elBB);
 }
 
 module.exports = function ({ events }, opts) {
@@ -68,7 +79,8 @@ module.exports = function ({ events }, opts) {
 
     if (isClipped(parentBB, thumbBB)) {
       thumb.scrollIntoView({
-        inline: 'center'
+        inline: 'center', // horizontal alignment
+        block: 'center' // vertical alignment
       });
     }
   }

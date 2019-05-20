@@ -54,13 +54,14 @@ function render(name, parentElem) {
 }
 
 async function initialize(elem) {
-  const experiments = await config.getProp('experiments');
+  const [lastDirectory, filmstripOnLeft] = await config.getProp([
+    'client.lastDirectory',
+    'experiments.filmstripOnLeft'
+  ]);
 
-  if (experiments.filmstripOnLeft) {
+  if (filmstripOnLeft) {
     elem.classList.add('experiment-filmstrip-left');
   }
-
-  const lastDirectory = await config.getProp('client.lastDirectory');
 
   if (!lastDirectory) {
     return;

@@ -38,9 +38,9 @@ function applyStyle(css) {
   document.head.appendChild(elem);
 }
 
-function render(name, parentElem) {
+function render(name, parentElem, opts) {
   const modname = path.resolve(__dirname, '..', name, `${name}`);
-  const mod = require(`${modname}.js`)({ events });
+  const mod = require(`${modname}.js`)({ events }, opts);
 
   if (mod.style === true) {
     linkStyle(`${modname}.css`);

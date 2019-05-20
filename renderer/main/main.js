@@ -38,9 +38,9 @@ function applyStyle(css) {
   document.head.appendChild(elem);
 }
 
-function render(name, parentElem) {
+function render(name, parentElem, opts) {
   const modname = path.resolve(__dirname, '..', name, `${name}`);
-  const mod = require(`${modname}.js`)({ events });
+  const mod = require(`${modname}.js`)({ events }, opts);
 
   if (mod.style === true) {
     linkStyle(`${modname}.css`);
@@ -53,43 +53,39 @@ function render(name, parentElem) {
   }
 }
 
-async function initialize() {
-  const lastDirectory = await config.getProp('client.lastDirectory');
-
-  if (!lastDirectory) {
-    return;
-  }
-
-  try {
-    const stat = await fs.stat(lastDirectory);
-
-    if (stat.isDirectory()) {
-      events.emit('directory:load', { dir: lastDirectory });
-    } else {
-      throw new Error(`"${lastDirectory}" is not a directory`);
-    }
-  } catch (e) {
-    log.error(e);
-    events.emit('error', new Error(`could not open "${lastDirectory}"`));
-  }
-}
-
-module.exports = function (elem) {
+function renderApp(elem, opts) {
   linkStyle(stylepath);
-
   elem.classList.add(name);
 
-  render('directory', elem);
-  render('rating', elem);
-  render('filmstrip', elem);
-  render('sidebar', elem);
-  render('controls', elem);
-  render('image', elem);
-  render('about', elem);
-  render('updater', elem);
-  render('dropzone', elem);
-  render('toast', elem);
-  render('modal', elem);
+  render('directory', elem, opts);
+  render('rating', elem, opts);
+  render('filmstrip', elem, opts);
+  render('sidebar', elem, opts);
+  render('controls', elem, opts);
+  render('image', elem, opts);
+  render('about', elem, opts);
+  render('updater', elem, opts);
+  render('dropzone', elem, opts);
+  render('toast', elem, opts);
+  render('modal', elem, opts);
+}
+
+async function start(elem) {
+  const [lastDirectory, filmstripOnLeft] = await config.getProp([
+    'client.lastDirectory',
+    'experiments.filmstripOnLeft'
+  ]);
+
+  const appOpts = {
+    experiments: { filmstripOnLeft },
+    client: { lastDirectory }
+  };
+
+  renderApp(elem, appOpts);
+
+  if (filmstripOnLeft) {
+    elem.classList.add('experiment-filmstrip-left');
+  }
 
   events.on('error', (err) => {
     events.emit('toast:error', {
@@ -98,11 +94,28 @@ module.exports = function (elem) {
     });
   });
 
+  if (lastDirectory) {
+    try {
+      const stat = await fs.stat(lastDirectory);
+
+      if (stat.isDirectory()) {
+        events.emit('directory:load', { dir: lastDirectory });
+      } else {
+        throw new Error(`"${lastDirectory}" is not a directory`);
+      }
+    } catch (e) {
+      log.error(e);
+      events.emit('error', new Error(`could not open "${lastDirectory}"`));
+    }
+  }
+
   window.addEventListener('resize', throttle(() => {
     events.emit('window:resize');
   }, 50));
+}
 
-  initialize().then(() => {
+module.exports = function (elem) {
+  start(elem).then(() => {
     startup.done();
     log.info('initialized');
   }).catch(err => {

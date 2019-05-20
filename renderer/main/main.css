@@ -41,6 +41,9 @@
   --accent-purple-dark: #332940;
 
   --main-pad: 8px;
+  --filmstrip-size: 200px;
+  --controls-size: 40px;
+  --sidebar-size: 280px;
 }
 
 * {
@@ -60,8 +63,8 @@ body {
   position: absolute;
   top: 0;
   left: 0;
-  bottom: 200px;
-  right: 280px;
+  bottom: var(--filmstrip-size);
+  right: var(--sidebar-size);
 
   background-color: var(--main-background);
 }
@@ -70,16 +73,16 @@ body {
   position: absolute;
   top: 0;
   right: 0;
-  width: 280px;
-  bottom: 240px;
+  width: var(--sidebar-size);
+  bottom: calc((var(--filmstrip-size)) + (var(--controls-size)));
 }
 
 .controls {
   position: absolute;
   right: 0;
-  bottom: 200px;
-  height: 40px;
-  width: 280px;
+  bottom: var(--filmstrip-size);
+  height: var(--controls-size);
+  width: var(--sidebar-size);
 }
 .controls::after {
   --size: 8px;
@@ -103,6 +106,35 @@ body {
   left: 0;
   width: 100%;
   height: 200px;
+}
+
+/* experiment filmstripOnLeft */
+.experiment-filmstrip-left {
+  --controls-size-exp: calc(var(--main-pad) + 40px);
+}
+.experiment-filmstrip-left .image {
+  top: 0;
+  bottom: 0;
+  left: 200px;
+}
+.experiment-filmstrip-left .sidebar {
+  bottom: var(--controls-size-exp);
+}
+.experiment-filmstrip-left .controls {
+  bottom: 0;
+  height: var(--controls-size-exp);
+  padding-bottom: var(--main-pad);
+
+}
+.experiment-filmstrip-left .controls::after {
+  display: none;
+}
+.experiment-filmstrip-left .filmstrip {
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 200px;
+  height: 100%;
 }
 
 .toast {

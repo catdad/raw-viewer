@@ -36,7 +36,7 @@ const filter = {
   }
 };
 
-module.exports = function ({ wrapper, displayImage, events }) {
+module.exports = function ({ wrapper, displayImage, direction, events }) {
   let expectRating = { from: 0, to: 5 };
   let expectType = '*';
 
@@ -138,11 +138,13 @@ module.exports = function ({ wrapper, displayImage, events }) {
     resolveVisible();
   }
 
-  // handle scrolling
-  wrapper.addEventListener('mousewheel', function (ev) {
-    wrapper.scrollLeft -= ev.wheelDeltaY;
-    ev.preventDefault();
-  });
+  if (direction === 'horizontal') {
+    // translate vertical scrolling to horizontal
+    wrapper.addEventListener('mousewheel', function (ev) {
+      wrapper.scrollLeft -= ev.wheelDeltaY;
+      ev.preventDefault();
+    });
+  }
 
   wrapper.addEventListener('scroll', () => {
     resolveVisible().catch(err => {
@@ -153,8 +155,8 @@ module.exports = function ({ wrapper, displayImage, events }) {
 
   // handle keyboard navigation
   keys.on('change', () => {
-    const isLeft = keys.includes(keys.LEFT);
-    const isRight = keys.includes(keys.RIGHT);
+    const isPrev = keys.includes(keys.LEFT) || keys.includes(keys.UP);
+    const isNext = keys.includes(keys.RIGHT) || keys.includes(keys.DOWN);
     const isDelete = keys.includes(keys.DELETE);
 
     if (isDelete) {
@@ -169,8 +171,8 @@ module.exports = function ({ wrapper, displayImage, events }) {
       return;
     }
 
-    if (isLeft || isRight) {
-      navigateTo(findNextTarget(wrapper, isLeft ? 'left' : 'right'));
+    if (isPrev || isNext) {
+      navigateTo(findNextTarget(wrapper, isPrev ? 'left' : 'right'));
     }
   });
 

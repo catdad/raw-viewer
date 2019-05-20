@@ -16,11 +16,24 @@ function isClippedRight(containerBB, elBB) {
   return elBB.right > containerBB.right;
 }
 
-function isClipped(containerBB, elBB) {
-  return isClippedLeft(containerBB, elBB) || isClippedRight(containerBB, elBB);
+function isClippedTop(containerBB, elBB) {
+  return elBB.top < containerBB.top;
 }
 
-module.exports = function ({ events }) {
+function isClippedBottom(containerBB, elBB) {
+  return elBB.bottom > containerBB.bottom;
+}
+
+function isClipped(containerBB, elBB) {
+  return isClippedLeft(containerBB, elBB) ||
+    isClippedRight(containerBB, elBB) ||
+    isClippedTop(containerBB, elBB) ||
+    isClippedBottom(containerBB, elBB);
+}
+
+module.exports = function ({ events }, opts) {
+  const direction = opts.experiments.filmstripOnLeft ? 'vertical' : 'horizontal';
+
   const elem = document.createElement('div');
   elem.className = name;
 
@@ -66,7 +79,8 @@ module.exports = function ({ events }) {
 
     if (isClipped(parentBB, thumbBB)) {
       thumb.scrollIntoView({
-        inline: 'center'
+        inline: 'center', // horizontal alignment
+        block: 'center' // vertical alignment
       });
     }
   }
@@ -130,7 +144,7 @@ module.exports = function ({ events }) {
     return { imgWrap, img };
   }
 
-  const { resolveVisible } = navigation({ wrapper, displayImage, events });
+  const { resolveVisible } = navigation({ wrapper, displayImage, direction, events });
 
   async function loadThumbnails({ files }) {
     wrapper.innerHTML = '';

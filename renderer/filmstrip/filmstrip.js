@@ -16,7 +16,7 @@ function isClippedRight(containerBB, elBB) {
   return elBB.right > containerBB.right;
 }
 
-function isClippedUp(containerBB, elBB) {
+function isClippedTop(containerBB, elBB) {
   return elBB.top < containerBB.top;
 }
 
@@ -27,7 +27,7 @@ function isClippedBottom(containerBB, elBB) {
 function isClipped(containerBB, elBB) {
   return isClippedLeft(containerBB, elBB) ||
     isClippedRight(containerBB, elBB) ||
-    isClippedUp(containerBB, elBB) ||
+    isClippedTop(containerBB, elBB) ||
     isClippedBottom(containerBB, elBB);
 }
 

@@ -5,6 +5,8 @@ const keys = (() => {
   const ALT = 'alt';
   const CTRL = 'control';
   const SHIFT = 'shift';
+  const UP = 'arrowup';
+  const DOWN = 'arrowdown';
   const LEFT = 'arrowleft';
   const RIGHT = 'arrowright';
   const DELETE = 'delete';
@@ -17,6 +19,8 @@ const keys = (() => {
     [`${ALT}`]: true,
     [`${CTRL}`]: true,
     [`${SHIFT}`]: true,
+    [`${UP}`]: true,
+    [`${DOWN}`]: true,
     [`${LEFT}`]: true,
     [`${RIGHT}`]: true,
     [`${DELETE}`]: true,
@@ -70,6 +74,8 @@ const keys = (() => {
     ALT,
     CTRL,
     SHIFT,
+    UP,
+    DOWN,
     LEFT,
     RIGHT,
     DELETE,

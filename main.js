@@ -65,6 +65,10 @@ function createWindow () {
       }
     });
 
+    if (config.getProp('experiments.mojaveDarkMode')) {
+      systemPreferences.setAppLevelAppearance('dark');
+    }
+
     if (config.getProp('window.maximized')) {
       mainWindow.maximize();
     }

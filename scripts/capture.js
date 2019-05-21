@@ -64,7 +64,7 @@ const exec = async (cmd, args, opts) => {
     await app.start(configPath);
     await app.waitForElementCount('.filmstrip .thumbnail', 1);
 
-    await exec('oscript', ['-e', 'tell app "System Events" to tell appearance preferences to set dark mode to not dark mode']);
+    await exec('osascript', ['-e', 'tell app "System Events" to tell appearance preferences to set dark mode to not dark mode']);
     await exec('screencapture', ['-x', 'screen.jpg'], {
       cwd: path.resolve(root)
     });

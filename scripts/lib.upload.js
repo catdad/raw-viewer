@@ -33,7 +33,7 @@ const fileIo = async (filepath, name = null) => {
         throw new Error('not successful');
       }
     } catch (e) {
-      console.log(`upload failed with ${res.statusCode} and body:`);
+      console.log(`upload failed with ${res.status} ${res.statusText} and body:`);
       console.log(txt);
     }
   } catch (e) {

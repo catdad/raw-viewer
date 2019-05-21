@@ -66,6 +66,9 @@ const sleep = ms => new Promise(resolve => setTimeout(() => resolve(), ms));
     const configPath = await config.create({
       client: {
         lastDirectory: path.resolve(root, 'temp')
+      },
+      experiments: {
+        mojaveDarkMode: true
       }
     });
 

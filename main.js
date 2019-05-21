@@ -11,7 +11,7 @@ const url = require('url');
 const EventEmitter = require('events');
 const events = new EventEmitter();
 
-const { app, BrowserWindow, Menu, ipcMain } = require('electron');
+const { app, BrowserWindow, Menu, ipcMain, systemPreferences } = require('electron');
 
 const config = require('./lib/config.js');
 const menu = require('./lib/menu.js');
@@ -48,6 +48,10 @@ function createWindow () {
     exiftool.open()
   ]).then(function () {
     Menu.setApplicationMenu(menu(events, config.getProp('experiments')));
+
+    if (config.getProp('experiments.mojaveDarkMode')) {
+      systemPreferences.setAppLevelAppearance('dark');
+    }
 
     // Create the browser window.
     mainWindow = new BrowserWindow({

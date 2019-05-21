@@ -50,20 +50,28 @@ const upload = async (filepath) => {
 };
 
 (async () => {
-  const configPath = await config.create({
-    client: {
-      lastDirectory: path.resolve(root, 'temp')
-    }
-  });
+  try {
+    const configPath = await config.create({
+      client: {
+        lastDirectory: path.resolve(root, 'temp')
+      }
+    });
 
-  await app.start(configPath);
-  await app.waitForElementCount('.filmstrip .thumbnail', 1);
+    await app.start(configPath);
+    await app.waitForElementCount('.filmstrip .thumbnail', 1);
 
-  await promisify(execFile)('screenshot', ['-x', 'screen.jpg'], {
-    cwd: path.resolve(root)
-  });
+    await promisify(execFile)('screenshot', ['-x', 'screen.jpg'], {
+      cwd: path.resolve(root)
+    });
 
-  await upload(path.resolve(root, 'screen.jpg'));
+    await upload(path.resolve(root, 'screen.jpg'));
+  } catch (e) {
+    throw e;
+  } finally {
+    await config.cleanAll();
+    await app.stop();
+    await fs.remove(path.resolve(root, 'screen.jpg'));
+  }
 })().then(() => {
   console.log('capture finished');
 }).catch(err => {

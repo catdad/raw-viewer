@@ -8,7 +8,7 @@ const fs = require('fs-extra');
 
 const config = require('../test/lib/config-provider.js');
 const app = require('../test/lib/app-provider.js');
-const fileIo = require('./lib.upload.js');
+const { fileIo } = require('./lib.upload.js');
 
 const exec = async (cmd, args, opts) => {
   return await promisify(execFile)(cmd, args, opts);

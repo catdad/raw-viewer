@@ -42,7 +42,7 @@ const sleep = ms => new Promise(resolve => setTimeout(() => resolve(), ms));
       cwd: path.resolve(root)
     });
 
-    await upload(path.resolve(root, 'screen.jpg'));
+    console.table(await upload(path.resolve(root, 'screen.jpg')));
   } catch (e) {
     throw e;
   } finally {

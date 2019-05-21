@@ -11,7 +11,7 @@ const throwResErr = (res, body) => {
 
 const expiresOn = (days) => {
   const date = new Date();
-  date.setDate(date.getDate + days);
+  date.setDate(date.getDate() + days);
   return date.toISOString();
 };
 

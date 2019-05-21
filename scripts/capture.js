@@ -60,7 +60,7 @@ const upload = async (filepath) => {
     await app.start(configPath);
     await app.waitForElementCount('.filmstrip .thumbnail', 1);
 
-    await promisify(execFile)('screenshot', ['-x', 'screen.jpg'], {
+    await promisify(execFile)('screencapture', ['-x', 'screen.jpg'], {
       cwd: path.resolve(root)
     });
 

@@ -42,4 +42,22 @@ const fileIo = async (filepath, name = null) => {
   }
 };
 
-module.exports = { fileIo };
+const transferSh = async (filepath, name = null) => {
+  const filename = name || path.basename(filepath);
+  const url = `https://transfer.sh/${filename}`;
+
+  console.log(url);
+
+  const res = await fetch(url, {
+    method: 'PUT',
+    body: fs.createReadStream(filepath)
+  });
+
+  console.log(res.status, res.statusText);
+
+  const txt = await res.text();
+
+  console.log(txt);
+};
+
+module.exports = { fileIo, transferSh };

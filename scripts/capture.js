@@ -8,7 +8,7 @@ const fs = require('fs-extra');
 
 const config = require('../test/lib/config-provider.js');
 const app = require('../test/lib/app-provider.js');
-const { fileIo } = require('./lib.upload.js');
+const { transferSh: upload } = require('./lib.upload.js');
 
 const exec = async (cmd, args, opts) => {
   return await promisify(execFile)(cmd, args, opts);
@@ -42,7 +42,7 @@ const sleep = ms => new Promise(resolve => setTimeout(() => resolve(), ms));
       cwd: path.resolve(root)
     });
 
-    await fileIo(path.resolve(root, 'screen.jpg'));
+    await upload(path.resolve(root, 'screen.jpg'));
   } catch (e) {
     throw e;
   } finally {

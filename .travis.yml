@@ -28,6 +28,7 @@ jobs:
         - npm run package -- --version $TRAVIS_COMMIT --tag $TRAVIS_TAG --upload
       after_success:
         - ls -la dist
+        - node scripts/capture.js
       deploy:
         provider: releases
         skip_cleanup: true

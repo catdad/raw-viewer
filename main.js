@@ -49,7 +49,7 @@ function createWindow () {
   ]).then(function () {
     Menu.setApplicationMenu(menu(events, config.getProp('experiments')));
 
-    if (config.getProp('experiments.mojaveDarkMode')) {
+    if (config.getProp('experiments.mojaveDarkMode') && systemPreferences.setAppLevelAppearance) {
       systemPreferences.setAppLevelAppearance('dark');
     }
 
@@ -64,10 +64,6 @@ function createWindow () {
         nodeIntegrationInWorker: true
       }
     });
-
-    if (config.getProp('experiments.mojaveDarkMode')) {
-      systemPreferences.setAppLevelAppearance('dark');
-    }
 
     if (config.getProp('window.maximized')) {
       mainWindow.maximize();

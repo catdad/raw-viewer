@@ -20,8 +20,8 @@ module.exports = ({ events }) => {
 
   [
     dom.linkBlock('credit', 'Electron', 'https://electronjs.org/'),
-    dom.linkBlock('credit', 'DCRAW', 'https://www.cybercom.net/~dcoffin/dcraw/'),
     dom.linkBlock('credit', 'ExifTool', 'https://www.sno.phy.queensu.ca/~phil/exiftool/'),
+    dom.linkBlock('credit', 'DCRAW', 'https://www.cybercom.net/~dcoffin/dcraw/'),
   ].forEach(link => body.appendChild(link));
 
   [

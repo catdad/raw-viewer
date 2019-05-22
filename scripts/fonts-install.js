@@ -48,7 +48,7 @@ const fonts = {
   'KFOlCnqEu92Fr1MmWUlfBBc4.woff2': 'https://fonts.gstatic.com/s/roboto/v19/KFOlCnqEu92Fr1MmWUlfBBc4.woff2'
 };
 
-(async () => {
+require('./lib.run.js')('fonts', async () => {
   await fs.ensureDir(fontsDir);
   await fs.outputFile(path.resolve(fontsDir, 'fonts.css'), css);
 
@@ -64,10 +64,4 @@ const fonts = {
       fs.createWriteStream(path.join(fontsDir, name))
     );
   }
-})().then(() => {
-  console.log('fonts fetched successfully');
-}).catch(err => {
-  console.error('error fetching fonts');
-  console.error(err);
-  process.exitCode = 1;
 });

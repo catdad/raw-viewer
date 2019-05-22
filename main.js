@@ -50,6 +50,7 @@ function createWindow () {
     Menu.setApplicationMenu(menu(events, config.getProp('experiments')));
 
     if (config.getProp('experiments.mojaveDarkMode') && systemPreferences.setAppLevelAppearance) {
+      log.info('attempting to set mojave dark mode');
       systemPreferences.setAppLevelAppearance('dark');
     }
 

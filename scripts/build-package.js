@@ -122,7 +122,7 @@ const upload = async (filename) => {
   }
 
   if (argv.upload && filepath) {
-    await upload(filepath);
+    console.table(await upload(filepath));
   }
 })().then(() => {
   console.log('Build complete');

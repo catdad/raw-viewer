@@ -9,13 +9,12 @@ const root = require('rootrequire');
 const packager = require('electron-packager');
 const archiver = require('archiver');
 const zip = require('electron-installer-zip');
-const fetch = require('node-fetch');
-const FormData = require('form-data');
 const argv = require('yargs-parser')(process.argv.slice(2));
 const version = argv.version || null;
 const tag = (typeof argv.tag === 'string') ? `v${argv.tag}` : null;
 
 const pkg = require('../package.json');
+const { transferSh } = require('./lib.upload.js');
 
 const platform = process.platform;
 
@@ -46,7 +45,7 @@ const ignore = [
 ];
 
 const winZip = async () => {
-  const filepath = `dist/${name}-Windows-portable.zip`;
+  const filepath = path.resolve(`dist/${name}-Windows-portable.zip`);
   console.log('Creating Windows portable zip', filepath);
 
   await fs.remove(filepath);
@@ -60,58 +59,38 @@ const winZip = async () => {
   archive.finalize();
 
   await promisify(pipeline)(archive, fs.createWriteStream(filepath));
+
+  return filepath;
 };
 
 const darwinZip = async () => {
-  const filepath = `dist/${name}-MacOS-portable.zip`;
+  const filepath = path.resolve(`dist/${name}-MacOS-portable.zip`);
   console.log('Creating MacOS portable zip', filepath);
 
   await promisify(zip)({
     dir: path.resolve(dirs.darwin, 'Raw Viewer.app'),
     out: filepath
   });
+
+  return filepath;
 };
 
 const linuxTar = async () => {
+  const filepath = path.resolve(`dist/${name}-Linux-portable.tar.gz`);
+
   await promisify(execFile)('tar', [
     'cfz',
-    `dist/${name}-Linux-portable.tar.gz`,
+    filepath,
     '-C', dirs.linux,
     '.'
   ]);
+
+  return filepath;
 };
 
 const upload = async (filename) => {
-  const url = 'https://file.io';
-  const filepath = `dist/${filename}`;
-  console.log(`Uploading ${filepath} to ${url}`);
-
   try {
-    const form = new FormData();
-    form.append('file', fs.createReadStream(filepath), {
-      filename: filename
-    });
-
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: form.getHeaders(),
-      body: form
-    });
-
-    const txt = await res.text();
-
-    try {
-      const json = JSON.parse(txt);
-
-      if (json.success) {
-        console.table(json);
-      } else {
-        throw new Error('not successful');
-      }
-    } catch (e) {
-      console.log(`upload failed with ${res.statusCode} and body:`);
-      console.log(txt);
-    }
+    await transferSh(path.resolve(root, 'dist', filename));
   } catch (e) {
     console.log('upload failed with error:');
     console.log(e);
@@ -132,20 +111,18 @@ const upload = async (filename) => {
     out: 'dist'
   });
 
+  let filepath;
+
   if (platform === 'win32') {
-    await winZip();
+    filepath = await winZip();
   } else if (platform === 'darwin') {
-    await darwinZip();
-
-    if (argv.upload) {
-      await upload(`${name}-MacOS-portable.zip`);
-    }
+    filepath = await darwinZip();
   } else if (platform === 'linux') {
-    await linuxTar();
+    filepath = await linuxTar();
+  }
 
-    if (argv.upload) {
-      await upload(`${name}-Linux-portable.tar.gz`);
-    }
+  if (argv.upload && filepath) {
+    await upload(filepath);
   }
 })().then(() => {
   console.log('Build complete');

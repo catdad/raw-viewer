@@ -5,7 +5,7 @@
   "description": "raw-viewer",
   "main": "main.js",
   "scripts": {
-    "postinstall": "electron-rebuild && node scripts/exiftool-install.js",
+    "postinstall": "electron-rebuild && node scripts/exiftool-install.js && node scripts/fonts-install.js",
     "lint": "eslint main.js lib public renderer scripts test",
     "pretest": "node test/lib/downloader.js",
     "test": "mocha --timeout 30000 --slow 0 test/**.test.js",

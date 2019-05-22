@@ -27,6 +27,9 @@ const sleep = ms => new Promise(resolve => setTimeout(() => resolve(), ms));
     const configPath = await config.create({
       client: {
         lastDirectory: path.resolve(root, 'temp')
+      },
+      experiments: {
+        mojaveDarkMode: true
       }
     });
 
@@ -47,7 +50,7 @@ const sleep = ms => new Promise(resolve => setTimeout(() => resolve(), ms));
     throw e;
   } finally {
     await config.cleanAll();
-    await app.stop();
+    await app.stop(true);
     await fs.remove(path.resolve(root, 'screen.jpg'));
   }
 })().then(() => {

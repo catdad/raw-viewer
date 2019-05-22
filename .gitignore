@@ -38,5 +38,5 @@ coverage/
 .nyc_output/
 .raw-viewer-config.json
 temp/
-third-party/exiftool/
+third-party/
 dist/

@@ -90,7 +90,7 @@ const linuxTar = async () => {
 
 const upload = async (filename) => {
   try {
-    await transferSh(path.resolve(root, 'dist', filename));
+    console.table(await transferSh(path.resolve(root, 'dist', filename)));
   } catch (e) {
     console.log('upload failed with error:');
     console.log(e);
@@ -122,7 +122,7 @@ const upload = async (filename) => {
   }
 
   if (argv.upload && filepath) {
-    console.table(await upload(filepath));
+    await upload(filepath);
   }
 })().then(() => {
   console.log('Build complete');

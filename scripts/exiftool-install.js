@@ -50,7 +50,7 @@ const unzipPromise = async (stream, outdir) => {
   }
 };
 
-(async () => {
+require('./lib.run.js')(`exiftool v${version}`, async () => {
   await fs.ensureDir(exiftoolDir);
 
   const archive = await responseStream(urls[platform]);
@@ -75,10 +75,4 @@ const unzipPromise = async (stream, outdir) => {
       }
     }));
   }
-})().then(() => {
-  console.log(`exiftool v${version} fetched successfully`);
-}).catch(err => {
-  console.error(`error fetching exiftool v${version}`);
-  console.error(err);
-  process.exitCode = 1;
 });

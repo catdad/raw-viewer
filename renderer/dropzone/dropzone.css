@@ -1,26 +1,38 @@
 .dropzone {
   display: flex;
-  background: rgba(128, 128, 128, 0.85);
+  background: rgba(18, 18, 18, 0.6);
   z-index: 200;
 }
 
 .dropzone .container {
   display: flex;
   margin: auto;
-  user-select: none;
+  pointer-events: none;
 
-  width: 50%;
+  width: 70%;
+  max-width: 600px;
   height: 50%;
 
   align-items: center;
   text-align: center;
 
-  background: rgba(70, 70, 70, 0.6);
-  border: 5px dashed var(--text-main);
+  background: var(--main-surface);
+  border: 3px dotted var(--main-border);
   border-radius: 20px;
+}
+
+.dropzone p {
+  line-height: 1.5;
+  margin: 0;
+  padding: 0;
+  font-size: 3rem;
+}
+
+.dropzone p.small {
+  font-size: 1.2rem;
+  padding: 1rem 0;
 }
 
 .dropzone .text {
   width: 100%;
-  font-size: 4rem;
 }

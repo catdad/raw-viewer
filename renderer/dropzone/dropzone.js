@@ -3,31 +3,24 @@ const fs = require('fs-extra');
 const name = 'dropzone';
 const style = true;
 
+const dom = require('../tools/dom.js');
+
 function dropzoneContent() {
-  const container = document.createElement('div');
-  container.className = 'container';
-
-  const text = document.createElement('div');
-  text.className = 'text';
-
-  text.appendChild(document.createTextNode('drag and drop a folder to view'));
-  container.appendChild(text);
-
-  return container;
+  return dom.children(
+    dom.div('container'),
+    dom.children(
+      dom.div('text'),
+      dom.p('drag a folder to open'),
+      dom.classname(dom.p('or click to select a folder'), 'small')
+    )
+  );
 }
 
 module.exports = function ({ events }) {
-  var elem = document.createElement('div');
-  elem.className = name;
+  const elem = dom.div(name);
   let hasDir = false;
 
-  const container = dropzoneContent();
-  container.onclick = (ev) => {
-    ev.preventDefault();
-    events.emit('directory:open');
-  };
-
-  elem.appendChild(container);
+  dom.children(elem, dropzoneContent());
 
   function open() {
     elem.style.display = 'flex';
@@ -55,8 +48,13 @@ module.exports = function ({ events }) {
     return false;
   }
 
-  elem.ondragover = stop.bind('enter');
-  elem.ondragend = stop.bind('end');
+  elem.onclick = (ev) => {
+    ev.preventDefault();
+    events.emit('directory:open');
+  };
+
+  elem.ondragover = stop;
+  elem.ondragend = stop;
 
   elem.ondragleave = () => {
     if (hasDir) {
@@ -82,6 +80,7 @@ module.exports = function ({ events }) {
   window.addEventListener('dragenter', (ev) => {
     ev.preventDefault();
     open();
+    return false;
   });
 
   events.on('directory:load', () => {

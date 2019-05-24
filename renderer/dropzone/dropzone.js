@@ -3,17 +3,17 @@ const fs = require('fs-extra');
 const name = 'dropzone';
 const style = true;
 
+const dom = require('../tools/dom.js');
+
 function dropzoneContent() {
-  const container = document.createElement('div');
-  container.className = 'container';
-
-  const text = document.createElement('div');
-  text.className = 'text';
-
-  text.appendChild(document.createTextNode('drag and drop a folder to view'));
-  container.appendChild(text);
-
-  return container;
+  return dom.children(
+    dom.div('container'),
+    dom.children(
+      dom.div('text'),
+      dom.p('drop a folder'),
+      dom.p('to view')
+    )
+  );
 }
 
 module.exports = function ({ events }) {

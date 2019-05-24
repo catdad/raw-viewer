@@ -39,7 +39,8 @@ describe('[smoke tests]', () => {
 
     await waitForVisible('.dropzone');
 
-    expect(await app.client.getText('.dropzone .container')).to.equal('drag and drop a folder to view');
+    expect(await app.client.getText('.dropzone .container'))
+      .to.equal('drag a folder to open\nor click to select a folder');
   });
 
   it('loads fixture images', async () => {

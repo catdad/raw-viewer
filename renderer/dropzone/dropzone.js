@@ -58,7 +58,7 @@ module.exports = function ({ events }) {
 
   elem.ondragleave = () => {
     if (hasDir) {
-      elem.style.display = 'none';
+      close();
     }
 
     return false;

@@ -38,7 +38,7 @@
     "node-fetch": "^2.6.0",
     "p-throttle": "^3.1.0",
     "pretty-bytes": "^5.2.0",
-    "semver": "^6.0.0",
+    "semver": "^6.1.0",
     "sharp": "^0.22.1",
     "trash": "^5.2.0"
   },
@@ -48,7 +48,7 @@
     "chalk": "^2.4.2",
     "del": "^4.1.1",
     "devtron": "^1.4.0",
-    "electron": "^5.0.1",
+    "electron": "^5.0.2",
     "electron-debug": "^2.2.0",
     "electron-installer-zip": "^0.1.2",
     "electron-packager": "^13.1.1",

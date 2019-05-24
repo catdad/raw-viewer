@@ -25,9 +25,14 @@
   line-height: 1.5;
   margin: 0;
   padding: 0;
+  font-size: 3rem;
+}
+
+.dropzone p.small {
+  font-size: 1.2rem;
+  padding: 1rem 0;
 }
 
 .dropzone .text {
   width: 100%;
-  font-size: 3rem;
 }

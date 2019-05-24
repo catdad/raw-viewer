@@ -10,8 +10,8 @@ function dropzoneContent() {
     dom.div('container'),
     dom.children(
       dom.div('text'),
-      dom.p('drop a folder'),
-      dom.p('to view')
+      dom.p('drag a folder to open'),
+      dom.classname(dom.p('or click to select a folder'), 'small')
     )
   );
 }

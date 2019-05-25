@@ -1,14 +1,15 @@
+const dom = require('../tools/dom.js');
+
 function ratingControl(rating) {
   function star(setTo) {
-    const char = setTo === 0 ? '⨯' :
-      setTo <= rating ? '★' : '☆';
+    const name = setTo === 0 ? 'close' :
+      setTo <= rating ? 'star' : 'star_border';
 
-    const el = document.createElement('span');
-    el.setAttribute('data-rate', setTo);
-    el.appendChild(document.createTextNode(char));
-    el.className = char;
+    const icon = dom.icon(name);
+    icon.setAttribute('data-rate', setTo);
+    icon.classList.add(name);
 
-    return el;
+    return icon;
   }
 
   return Array.apply(null, new Array(6)).map((n, i) => {

@@ -11,7 +11,7 @@
   --spacing: var(--main-pad);
   --margin: calc((var(--spacing)) / 2);
 
-  --rate-opacity: 0.6;
+  --rate-opacity: 0.75;
 }
 
 .experiment-filmstrip-left .filmstrip {
@@ -120,7 +120,7 @@
   position: absolute;
   top: 2px;
   z-index: 1;
-  font-size: 1.4rem;
+  font-size: 1.2rem;
   line-height: 1.2;
   text-shadow: 0 0 10px var(--main-background);
 }

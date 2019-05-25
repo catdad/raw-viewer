@@ -58,6 +58,13 @@ const linkBlock = (className, str, href) => {
   return el;
 };
 
+const icon = name => {
+  return children(
+    classname(document.createElement('i'), 'material-icons'),
+    text(name)
+  );
+};
+
 const classname = (el, className) => {
   el.className = className;
   return el;
@@ -85,6 +92,7 @@ module.exports = {
   h1,
   link,
   linkBlock,
+  icon,
   classname,
   children,
   empty

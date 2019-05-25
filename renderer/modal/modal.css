@@ -31,3 +31,21 @@
 
   overflow: auto;
 }
+
+.modal a {
+  color: var(--accent-yellow-bright);
+  text-decoration: none;
+  opacity: 0.9;
+}
+
+.modal a:hover {
+  opacity: 1;
+  text-decoration: underline;
+}
+
+.modal .byline i {
+  position: relative;
+  bottom: -3px;
+  font-size: 1rem;
+  color: var(--accent-yellow-bright);
+}

@@ -30,11 +30,17 @@ module.exports = ({ events }) => {
   const title = dom.h1(`${appName} v${pkg.version}`);
   head.appendChild(title);
 
-  [
-    dom.link(appName, 'https://github.com/catdad/raw-viewer'),
-    dom.text(' is made with 💛 by '),
-    dom.link('catdad', 'https://github.com/catdad')
-  ].forEach(el => foot.appendChild(el));
+  dom.children(
+    foot,
+    dom.children(
+      dom.div('byline'),
+      dom.link(appName, 'https://github.com/catdad/raw-viewer'),
+      dom.text(' is made with '),
+      dom.icon('favorite'),
+      dom.text(' by '),
+      dom.link('catdad', 'https://github.com/catdad')
+    )
+  );
 
   events.on('check-for-update', async () => {
     dom.empty(elem);

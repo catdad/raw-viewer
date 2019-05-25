@@ -12,16 +12,6 @@
   margin: 10px auto;
 }
 
-.modal .about a {
-  color: var(--accent-yellow-bright);
-  text-decoration: none;
-  opacity: 0.9;
-}
-.modal .about a:hover {
-  opacity: 1;
-  text-decoration: underline;
-}
-
 .modal .about .head,
 .modal .about .foot {
   flex: 0;

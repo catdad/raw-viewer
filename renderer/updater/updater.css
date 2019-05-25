@@ -7,21 +7,6 @@
   min-height: 100%;
 }
 
-.modal .updater .credit {
-  font-size: 1.6rem;
-  margin: 10px auto;
-}
-
-.modal .updater a {
-  color: var(--accent-yellow-bright);
-  text-decoration: none;
-  opacity: 0.9;
-}
-.modal .updater a:hover {
-  opacity: 1;
-  text-decoration: underline;
-}
-
 .modal .updater .head,
 .modal .updater .foot {
   flex: 0;

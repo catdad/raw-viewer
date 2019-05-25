@@ -24,11 +24,17 @@ module.exports = ({ events }) => {
     dom.linkBlock('credit', 'DCRAW', 'https://www.cybercom.net/~dcoffin/dcraw/'),
   ].forEach(link => body.appendChild(link));
 
-  [
-    dom.link(appName, 'https://github.com/catdad/raw-viewer'),
-    dom.text(' is made with 💛 by '),
-    dom.link('catdad', 'https://github.com/catdad')
-  ].forEach(el => foot.appendChild(el));
+  dom.children(
+    foot,
+    dom.children(
+      dom.div('byline'),
+      dom.link(appName, 'https://github.com/catdad/raw-viewer'),
+      dom.text(' is made with '),
+      dom.icon('favorite'),
+      dom.text(' by '),
+      dom.link('catdad', 'https://github.com/catdad')
+    )
+  );
 
   events.on('about', () => {
     events.emit('modal', { content: elem });

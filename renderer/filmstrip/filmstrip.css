@@ -10,6 +10,8 @@
 
   --spacing: var(--main-pad);
   --margin: calc((var(--spacing)) / 2);
+
+  --rate-opacity: 0.6;
 }
 
 .experiment-filmstrip-left .filmstrip {
@@ -116,7 +118,7 @@
 
 .filmstrip .rating {
   position: absolute;
-  top: 0;
+  top: 2px;
   z-index: 1;
   font-size: 1.4rem;
   line-height: 1.2;
@@ -125,15 +127,15 @@
 
 .filmstrip .rating [data-rate="0"] {
   padding: 0 2px;
-  opacity: 0.8;
+  opacity: var(--rate-opacity);
 }
 
-.filmstrip .rating .★ {
+.filmstrip .rating .star {
   color: var(--accent-yellow-bright);
 }
 
-.filmstrip .rating .☆ {
-  opacity: 0.9;
+.filmstrip .rating .star_border {
+  opacity: var(--rate-opacity);
 }
 
 .filmstrip .thumbnail::after {

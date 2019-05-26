@@ -37,7 +37,7 @@ module.exports = () => {
       }
     ),
     dom.click(
-      dom.classname(dom.icon('reorder'), 'left'),
+      dom.classname(dom.icon('menu'), 'left'),
       (e) => {
         const rect = e.target.getBoundingClientRect();
 

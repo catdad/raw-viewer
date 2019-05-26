@@ -47,7 +47,7 @@ function createWindow () {
     config.read(),
     exiftool.open()
   ]).then(function () {
-    Menu.setApplicationMenu(menu(events, config.getProp('experiments')));
+    Menu.setApplicationMenu(menu.create(events, config.getProp('experiments')));
 
     if (config.getProp('experiments.mojaveDarkMode') && systemPreferences.setAppLevelAppearance) {
       log.info('attempting to set mojave dark mode');

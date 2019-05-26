@@ -66,7 +66,7 @@ const icon = name => {
 };
 
 const classname = (el, className) => {
-  el.className = className;
+  el.classList.add(className);
   return el;
 };
 

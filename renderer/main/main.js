@@ -57,6 +57,10 @@ function renderApp(elem, opts) {
   linkStyle(stylepath);
   elem.classList.add(name);
 
+  if (opts.experiments.framelessWindow) {
+    elem.classList.add('frameless');
+  }
+
   render('frame', elem, opts);
   render('directory', elem, opts);
   render('rating', elem, opts);
@@ -72,13 +76,14 @@ function renderApp(elem, opts) {
 }
 
 async function start(elem) {
-  const [lastDirectory, filmstripOnLeft] = await config.getProp([
+  const [lastDirectory, filmstripOnLeft, framelessWindow] = await config.getProp([
     'client.lastDirectory',
-    'experiments.filmstripOnLeft'
+    'experiments.filmstripOnLeft',
+    'experiments.framelessWindow'
   ]);
 
   const appOpts = {
-    experiments: { filmstripOnLeft },
+    experiments: { filmstripOnLeft, framelessWindow },
     client: { lastDirectory }
   };
 

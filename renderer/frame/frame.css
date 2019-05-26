@@ -1,0 +1,14 @@
+.frame {
+  -webkit-app-region: drag;
+  -webkit-user-select: none;
+
+  --frame-font-size: 18px;
+  --frame-padding: calc((var(--frame-size) - var(--frame-font-size)) / 2 );
+}
+
+.frame i {
+  float: right;
+  font-size: var(--frame-font-size);
+  padding: var(--frame-padding) 8px;
+  -webkit-app-region: no-drag;
+}

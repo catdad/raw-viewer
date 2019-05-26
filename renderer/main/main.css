@@ -80,7 +80,11 @@ body {
 .frameless .sidebar {
   top: var(--frame-size);
 }
+.frame {
+  display: none;
+}
 .frameless .frame {
+  display: block;
   position: absolute;
   top: 0;
   right: 0;

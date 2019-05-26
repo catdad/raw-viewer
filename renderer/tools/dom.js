@@ -65,8 +65,8 @@ const icon = name => {
   );
 };
 
-const classname = (el, className) => {
-  el.classList.add(className);
+const classname = (el, ...classes) => {
+  classes.forEach(c => el.classList.add(c));
   return el;
 };
 

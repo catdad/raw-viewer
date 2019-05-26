@@ -57,6 +57,7 @@ function renderApp(elem, opts) {
   linkStyle(stylepath);
   elem.classList.add(name);
 
+  render('frame', elem, opts);
   render('directory', elem, opts);
   render('rating', elem, opts);
   render('filmstrip', elem, opts);

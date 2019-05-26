@@ -171,6 +171,12 @@ body {
   height: 100%;
 }
 
+/* icon styles */
+.icon-rotate-180 {
+  transform-origin: center;
+  transform: rotate(180deg);
+}
+
 /* generic scrollbar that can be used throughout */
 .scrollbar::-webkit-scrollbar {
   width: 8px;

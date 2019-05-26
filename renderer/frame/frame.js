@@ -19,7 +19,7 @@ module.exports = () => {
       }
     ),
     dom.click(
-      dom.classname(dom.icon('flip_to_front'), 'right'),
+      dom.classname(dom.icon('filter_none'), 'right', 'icon-rotate-180'),
       () => {
         const browser = BrowserWindow.getFocusedWindow();
 

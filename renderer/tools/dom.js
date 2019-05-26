@@ -78,6 +78,11 @@ const children = (el, ...childs) => {
   return el;
 };
 
+const click = (el, handler) => {
+  el.addEventListener('click', handler, false);
+  return el;
+};
+
 const empty = (elem) => {
   while (elem.firstChild) {
     elem.removeChild(elem.firstChild);
@@ -95,5 +100,6 @@ module.exports = {
   icon,
   classname,
   children,
+  click,
   empty
 };

@@ -2,20 +2,14 @@ const { BrowserWindow } = require('electron').remote;
 
 const name = 'frame';
 const style = true;
-const log = require('../../lib/log.js')(name);
 
 const dom = require('../tools/dom.js');
 
-module.exports = ({ events }) => {
-  const close = dom.icon('close');
-  const maximize = dom.icon('flip_to_front');
-  const minimize = dom.icon('minimize');
-
-  close.addEventListener('click', () => {
+module.exports = () => {
+  const close = dom.click(dom.icon('close'), () => {
     BrowserWindow.getFocusedWindow().close();
   });
-
-  maximize.addEventListener('click', () => {
+  const maximize = dom.click(dom.icon('flip_to_front'), () => {
     const browser = BrowserWindow.getFocusedWindow();
 
     if (browser.isMaximized()) {
@@ -24,8 +18,7 @@ module.exports = ({ events }) => {
       browser.maximize();
     }
   });
-
-  minimize.addEventListener('click', () => {
+  const minimize = dom.click(dom.icon('minimize'), () => {
     BrowserWindow.getFocusedWindow().minimize();
   });
 

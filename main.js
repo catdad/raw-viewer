@@ -63,7 +63,8 @@ function createWindow () {
       webPreferences: {
         nodeIntegration: true,
         nodeIntegrationInWorker: true
-      }
+      },
+      frame: !config.getProp('experiments.framelessWindow')
     });
 
     if (config.getProp('window.maximized')) {

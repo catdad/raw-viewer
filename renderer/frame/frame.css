@@ -7,8 +7,14 @@
 }
 
 .frame i {
-  float: right;
   font-size: var(--frame-font-size);
   padding: var(--frame-padding) 8px;
   -webkit-app-region: no-drag;
+}
+
+.frame i.left {
+  float: left
+}
+.frame i.right {
+  float: right
 }

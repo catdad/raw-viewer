@@ -12,35 +12,47 @@ module.exports = () => {
 
   const elem = dom.children(
     dom.div(name),
-    dom.click(dom.icon('close'), () => {
-      BrowserWindow.getFocusedWindow().close();
-    }),
-    dom.click(dom.icon('flip_to_front'), () => {
-      const browser = BrowserWindow.getFocusedWindow();
-
-      if (browser.isMaximized()) {
-        browser.unmaximize();
-      } else {
-        browser.maximize();
+    dom.click(
+      dom.classname(dom.icon('close'), 'right'),
+      () => {
+        BrowserWindow.getFocusedWindow().close();
       }
-    }),
-    dom.click(dom.icon('minimize'), () => {
-      BrowserWindow.getFocusedWindow().minimize();
-    }),
-    dom.click(dom.icon('reorder'), (e) => {
-      const rect = e.target.getBoundingClientRect();
+    ),
+    dom.click(
+      dom.classname(dom.icon('flip_to_front'), 'right'),
+      () => {
+        const browser = BrowserWindow.getFocusedWindow();
 
-      menu[menuOpen ? 'closeContext' : 'openContext']({
-        x: rect.left,
-        y: rect.bottom
-      }).then(() => {
-        log.info('opened frameless app menu');
-      }).catch(err => {
-        log.error('frameless app menu error', err);
-      });
+        if (browser.isMaximized()) {
+          browser.unmaximize();
+        } else {
+          browser.maximize();
+        }
+      }
+    ),
+    dom.click(
+      dom.classname(dom.icon('minimize'), 'right'),
+      () => {
+        BrowserWindow.getFocusedWindow().minimize();
+      }
+    ),
+    dom.click(
+      dom.classname(dom.icon('reorder'), 'left'),
+      (e) => {
+        const rect = e.target.getBoundingClientRect();
 
-      menuOpen = !menuOpen;
-    })
+        menu[menuOpen ? 'closeContext' : 'openContext']({
+          x: rect.left,
+          y: rect.bottom
+        }).then(() => {
+          log.info('opened frameless app menu');
+        }).catch(err => {
+          log.error('frameless app menu error', err);
+        });
+
+        menuOpen = !menuOpen;
+      }
+    )
   );
 
   return { elem, style };

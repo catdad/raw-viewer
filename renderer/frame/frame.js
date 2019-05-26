@@ -13,7 +13,7 @@ module.exports = () => {
   const elem = dom.children(
     dom.div(name),
     dom.click(
-      dom.classname(dom.icon('close'), 'right'),
+      dom.classname(dom.icon('close'), 'right', 'close'),
       () => {
         BrowserWindow.getFocusedWindow().close();
       }

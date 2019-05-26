@@ -8,8 +8,15 @@
 
 .frame i {
   font-size: var(--frame-font-size);
-  padding: var(--frame-padding) 8px;
+  padding: var(--frame-padding) 10px;
   -webkit-app-region: no-drag;
+}
+
+.frame i:hover {
+  background-color: var(--main-border);
+}
+.frame i.close:hover {
+  background-color: var(--accent-red-bright);
 }
 
 .frame i.left {

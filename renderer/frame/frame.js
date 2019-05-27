@@ -9,6 +9,17 @@ const dom = require('../tools/dom.js');
 
 module.exports = () => {
   let menuOpen = false;
+  let menuTimer;
+
+  const throttledClose = () => {
+    if (menuTimer) {
+      clearTimeout(menuTimer);
+    }
+
+    menuTimer = setTimeout(() => {
+      menuOpen = false;
+    }, 100);
+  };
 
   const elem = dom.children(
     dom.div(name),
@@ -39,14 +50,20 @@ module.exports = () => {
     dom.click(
       dom.classname(dom.icon('menu'), 'left'),
       (e) => {
+        if (menuTimer) {
+          clearTimeout(menuTimer);
+        }
+
         const rect = e.target.getBoundingClientRect();
 
         menu[menuOpen ? 'closeContext' : 'openContext']({
           x: rect.left,
           y: rect.bottom
         }).then(() => {
-          log.info('opened frameless app menu');
+          throttledClose();
+          log.info('frameless app menu action complete');
         }).catch(err => {
+          throttledClose();
           log.error('frameless app menu error', err);
         });
 

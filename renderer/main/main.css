@@ -37,6 +37,7 @@
   --accent-purple: #dd75ff;
   --accent-yellow: #ffdd75;
 
+  --accent-red-bright: #a01212;
   --accent-yellow-bright: #f6c304;
   --accent-purple-dark: #332940;
 
@@ -44,6 +45,7 @@
   --filmstrip-size: 200px;
   --controls-size: 40px;
   --sidebar-size: 280px;
+  --frame-size: 28px;
 }
 
 * {
@@ -75,6 +77,20 @@ body {
   right: 0;
   width: var(--sidebar-size);
   bottom: calc((var(--filmstrip-size)) + (var(--controls-size)));
+}
+.frameless .sidebar {
+  top: var(--frame-size);
+}
+.frame {
+  display: none;
+}
+.frameless .frame {
+  display: block;
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: var(--sidebar-size);
+  height: var(--frame-size);
 }
 
 .controls {
@@ -143,6 +159,9 @@ body {
   right: 0;
   width: 250px;
 }
+.frameless .toast {
+  top: var(--frame-size);
+}
 
 .dropzone {
   position: absolute;
@@ -151,6 +170,12 @@ body {
 
   width: 100%;
   height: 100%;
+}
+
+/* icon styles */
+.icon-rotate-180 {
+  transform-origin: center;
+  transform: rotate(180deg);
 }
 
 /* generic scrollbar that can be used throughout */

@@ -65,8 +65,8 @@ const icon = name => {
   );
 };
 
-const classname = (el, className) => {
-  el.className = className;
+const classname = (el, ...classes) => {
+  classes.forEach(c => el.classList.add(c));
   return el;
 };
 
@@ -75,6 +75,11 @@ const children = (el, ...childs) => {
     el.appendChild(child);
   }
 
+  return el;
+};
+
+const click = (el, handler) => {
+  el.addEventListener('click', handler, false);
   return el;
 };
 
@@ -95,5 +100,6 @@ module.exports = {
   icon,
   classname,
   children,
+  click,
   empty
 };

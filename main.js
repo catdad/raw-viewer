@@ -21,6 +21,7 @@ const log = require('./lib/log.js')('main');
 log.info(`electron node version: ${process.version}`);
 
 let mainWindow;
+let stayAlive;
 
 function onIpc(ev, data) {
   switch (true) {
@@ -47,7 +48,7 @@ function createWindow () {
     config.read(),
     exiftool.open()
   ]).then(function () {
-    Menu.setApplicationMenu(menu(events, config.getProp('experiments')));
+    Menu.setApplicationMenu(menu.create(events, config.getProp('experiments')));
 
     if (config.getProp('experiments.mojaveDarkMode') && systemPreferences.setAppLevelAppearance) {
       log.info('attempting to set mojave dark mode');
@@ -63,8 +64,11 @@ function createWindow () {
       webPreferences: {
         nodeIntegration: true,
         nodeIntegrationInWorker: true
-      }
+      },
+      frame: !config.getProp('experiments.framelessWindow')
     });
+
+    stayAlive = false;
 
     if (config.getProp('window.maximized')) {
       mainWindow.maximize();
@@ -116,6 +120,18 @@ function createWindow () {
     events.on('reload', () => {
       mainWindow.reload();
     });
+
+    events.on('reset', () => {
+      stayAlive = true;
+
+      log.info('reopening main window');
+      mainWindow.once('close', () => {
+        createWindow();
+      });
+
+      mainWindow.close();
+      mainWindow = null;
+    });
   }).catch(function (err) {
     throw err;
   });
@@ -145,7 +161,7 @@ app.on('ready', createWindow);
 app.on('window-all-closed', function () {
   // On OS X it is common for applications and their menu bar
   // to stay active until the user quits explicitly with Cmd + Q
-  if (process.platform === 'darwin') {
+  if (process.platform === 'darwin' || stayAlive) {
     events.removeAllListeners();
   } else {
     app.quit();

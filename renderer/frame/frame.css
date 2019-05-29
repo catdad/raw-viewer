@@ -6,6 +6,11 @@
   --frame-padding: calc((var(--frame-size) - var(--frame-font-size)) / 2 );
 }
 
+.darwin .frame.partial-frame {
+  width: 90px;
+  border-radius: 0 0 calc(var(--frame-size) / 2) 0;
+}
+
 .frame i {
   font-size: var(--frame-font-size);
   padding: var(--frame-padding) 10px;

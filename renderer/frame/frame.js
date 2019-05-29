@@ -73,11 +73,14 @@ const defaultFrame = () => {
   );
 };
 
-const darwinFrame = () => {
-  return dom.div(name);
+const darwinFrame = (experiments) => {
+  return dom.classname(
+    dom.div(name),
+    experiments.filmstripOnLeft ? 'full-frame' : 'partial-frame'
+  );
 };
 
-module.exports = () => {
-  const elem = process.platform === 'darwin' ? darwinFrame() : defaultFrame();
+module.exports = ({ events }, { experiments }) => {
+  const elem = process.platform === 'darwin' ? darwinFrame(experiments) : defaultFrame();
   return { elem, style };
 };

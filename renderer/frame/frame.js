@@ -75,7 +75,19 @@ const defaultFrame = () => {
 
 const darwinFrame = (experiments) => {
   return dom.children(
-    dom.div(experiments.filmstripOnLeft ? name : `${name}-partial`),
+    dom.handle(
+      dom.div(experiments.filmstripOnLeft ? name : `${name}-partial`),
+      'dblclick',
+      () => {
+        const browser = BrowserWindow.getFocusedWindow();
+
+        if (browser.isMaximized()) {
+          browser.unmaximize();
+        } else {
+          browser.maximize();
+        }
+      }
+    ),
     dom.classname(dom.icon('control_camera'), 'right')
   );
 };

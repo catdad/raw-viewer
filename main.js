@@ -55,8 +55,7 @@ function createWindow () {
       systemPreferences.setAppLevelAppearance('dark');
     }
 
-    // Create the browser window.
-    mainWindow = new BrowserWindow({
+    const windowOptions = {
       width: config.getProp('window.width') || 1000,
       height: config.getProp('window.height') || 800,
       backgroundColor: '#121212',
@@ -65,8 +64,15 @@ function createWindow () {
         nodeIntegration: true,
         nodeIntegrationInWorker: true
       },
-      frame: !config.getProp('experiments.framelessWindow')
-    });
+      frame: process.platform === 'darwin' ? true : !config.getProp('experiments.framelessWindow')
+    }
+
+    if (process.platform === 'darwin' && config.getProp('experiments.framelessWindow')) {
+      windowOptions.titleBarStyle = 'hidden';
+    }
+
+    // Create the browser window.
+    mainWindow = new BrowserWindow(windowOptions);
 
     stayAlive = false;
 

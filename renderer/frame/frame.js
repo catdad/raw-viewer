@@ -7,7 +7,7 @@ const log = require('../../lib/log.js')(name);
 const menu = require('../../lib/menu.js');
 const dom = require('../tools/dom.js');
 
-module.exports = () => {
+const defaultFrame = () => {
   let menuOpen = false;
   let menuTimer;
 
@@ -21,7 +21,7 @@ module.exports = () => {
     }, 100);
   };
 
-  const elem = dom.children(
+  return dom.children(
     dom.div(name),
     dom.click(
       dom.classname(dom.icon('close'), 'right', 'close'),
@@ -71,6 +71,13 @@ module.exports = () => {
       }
     )
   );
+};
 
+const darwinFrame = () => {
+  return dom.div(name);
+};
+
+module.exports = () => {
+  const elem = process.platform === 'darwin' ? darwinFrame() : defaultFrame();
   return { elem, style };
 };

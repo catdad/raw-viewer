@@ -87,7 +87,7 @@ body {
 .win32.frameless .sidebar {
   top: var(--frame-size);
 }
-.frame {
+.frame, .frame-partial {
   display: none;
 }
 .win32.frameless .frame {
@@ -98,7 +98,8 @@ body {
   width: var(--sidebar-size);
   height: var(--frame-size);
 }
-.darwin.frameless .frame {
+.darwin.frameless .frame,
+.darwin.frameless .frame-partial {
   display: block;
   position: absolute;;
   top: 0;
@@ -106,7 +107,6 @@ body {
   width: var(--filmstrip-size);
   height: var(--frame-size);
   z-index: 1;
-  background: red;
 }
 
 .controls {

@@ -75,10 +75,7 @@ const defaultFrame = () => {
 
 const darwinFrame = (experiments) => {
   return dom.children(
-    dom.classname(
-      dom.div(name),
-      experiments.filmstripOnLeft ? 'full-frame' : 'partial-frame'
-    ),
+    dom.div(experiments.filmstripOnLeft ? name : `${name}-partial`),
     dom.classname(dom.icon('control_camera'), 'right')
   );
 };

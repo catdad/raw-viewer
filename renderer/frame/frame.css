@@ -7,8 +7,10 @@
 }
 
 .darwin .frame.partial-frame {
-  width: 90px;
+  width: 88px;
   border-radius: 0 0 calc(var(--frame-size) / 2) 0;
+  background-color: var(--main-surface-pop);
+  opacity: 0.6;
 }
 
 .frame i {
@@ -16,12 +18,21 @@
   padding: var(--frame-padding) 10px;
   -webkit-app-region: no-drag;
 }
-
 .frame i:hover {
   background-color: var(--main-border);
 }
 .frame i.close:hover {
   background-color: var(--accent-red-bright);
+}
+
+.darwin .frame i {
+  padding-top: calc(var(--frame-padding) - 1px);
+  padding-right: 5px;
+  padding-left: 5px;
+  -webkit-app-region: drag;
+}
+.darwin .frame i:hover {
+  background-color: unset;
 }
 
 .frame i.left {

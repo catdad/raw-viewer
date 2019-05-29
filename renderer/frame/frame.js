@@ -74,9 +74,12 @@ const defaultFrame = () => {
 };
 
 const darwinFrame = (experiments) => {
-  return dom.classname(
-    dom.div(name),
-    experiments.filmstripOnLeft ? 'full-frame' : 'partial-frame'
+  return dom.children(
+    dom.classname(
+      dom.div(name),
+      experiments.filmstripOnLeft ? 'full-frame' : 'partial-frame'
+    ),
+    dom.classname(dom.icon('control_camera'), 'right')
   );
 };
 

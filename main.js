@@ -65,7 +65,7 @@ function createWindow () {
         nodeIntegrationInWorker: true
       },
       frame: process.platform === 'darwin' ? true : !config.getProp('experiments.framelessWindow')
-    }
+    };
 
     if (process.platform === 'darwin' && config.getProp('experiments.framelessWindow')) {
       windowOptions.titleBarStyle = 'hidden';

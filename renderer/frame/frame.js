@@ -83,7 +83,7 @@ const darwinFrame = (experiments) => {
   );
 };
 
-module.exports = ({ events }, { experiments }) => {
+module.exports = (obj, { experiments }) => {
   const elem = process.platform === 'darwin' ? darwinFrame(experiments) : defaultFrame();
   return { elem, style };
 };

@@ -7,7 +7,17 @@ const log = require('../../lib/log.js')(name);
 const menu = require('../../lib/menu.js');
 const dom = require('../tools/dom.js');
 
-module.exports = () => {
+const maximizeToggle = () => {
+  const browser = BrowserWindow.getFocusedWindow();
+
+  if (browser.isMaximized()) {
+    browser.unmaximize();
+  } else {
+    browser.maximize();
+  }
+};
+
+const defaultFrame = () => {
   let menuOpen = false;
   let menuTimer;
 
@@ -21,7 +31,7 @@ module.exports = () => {
     }, 100);
   };
 
-  const elem = dom.children(
+  return dom.children(
     dom.div(name),
     dom.click(
       dom.classname(dom.icon('close'), 'right', 'close'),
@@ -31,15 +41,7 @@ module.exports = () => {
     ),
     dom.click(
       dom.classname(dom.icon('filter_none'), 'right', 'icon-rotate-180'),
-      () => {
-        const browser = BrowserWindow.getFocusedWindow();
-
-        if (browser.isMaximized()) {
-          browser.unmaximize();
-        } else {
-          browser.maximize();
-        }
-      }
+      maximizeToggle
     ),
     dom.click(
       dom.classname(dom.icon('minimize'), 'right'),
@@ -71,6 +73,20 @@ module.exports = () => {
       }
     )
   );
+};
 
+const darwinFrame = (experiments) => {
+  return dom.children(
+    dom.handle(
+      dom.div(experiments.filmstripOnLeft ? name : `${name}-partial`),
+      'dblclick',
+      maximizeToggle
+    ),
+    dom.classname(dom.icon('control_camera'), 'right')
+  );
+};
+
+module.exports = (obj, { experiments }) => {
+  const elem = process.platform === 'darwin' ? darwinFrame(experiments) : defaultFrame();
   return { elem, style };
 };

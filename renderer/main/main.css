@@ -45,7 +45,13 @@
   --filmstrip-size: 200px;
   --controls-size: 40px;
   --sidebar-size: 280px;
+}
+
+.win32 {
   --frame-size: 28px;
+}
+.darwin {
+  --frame-size: 24px;
 }
 
 * {
@@ -78,19 +84,29 @@ body {
   width: var(--sidebar-size);
   bottom: calc((var(--filmstrip-size)) + (var(--controls-size)));
 }
-.frameless .sidebar {
+.win32.frameless .sidebar {
   top: var(--frame-size);
 }
-.frame {
+.frame, .frame-partial {
   display: none;
 }
-.frameless .frame {
+.win32.frameless .frame {
   display: block;
   position: absolute;
   top: 0;
   right: 0;
   width: var(--sidebar-size);
   height: var(--frame-size);
+}
+.darwin.frameless .frame,
+.darwin.frameless .frame-partial {
+  display: block;
+  position: absolute;;
+  top: 0;
+  left: 0;
+  width: var(--filmstrip-size);
+  height: var(--frame-size);
+  z-index: 1;
 }
 
 .controls {
@@ -152,6 +168,10 @@ body {
   width: 200px;
   height: 100%;
 }
+.darwin.frameless.experiment-filmstrip-left .filmstrip {
+  top: var(--frame-size);
+  height: calc(100% - var(--frame-size));
+}
 
 .toast {
   position: absolute;
@@ -159,7 +179,7 @@ body {
   right: 0;
   width: 250px;
 }
-.frameless .toast {
+.win32.frameless .toast {
   top: var(--frame-size);
 }
 

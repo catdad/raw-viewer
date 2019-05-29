@@ -78,10 +78,12 @@ const children = (el, ...childs) => {
   return el;
 };
 
-const click = (el, handler) => {
-  el.addEventListener('click', handler, false);
+const handle = (el, name, handler) => {
+  el.addEventListener(name, handler, false);
   return el;
 };
+
+const click = (el, handler) => handle(el, 'click', handler);
 
 const empty = (elem) => {
   while (elem.firstChild) {
@@ -100,6 +102,7 @@ module.exports = {
   icon,
   classname,
   children,
+  handle,
   click,
   empty
 };

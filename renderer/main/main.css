@@ -168,6 +168,10 @@ body {
   width: 200px;
   height: 100%;
 }
+.darwin.frameless.experiment-filmstrip-left .filmstrip {
+  top: var(--frame-size);
+  height: calc(100% - var(--frame-size));
+}
 
 .toast {
   position: absolute;

@@ -56,6 +56,7 @@ function render(name, parentElem, opts) {
 function renderApp(elem, opts) {
   linkStyle(stylepath);
   elem.classList.add(name);
+  elem.classList.add(process.platform);
 
   if (opts.experiments.framelessWindow) {
     elem.classList.add('frameless');

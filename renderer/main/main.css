@@ -78,13 +78,13 @@ body {
   width: var(--sidebar-size);
   bottom: calc((var(--filmstrip-size)) + (var(--controls-size)));
 }
-.frameless .sidebar {
+.win32 .frameless .sidebar {
   top: var(--frame-size);
 }
 .frame {
   display: none;
 }
-.frameless .frame {
+.win32 .frameless .frame {
   display: block;
   position: absolute;
   top: 0;
@@ -159,7 +159,7 @@ body {
   right: 0;
   width: 250px;
 }
-.frameless .toast {
+.win32 .frameless .toast {
   top: var(--frame-size);
 }
 

@@ -7,6 +7,16 @@ const log = require('../../lib/log.js')(name);
 const menu = require('../../lib/menu.js');
 const dom = require('../tools/dom.js');
 
+const maximizeToggle = () => {
+  const browser = BrowserWindow.getFocusedWindow();
+
+  if (browser.isMaximized()) {
+    browser.unmaximize();
+  } else {
+    browser.maximize();
+  }
+};
+
 const defaultFrame = () => {
   let menuOpen = false;
   let menuTimer;
@@ -31,15 +41,7 @@ const defaultFrame = () => {
     ),
     dom.click(
       dom.classname(dom.icon('filter_none'), 'right', 'icon-rotate-180'),
-      () => {
-        const browser = BrowserWindow.getFocusedWindow();
-
-        if (browser.isMaximized()) {
-          browser.unmaximize();
-        } else {
-          browser.maximize();
-        }
-      }
+      maximizeToggle
     ),
     dom.click(
       dom.classname(dom.icon('minimize'), 'right'),
@@ -78,15 +80,7 @@ const darwinFrame = (experiments) => {
     dom.handle(
       dom.div(experiments.filmstripOnLeft ? name : `${name}-partial`),
       'dblclick',
-      () => {
-        const browser = BrowserWindow.getFocusedWindow();
-
-        if (browser.isMaximized()) {
-          browser.unmaximize();
-        } else {
-          browser.maximize();
-        }
-      }
+      maximizeToggle
     ),
     dom.classname(dom.icon('control_camera'), 'right')
   );

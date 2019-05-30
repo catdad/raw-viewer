@@ -91,7 +91,11 @@ function createWindow () {
     });
 
     mainWindow.on('resize', function () {
-      var size = mainWindow.getSize();
+      if (mainWindow.isMaximized()) {
+        return;
+      }
+
+      const size = mainWindow.getSize();
 
       config.setProp('window.width', size[0]);
       config.setProp('window.height', size[1]);

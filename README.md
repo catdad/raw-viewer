@@ -25,15 +25,19 @@ You can get the latest Windows and MacOS versions here: https://github.com/catda
 
 # Windows
 
-This is a self-contained portable app. Just unzip it and run `Raw Viewer.exe`
+This is a self-contained portable app. Unzip the download and run `Raw Viewer.exe`.
 
 If you no longer wish to use this app, you can just delete the folder where you unzipped it -- but don't worry, all your photos as well as their ratings will stay right where you left them.
 
 # MacOS
 
-While a MacOS package is available, I do not currently have a Mac so I was not able to fully test the package (though the build system does run tests on a Mac). If you are able to test the app and improve the installation and uninstallation instructions here, please [open a new issue](https://github.com/catdad/raw-viewer/issues/new) or submit a pull request. All help is appreciated!
+This is a self-contained portable app. Unzip the download and run `Raw Viewer`.
 
-What _should_ work is simply unzipping the package anywhere and running `Raw Viewer.app`.
+The first time you run it, it will fail to verify the app and tell you that you cannot run it. If this happens, open System Preferences > Security & Privacy. There, you will see a message at the bottom saying that Raw Viewer was prevented from opening with an "Open Anyway" button. Click that button and now you will able to run the app. You will only need to do this once on your computer.
+
+If you are a developer and know more about how to sign the application, please let me knowat issue [#191](https://github.com/catdad/raw-viewer/issues/191).
+
+If you no longer with to use this app, you can just delete the folder where you unzipped it -- but don't worry, all your photos as well as their ratings will stay right where you left then.
 
 # Linux
 

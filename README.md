@@ -25,7 +25,7 @@ You can get the latest Windows and MacOS versions here: https://github.com/catda
 
 # Windows
 
-This is a self-contained portable app. Just unzip it and run `Raw Viewer.exe`
+This is a self-contained portable app. Unzip the download and run `Raw Viewer.exe`.
 
 If you no longer wish to use this app, you can just delete the folder where you unzipped it -- but don't worry, all your photos as well as their ratings will stay right where you left them.
 

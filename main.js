@@ -91,7 +91,7 @@ function createWindow () {
     });
 
     mainWindow.on('resize', function () {
-      if (mainWindow.isMaximized()) {
+      if (mainWindow.isMaximized() || mainWindow.isMinimized()) {
         return;
       }
 

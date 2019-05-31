@@ -35,6 +35,8 @@ const empty = (elem) => {
   return elem;
 };
 
+const fragment = (...childs) => children(document.createDocumentFragment(), ...childs);
+
 const elem = (tag) => document.createElement(tag);
 
 const text = (str) => document.createTextNode(str);
@@ -72,7 +74,9 @@ const button = (str, onClick) => click(children(elem('button'), text(str)), onCl
 const icon = name => children(classname(elem('i'), 'material-icons'), text(name));
 
 module.exports = {
+  elem,
   nill,
+  fragment,
   text,
   div,
   p,

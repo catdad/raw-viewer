@@ -157,7 +157,7 @@ module.exports = ({ wrapper, displayImage, direction, events }) => {
   keys.on('change', () => {
     const isPrev = keys.includes(keys.LEFT) || keys.includes(keys.UP);
     const isNext = keys.includes(keys.RIGHT) || keys.includes(keys.DOWN);
-    const isDelete = keys.includes(keys.DELETE);
+    const isDelete = keys.includes(keys.DELETE) || keys.includes(keys.BACKSPACE);
 
     if (isDelete) {
       deleteSelected()

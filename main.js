@@ -23,6 +23,20 @@ log.info(`electron node version: ${process.version}`);
 let mainWindow;
 let stayAlive;
 
+// macOS Mojave light/dark mode changed
+const setMacOSTheme = () => {
+  if (!(systemPreferences.setAppLevelAppearance && systemPreferences.isDarkMode)) {
+    log.info('this system does not support setting app-level appearance');
+    return;
+  }
+
+  const mode = systemPreferences.isDarkMode() ? 'dark' : 'light';
+  log.info(`setting app-level appearance to ${mode}`);
+  systemPreferences.setAppLevelAppearance(mode);
+};
+systemPreferences.subscribeNotification('AppleInterfaceThemeChangedNotification', setMacOSTheme);
+setMacOSTheme();
+
 function onIpc(ev, data) {
   switch (true) {
     case data.type === 'config-set':
@@ -49,11 +63,6 @@ function createWindow () {
     exiftool.open()
   ]).then(function () {
     Menu.setApplicationMenu(menu.create(events, config.getProp('experiments')));
-
-    if (config.getProp('experiments.mojaveDarkMode') && systemPreferences.setAppLevelAppearance) {
-      log.info('attempting to set mojave dark mode');
-      systemPreferences.setAppLevelAppearance('dark');
-    }
 
     const windowOptions = {
       width: config.getProp('window.width') || 1000,

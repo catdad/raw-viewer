@@ -2,6 +2,7 @@ const name = 'image';
 const style = true;
 const log = require('../../lib/log.js')(name);
 
+const dom = require('../tools/dom.js');
 const keys = require('../tools/keyboard.js');
 const imageControl = require('./image-control.js');
 
@@ -49,12 +50,10 @@ function registerMouse(elem) {
 }
 
 module.exports = ({ events }) => {
-  const elem = document.createElement('div');
-  elem.className = `${name} scrollbar`;
+  const elem = dom.classname(dom.div(), `${name}`, 'scrollbar');
+  const { dom: controlDom, load, zoom } = imageControl({ name, elem, events });
 
-  const { dom, load, zoom } = imageControl({ name, elem, events });
-
-  elem.appendChild(dom);
+  elem.appendChild(controlDom);
 
   keys.on('change', () => {
     if (keys.includes(keys.ALT) && keys.includes('z')) {

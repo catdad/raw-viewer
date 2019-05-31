@@ -1,6 +1,7 @@
 const { debounce } = require('lodash');
 const log = require('../../lib/log.js')('image-control');
 const keys = require('../tools/keyboard.js');
+const dom = require('../tools/dom.js');
 
 function int(num) {
   return Math.floor(num);
@@ -22,8 +23,7 @@ module.exports = ({ name, elem, events }) => {
   let zoomType = 'fit';
 
   const img = document.createElement('img');
-  const container = document.createElement('div');
-  container.className = `${name}-container`;
+  const container = dom.div(`${name}-container`);
 
   container.appendChild(img);
 

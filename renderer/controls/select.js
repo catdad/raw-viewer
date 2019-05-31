@@ -1,12 +1,16 @@
 const EventEmitter = require('events');
 const equal = require('fast-deep-equal');
 
+const dom = require('../tools/dom.js');
+
 function setOptions(select, values) {
   select.innerHTML = '';
 
   values.forEach((val) => {
-    const opt = document.createElement('option');
-    opt.appendChild(document.createTextNode(val.label));
+    const opt = dom.children(
+      document.createElement('option'),
+      document.createTextNode(val.label)
+    );
     opt.x_value = val.value;
 
     select.appendChild(opt);
@@ -28,17 +32,18 @@ function getOption(select) {
 
 module.exports = ({ values }) => {
   const ev = new EventEmitter();
-  const select = document.createElement('select');
-  select.className = 'select';
+  const select = dom.handle(
+    dom.classname(dom.elem('select'), 'select'),
+    'change',
+    () => {
+      ev.emit('change', {
+        value: select.options[select.selectedIndex].x_value,
+        label: select.value
+      });
+    }
+  );
 
   setOptions(select, values);
-
-  select.onchange = () => {
-    ev.emit('change', {
-      value: select.options[select.selectedIndex].x_value,
-      label: select.value
-    });
-  };
 
   return Object.defineProperties({
     elem: select,

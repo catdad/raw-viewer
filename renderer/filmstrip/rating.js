@@ -5,11 +5,10 @@ function ratingControl(rating) {
     const name = setTo === 0 ? 'close' :
       setTo <= rating ? 'star' : 'star_border';
 
-    const icon = dom.icon(name);
-    icon.setAttribute('data-rate', setTo);
-    icon.classList.add(name);
-
-    return icon;
+    return dom.props(
+      dom.classname(dom.icon(name), name),
+      { 'data-rate': setTo }
+    );
   }
 
   return Array.apply(null, new Array(6)).map((n, i) => {
@@ -18,28 +17,23 @@ function ratingControl(rating) {
 }
 
 function render(elem, filepath, rating, events) {
-  elem.innerHTML = '';
+  dom.children(
+    dom.empty(elem),
+    dom.fragment(...ratingControl(rating).map((el, idx) => {
+      return dom.click(el, (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
 
-  const fragment = document.createDocumentFragment();
-
-  ratingControl(rating).forEach((el, idx) => {
-    el.addEventListener('click', (ev) => {
-      ev.preventDefault();
-      ev.stopPropagation();
-
-      events.emit('image:rate', { filepath, rating: idx });
-    });
-
-    fragment.appendChild(el);
-  });
-
-  elem.appendChild(fragment);
+        events.emit('image:rate', { filepath, rating: idx });
+      });
+    }))
+  );
 }
 
 module.exports = ({ filepath, meta, events, setMeta }) => {
-  const elem = document.createElement('div');
-  elem.className = 'rating';
-  elem.setAttribute('data-rating', meta.rating);
+  const elem = dom.props(dom.div('rating'), {
+    'data-rating': meta.rating
+  });
 
   const onRated = ({ filepath: evpath, rating, meta }) => {
     if (evpath !== filepath) {

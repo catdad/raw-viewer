@@ -12,6 +12,14 @@ const classname = (el, ...classes) => {
   return el;
 };
 
+const props = (el, obj) => {
+  for (let key in obj) {
+    el.setAttribute(key, obj[key]);
+  }
+
+  return el;
+};
+
 const children = (el, ...childs) => {
   for (let child of childs) {
     el.appendChild(child);
@@ -46,18 +54,13 @@ const span = (str) => children(elem('span'), text(str || ''));
 
 const h1 = (str) => children(elem('h1'), text(str));
 
-const link = (str, href) => {
-  const a = children(
-    click(elem('a'), (ev) => {
-      ev.preventDefault();
-      shell.openExternal(href);
-    }),
-    text(str)
-  );
-  a.href = href;
-
-  return a;
-};
+const link = (str, href) => click(
+  children(props(elem('a'), { href }), text(str)),
+  (ev) => {
+    ev.preventDefault();
+    shell.openExternal(href);
+  }
+);
 
 const linkBlock = (className, str, href) => children(div(className), link(str, href));
 
@@ -75,6 +78,7 @@ module.exports = {
   linkBlock,
   button,
   icon,
+  props,
   classname,
   children,
   handle,

@@ -36,7 +36,7 @@ function render(elem, filepath, rating, events) {
   elem.appendChild(fragment);
 }
 
-module.exports = function ({ filepath, meta, events, setMeta }) {
+module.exports = ({ filepath, meta, events, setMeta }) => {
   const elem = document.createElement('div');
   elem.className = 'rating';
   elem.setAttribute('data-rating', meta.rating);

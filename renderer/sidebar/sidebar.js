@@ -81,7 +81,7 @@ const derive = (meta) => {
   return derived;
 };
 
-module.exports = function ({ events }) {
+module.exports = ({ events }) => {
   const elem = dom.div(name);
 
   async function saveImage({ filepath, imageUrl, name }) {

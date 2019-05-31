@@ -7,7 +7,7 @@ const style = true;
 const defaultRating = { from: 0, to: 5 };
 const defaultType = '*';
 
-module.exports = function ({ events }) {
+module.exports = ({ events }) => {
   const elem = document.createElement('div');
   elem.className = name;
 

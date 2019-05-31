@@ -48,7 +48,7 @@ function registerMouse(elem) {
   elem.addEventListener('mousedown', onMouseDown);
 }
 
-module.exports = function ({ events }) {
+module.exports = ({ events }) => {
   const elem = document.createElement('div');
   elem.className = `${name} scrollbar`;
 

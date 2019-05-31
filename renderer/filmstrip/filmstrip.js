@@ -31,7 +31,7 @@ function isClipped(containerBB, elBB) {
     isClippedBottom(containerBB, elBB);
 }
 
-module.exports = function ({ events }, opts) {
+module.exports = ({ events }, opts) => {
   const direction = opts.experiments.filmstripOnLeft ? 'vertical' : 'horizontal';
 
   const elem = document.createElement('div');
@@ -228,7 +228,7 @@ module.exports = function ({ events }, opts) {
     resolveVisible();
   });
 
-  events.on('directory:discover', function ({ files }) {
+  events.on('directory:discover', ({ files }) => {
     log.timing('load thumbs', async () => await loadThumbnails({ files }));
   });
 

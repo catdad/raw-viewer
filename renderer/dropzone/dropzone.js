@@ -16,7 +16,7 @@ function dropzoneContent() {
   );
 }
 
-module.exports = function ({ events }) {
+module.exports = ({ events }) => {
   const elem = dom.div(name);
   let hasDir = false;
 

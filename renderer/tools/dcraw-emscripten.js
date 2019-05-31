@@ -5,7 +5,7 @@ const log = require('../../lib/log.js')('dcraw');
 // let workers = require('workers.js')(4);
 // let data = await workers.exec('imageUint8Array', [filepath]);
 
-module.exports = function (count) {
+module.exports = (count) => {
   const arr = [];
   const queue = [];
   const events = new EventEmitter();
@@ -28,7 +28,7 @@ module.exports = function (count) {
         // this path is relative to index.html
         const worker = new Worker('./dcraw-worker.js');
 
-        worker.onmessage = function (ev) {
+        worker.onmessage = (ev) => {
           if (ev.data.type === 'ready') {
             return resolve(worker);
           }

@@ -6,7 +6,7 @@ const config = require('../../lib/config.js');
 
 //  const name = 'directory';
 
-module.exports = function ({ events }) {
+module.exports = ({ events }) => {
 
   async function ondir(dir) {
     exiftool.resetCache();

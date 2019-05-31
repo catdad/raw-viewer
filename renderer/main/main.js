@@ -31,7 +31,7 @@ function linkStyle(csspath) {
 }
 
 function applyStyle(css) {
-  var elem = document.createElement('style');
+  const elem = document.createElement('style');
   elem.type = 'text/css';
 
   elem.appendChild(document.createTextNode(css));
@@ -121,7 +121,7 @@ async function start(elem) {
   }, 50));
 }
 
-module.exports = function (elem) {
+module.exports = (elem) => {
   start(elem).then(() => {
     startup.done();
     log.info('initialized');

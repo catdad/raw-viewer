@@ -3,7 +3,7 @@ const exiftool = require('../tools/exiftool-child.js');
 const log = require('../../lib/log.js')(name);
 const keys = require('../tools/keyboard.js');
 
-module.exports = function ({ events }) {
+module.exports = ({ events }) => {
   let loadedFilepath = null;
 
   function setRating(filepath, rating, toast = false) {

@@ -1,7 +1,7 @@
 const EventEmitter = require('events');
 
 function getValue(radios) {
-  for (var i = 0, l = radios.length; i < l; i++) {
+  for (let i = 0, l = radios.length; i < l; i++) {
     if (radios[i].checked) {
       return radios[i].value;
     }
@@ -11,7 +11,7 @@ function getValue(radios) {
 }
 
 function setValue(radios, val) {
-  for (var i = 0, l = radios.length; i < l; i++) {
+  for (let i = 0, l = radios.length; i < l; i++) {
     if (radios[i].value === val) {
       radios[i].checked = 'checked';
       return;

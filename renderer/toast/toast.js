@@ -16,7 +16,7 @@ function createMsg({ text, type, title = null }) {
   );
 }
 
-module.exports = function ({ events }) {
+module.exports = ({ events }) => {
   const elem = dom.div(name);
 
   function removeToast(msg) {

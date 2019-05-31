@@ -10,6 +10,7 @@ const keys = (() => {
   const LEFT = 'arrowleft';
   const RIGHT = 'arrowright';
   const DELETE = 'delete';
+  const BACKSPACE = 'backspace';
 
   const events = new EventEmitter();
 
@@ -24,6 +25,7 @@ const keys = (() => {
     [`${LEFT}`]: true,
     [`${RIGHT}`]: true,
     [`${DELETE}`]: true,
+    [`${BACKSPACE}`]: true,
     z: true,
     0: true,
     1: true,
@@ -79,6 +81,7 @@ const keys = (() => {
     LEFT,
     RIGHT,
     DELETE,
+    BACKSPACE,
     includes: (key) => !!down[key.toString()],
     on: events.addListener.bind(events),
     off: events.removeListener.bind(events)

@@ -34,8 +34,11 @@ const setMacOSTheme = () => {
   log.info(`setting app-level appearance to ${mode}`);
   systemPreferences.setAppLevelAppearance(mode);
 };
-systemPreferences.subscribeNotification('AppleInterfaceThemeChangedNotification', setMacOSTheme);
-setMacOSTheme();
+
+if (systemPreferences.subscribeNotification) {
+  systemPreferences.subscribeNotification('AppleInterfaceThemeChangedNotification', setMacOSTheme);
+  setMacOSTheme();
+}
 
 function onIpc(ev, data) {
   switch (true) {

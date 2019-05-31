@@ -145,44 +145,38 @@ module.exports = ({ events }) => {
       return renderKeyValue({ key: gui, value: allMeta[key] });
     }).forEach(elem => fragment.appendChild(elem));
 
-    const showFullMeta = dom.button('Show all metadata', () => {
-      events.emit('modal', { content: render(meta) });
-    });
-
     const name = path.basename(filepath, path.extname(filepath)) + '.jpg';
-    const download = dom.button('Save preview image', async () => {
-      try {
-        await saveImage({ filepath, imageUrl, name });
-      } catch (e) {
-        events.emit('error', e);
-      }
-    });
-
-    fragment.appendChild(showFullMeta);
-    fragment.appendChild(download);
-
-    if (renderFromRaw) {
-      const rawRender = document.createElement('button');
-      rawRender.innerHTML = 'Render from RAW';
-      rawRender.onclick = async () => {
+    dom.children(
+      fragment,
+      dom.button('Show all metadata', () => {
+        events.emit('modal', { content: render(meta) });
+      }),
+      dom.button('Save preview image', async () => {
         try {
-          const raw = await exiftool.rawRender(filepath);
-
-          events.emit('image:load', {
-            filepath: filepath,
-            imageUrl: raw,
-            rotation: 0
-          });
+          await saveImage({ filepath, imageUrl, name });
         } catch (e) {
-          log.error('render from RAW error:', e);
-          events.emit('error', new Error('RAW image is unsupported'));
+          events.emit('error', e);
         }
-      };
-      fragment.appendChild(rawRender);
-    }
+      }),
+      renderFromRaw ?
+        dom.button('Render from RAW', async () => {
+          try {
+            const raw = await exiftool.rawRender(filepath);
 
-    elem.innerHTML = '';
-    elem.appendChild(fragment);
+            events.emit('image:load', {
+              filepath: filepath,
+              imageUrl: raw,
+              rotation: 0
+            });
+          } catch (e) {
+            log.error('render from RAW error:', e);
+            events.emit('error', new Error('RAW image is unsupported'));
+          }
+        }) :
+        dom.nill()
+    );
+
+    dom.children(dom.empty(elem), fragment);
   }
 
   events.on('meta:load', loadInfo);

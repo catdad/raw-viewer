@@ -12,11 +12,25 @@ const classname = (el, ...classes) => {
   return el;
 };
 
+const children = (el, ...childs) => {
+  for (let child of childs) {
+    el.appendChild(child);
+  }
+
+  return el;
+};
+
+const empty = (elem) => {
+  while (elem.firstChild) {
+    elem.removeChild(elem.firstChild);
+  }
+};
+
 const elem = (tag) => document.createElement(tag);
 
-const div = (className) => classname(elem('div'), className);
-
 const text = (str) => document.createTextNode(str);
+
+const div = (className) => classname(elem('div'), className);
 
 const p = (str) => {
   const el = elem('p');
@@ -28,22 +42,9 @@ const p = (str) => {
   return el;
 };
 
-const span = (str) => {
-  const el = document.createElement('span');
+const span = (str) => children(elem('span'), text(str || ''));
 
-  if (str !== undefined) {
-    el.appendChild(text(str));
-  }
-
-  return el;
-};
-
-const h1 = (str) => {
-  const el = document.createElement('h1');
-  el.appendChild(text(str));
-
-  return el;
-};
+const h1 = (str) => children(elem('h1'), text(str));
 
 const link = (str, href) => {
   const a = children(
@@ -62,28 +63,11 @@ const linkBlock = (className, str, href) => children(div(className), link(str, h
 
 const button = (str, onClick) => click(children(elem('button'), text(str)), onClick);
 
-const icon = name => children(
-  classname(elem('i'), 'material-icons'),
-  text(name)
-);
-
-const children = (el, ...childs) => {
-  for (let child of childs) {
-    el.appendChild(child);
-  }
-
-  return el;
-};
-
-const empty = (elem) => {
-  while (elem.firstChild) {
-    elem.removeChild(elem.firstChild);
-  }
-};
+const icon = name => children(classname(elem('i'), 'material-icons'), text(name));
 
 module.exports = {
-  div,
   text,
+  div,
   p,
   span,
   h1,

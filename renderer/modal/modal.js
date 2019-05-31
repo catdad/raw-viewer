@@ -5,8 +5,8 @@ const log = require('../../lib/log.js')(name);
 const dom = require('../tools/dom.js');
 
 module.exports = ({ events }) => {
-  const elem = dom.div(`${name} hidden`);
-  const container = dom.div(`${name}-container scrollbar`);
+  const elem = dom.classname(dom.div(), `${name}`, 'hidden');
+  const container = dom.classname(dom.div(), `${name}-container`, 'scrollbar');
   elem.appendChild(container);
 
   elem.addEventListener('click', () => {

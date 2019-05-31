@@ -1,16 +1,20 @@
 const { shell } = require('electron');
 
-const elem = (tag) => document.createElement(tag);
-
-const div = (className) => {
-  const el = elem('div');
-
-  if (className) {
-    el.className = className;
-  }
-
+const handle = (el, name, handler) => {
+  el.addEventListener(name, handler, false);
   return el;
 };
+
+const click = (el, handler) => handle(el, 'click', handler);
+
+const classname = (el, ...classes) => {
+  classes.forEach(c => c && el.classList.add(c));
+  return el;
+};
+
+const elem = (tag) => document.createElement(tag);
+
+const div = (className) => classname(elem('div'), className);
 
 const text = (str) => document.createTextNode(str);
 
@@ -63,11 +67,6 @@ const icon = name => children(
   text(name)
 );
 
-const classname = (el, ...classes) => {
-  classes.forEach(c => el.classList.add(c));
-  return el;
-};
-
 const children = (el, ...childs) => {
   for (let child of childs) {
     el.appendChild(child);
@@ -75,13 +74,6 @@ const children = (el, ...childs) => {
 
   return el;
 };
-
-const handle = (el, name, handler) => {
-  el.addEventListener(name, handler, false);
-  return el;
-};
-
-const click = (el, handler) => handle(el, 'click', handler);
 
 const empty = (elem) => {
   while (elem.firstChild) {

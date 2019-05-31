@@ -1,5 +1,7 @@
 const { shell } = require('electron');
 
+const elem = (tag) => document.createElement(tag);
+
 const div = (className) => {
   const el = document.createElement('div');
 
@@ -37,6 +39,10 @@ const h1 = (str) => {
   el.appendChild(text(str));
 
   return el;
+};
+
+const button = (str, onClick) => {
+  return click(children(elem('button'), text(str)), onClick);
 };
 
 const link = (str, href) => {
@@ -97,6 +103,7 @@ module.exports = {
   p,
   span,
   h1,
+  button,
   link,
   linkBlock,
   icon,

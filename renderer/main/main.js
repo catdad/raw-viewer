@@ -8,6 +8,7 @@ const EventEmitter = require('events');
 const ipc = require('electron').ipcRenderer;
 const { throttle } = require('lodash');
 
+const dom = require('../tools/dom.js');
 const config = require('../../lib/config.js');
 const stylepath = path.resolve(__dirname, `${name}.css`);
 
@@ -22,20 +23,24 @@ ipc.on('ipcevent', (ev, { name, data }) => {
 });
 
 function linkStyle(csspath) {
-  const elem = document.createElement('link');
-  elem.setAttribute('rel', 'stylesheet');
-  elem.setAttribute('type', 'text/css');
-  elem.setAttribute('href', csspath);
-
-  document.head.appendChild(elem);
+  dom.children(
+    document.head,
+    dom.props(dom.elem('link'), {
+      rel: 'stylesheet',
+      type: 'text/css',
+      href: csspath
+    })
+  );
 }
 
 function applyStyle(css) {
-  const elem = document.createElement('style');
-  elem.type = 'text/css';
-
-  elem.appendChild(document.createTextNode(css));
-  document.head.appendChild(elem);
+  dom.children(
+    document.head,
+    dom.children(
+      dom.props(dom.elem('style'), { type: 'text/css' }),
+      dom.text(css)
+    )
+  );
 }
 
 function render(name, parentElem, opts) {

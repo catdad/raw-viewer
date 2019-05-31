@@ -133,8 +133,7 @@ module.exports = ({ events }, opts) => {
 
   function thumbnail() {
     const imgWrap = dom.div('thumbnail');
-
-    const img = document.createElement('img');
+    const img = dom.elem('img');
 
     imgWrap.appendChild(img);
 

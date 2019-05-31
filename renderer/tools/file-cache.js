@@ -26,10 +26,21 @@ function reset() {
   }
 
   watcher.close();
+  init();
 }
 
-watcher.on('change', filepath => {
-  remove(filepath);
-});
+function init() {
+  watcher.on('change', ({ filepath }) => {
+    log.info(`external change ${filepath}`);
+    remove(filepath);
+  });
+
+  watcher.on('error', err => {
+    remove(err.filepath);
+    log.error(err);
+  });
+}
+
+init();
 
 module.exports = { read, add, remove, reset };

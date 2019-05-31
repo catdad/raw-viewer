@@ -17,6 +17,7 @@ const config = require('./lib/config.js');
 const menu = require('./lib/menu.js');
 const exiftool = require('./lib/exiftool.js');
 const log = require('./lib/log.js')('main');
+const debounce = require('./lib/debounce.js');
 
 log.info(`electron node version: ${process.version}`);
 
@@ -102,7 +103,7 @@ function createWindow () {
       mainWindow = null;
     });
 
-    mainWindow.on('resize', function () {
+    mainWindow.on('resize', debounce(() => {
       if (mainWindow.isMaximized() || mainWindow.isMinimized()) {
         return;
       }
@@ -111,7 +112,7 @@ function createWindow () {
 
       config.setProp('window.width', size[0]);
       config.setProp('window.height', size[1]);
-    });
+    }, 500));
 
     mainWindow.on('maximize', function () {
       config.setProp('window.maximized', true);

@@ -29,7 +29,6 @@ const sleep = ms => new Promise(resolve => setTimeout(() => resolve(), ms));
         lastDirectory: path.resolve(root, 'temp')
       },
       experiments: {
-        mojaveDarkMode: true,
         framelessWindow: true
       }
     });

@@ -2,6 +2,7 @@ const name = 'filmstrip';
 const style = true;
 
 const log = require('../../lib/log.js')(name);
+const dom = require('../tools/dom.js');
 const dragDrop = require('../tools/ipc-draganddrop.js');
 const readMetaAndDataUrl = require('./read-image.js');
 const navigation = require('./navigation.js');
@@ -31,14 +32,11 @@ function isClipped(containerBB, elBB) {
     isClippedBottom(containerBB, elBB);
 }
 
-module.exports = function ({ events }, opts) {
+module.exports = ({ events }, opts) => {
   const direction = opts.experiments.filmstripOnLeft ? 'vertical' : 'horizontal';
 
-  const elem = document.createElement('div');
-  elem.className = name;
-
-  const wrapper = document.createElement('div');
-  wrapper.className = `${name}-wrapper`;
+  const elem = dom.div(name);
+  const wrapper = dom.div(`${name}-wrapper`);
 
   elem.appendChild(wrapper);
 
@@ -134,8 +132,7 @@ module.exports = function ({ events }, opts) {
   }
 
   function thumbnail() {
-    const imgWrap = document.createElement('div');
-    imgWrap.className = 'thumbnail';
+    const imgWrap = dom.div('thumbnail');
 
     const img = document.createElement('img');
 
@@ -228,7 +225,7 @@ module.exports = function ({ events }, opts) {
     resolveVisible();
   });
 
-  events.on('directory:discover', function ({ files }) {
+  events.on('directory:discover', ({ files }) => {
     log.timing('load thumbs', async () => await loadThumbnails({ files }));
   });
 

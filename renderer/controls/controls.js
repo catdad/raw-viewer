@@ -1,3 +1,4 @@
+const dom = require('../tools/dom.js');
 const toggle = require('./toggle.js');
 const select = require('./select.js');
 
@@ -7,9 +8,8 @@ const style = true;
 const defaultRating = { from: 0, to: 5 };
 const defaultType = '*';
 
-module.exports = function ({ events }) {
-  const elem = document.createElement('div');
-  elem.className = name;
+module.exports = ({ events }) => {
+  const elem = dom.div(name);
 
   const zoom = toggle({
     name: 'zoom',
@@ -52,9 +52,7 @@ module.exports = function ({ events }) {
     events.emit('image:filter', { type: value });
   });
 
-  elem.appendChild(zoom.elem);
-  elem.appendChild(ratingFilter.elem);
-  elem.appendChild(typeFilter.elem);
+  dom.children(elem, zoom.elem, ratingFilter.elem, typeFilter.elem);
 
   events.on('directory:discover', ({ files }) => {
     // reset values to default

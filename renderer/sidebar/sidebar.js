@@ -81,7 +81,7 @@ const derive = (meta) => {
   return derived;
 };
 
-module.exports = function ({ events }) {
+module.exports = ({ events }) => {
   const elem = dom.div(name);
 
   async function saveImage({ filepath, imageUrl, name }) {
@@ -115,11 +115,13 @@ module.exports = function ({ events }) {
   }
 
   async function loadInfo({ filepath, imageUrl }) {
-    const meta = await log.timing(
-      `exif ${filepath}`,
-      async () => await exiftool.readFullMeta(filepath)
-    );
-    const renderFromRaw = await config.getProp('experiments.renderFromRaw');
+    const [ meta, renderFromRaw ] = await Promise.all([
+      log.timing(
+        `exif ${filepath}`,
+        async () => await exiftool.readFullMeta(filepath)
+      ),
+      config.getProp('experiments.renderFromRaw')
+    ]);
 
     const allMeta = Object.assign({}, meta, derive(meta));
 
@@ -145,48 +147,38 @@ module.exports = function ({ events }) {
       return renderKeyValue({ key: gui, value: allMeta[key] });
     }).forEach(elem => fragment.appendChild(elem));
 
-    const showFullMeta = document.createElement('button');
-    showFullMeta.innerHTML = 'Show all metadata';
-    showFullMeta.onclick = () => {
-      events.emit('modal', { content: render(meta) });
-    };
-
-    const download = document.createElement('button');
     const name = path.basename(filepath, path.extname(filepath)) + '.jpg';
-    download.innerHTML = 'Save preview image';
-    download.onclick = async () => {
-      try {
-        await saveImage({ filepath, imageUrl, name });
-      } catch (e) {
-        events.emit('error', e);
-      }
-    };
-
-    fragment.appendChild(showFullMeta);
-    fragment.appendChild(download);
-
-    if (renderFromRaw) {
-      const rawRender = document.createElement('button');
-      rawRender.innerHTML = 'Render from RAW';
-      rawRender.onclick = async () => {
+    dom.children(
+      fragment,
+      dom.button('Show all metadata', () => {
+        events.emit('modal', { content: render(meta) });
+      }),
+      dom.button('Save preview image', async () => {
         try {
-          const raw = await exiftool.rawRender(filepath);
-
-          events.emit('image:load', {
-            filepath: filepath,
-            imageUrl: raw,
-            rotation: 0
-          });
+          await saveImage({ filepath, imageUrl, name });
         } catch (e) {
-          log.error('render from RAW error:', e);
-          events.emit('error', new Error('RAW image is unsupported'));
+          events.emit('error', e);
         }
-      };
-      fragment.appendChild(rawRender);
-    }
+      }),
+      renderFromRaw ?
+        dom.button('Render from RAW', async () => {
+          try {
+            const raw = await exiftool.rawRender(filepath);
 
-    elem.innerHTML = '';
-    elem.appendChild(fragment);
+            events.emit('image:load', {
+              filepath: filepath,
+              imageUrl: raw,
+              rotation: 0
+            });
+          } catch (e) {
+            log.error('render from RAW error:', e);
+            events.emit('error', new Error('RAW image is unsupported'));
+          }
+        }) :
+        dom.nill()
+    );
+
+    dom.children(dom.empty(elem), fragment);
   }
 
   events.on('meta:load', loadInfo);

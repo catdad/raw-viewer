@@ -91,7 +91,7 @@ function exec(data) {
 }
 
 // eslint-disable-next-line no-undef
-onmessage = function (ev) {
+onmessage = (ev) => {
   const data = ev.data;
 
   if (data.type === 'exec') {

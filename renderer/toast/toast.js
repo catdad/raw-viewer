@@ -1,26 +1,23 @@
 const name = 'toast';
 const style = true;
 
+const dom = require('../tools/dom.js');
+
 function createMsg({ text, type, title = null }) {
-  const div = document.createElement('div');
-  div.className = `toast-msg toast-${type}`;
-
-  if (title) {
-    const titleElem = document.createElement('div');
-    titleElem.className = 'toast-title';
-
-    titleElem.appendChild(document.createTextNode(title));
-    div.appendChild(titleElem);
-  }
-
-  div.appendChild(document.createTextNode(text.toString()));
-
-  return div;
+  return dom.children(
+    dom.classname(dom.div(), `${name}-msg`, `${name}-${type}`),
+    title ?
+      dom.children(
+        dom.div(`${name}-title`),
+        dom.text(title)
+      ) :
+      dom.text(''),
+    dom.text(text.toString())
+  );
 }
 
-module.exports = function ({ events }) {
-  var elem = document.createElement('div');
-  elem.className = name;
+module.exports = ({ events }) => {
+  const elem = dom.div(name);
 
   function removeToast(msg) {
     msg.classList.remove('toast-show');

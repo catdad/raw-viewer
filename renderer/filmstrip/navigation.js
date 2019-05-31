@@ -36,7 +36,7 @@ const filter = {
   }
 };
 
-module.exports = function ({ wrapper, displayImage, direction, events }) {
+module.exports = ({ wrapper, displayImage, direction, events }) => {
   let expectRating = { from: 0, to: 5 };
   let expectType = '*';
 
@@ -140,7 +140,7 @@ module.exports = function ({ wrapper, displayImage, direction, events }) {
 
   if (direction === 'horizontal') {
     // translate vertical scrolling to horizontal
-    wrapper.addEventListener('mousewheel', function (ev) {
+    wrapper.addEventListener('mousewheel', (ev) => {
       wrapper.scrollLeft -= ev.wheelDeltaY;
       ev.preventDefault();
     });

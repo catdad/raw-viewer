@@ -115,11 +115,13 @@ module.exports = ({ events }) => {
   }
 
   async function loadInfo({ filepath, imageUrl }) {
-    const meta = await log.timing(
-      `exif ${filepath}`,
-      async () => await exiftool.readFullMeta(filepath)
-    );
-    const renderFromRaw = await config.getProp('experiments.renderFromRaw');
+    const [ meta, renderFromRaw ] = await Promise.all([
+      log.timing(
+        `exif ${filepath}`,
+        async () => await exiftool.readFullMeta(filepath)
+      ),
+      config.getProp('experiments.renderFromRaw')
+    ]);
 
     const allMeta = Object.assign({}, meta, derive(meta));
 

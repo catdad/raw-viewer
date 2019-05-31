@@ -145,22 +145,18 @@ module.exports = ({ events }) => {
       return renderKeyValue({ key: gui, value: allMeta[key] });
     }).forEach(elem => fragment.appendChild(elem));
 
-    const showFullMeta = document.createElement('button');
-    showFullMeta.innerHTML = 'Show all metadata';
-    showFullMeta.onclick = () => {
+    const showFullMeta = dom.button('Show all metadata', () => {
       events.emit('modal', { content: render(meta) });
-    };
+    });
 
-    const download = document.createElement('button');
     const name = path.basename(filepath, path.extname(filepath)) + '.jpg';
-    download.innerHTML = 'Save preview image';
-    download.onclick = async () => {
+    const download = dom.button('Save preview image', async () => {
       try {
         await saveImage({ filepath, imageUrl, name });
       } catch (e) {
         events.emit('error', e);
       }
-    };
+    });
 
     fragment.appendChild(showFullMeta);
     fragment.appendChild(download);

@@ -3,7 +3,7 @@ const { shell } = require('electron');
 const elem = (tag) => document.createElement(tag);
 
 const div = (className) => {
-  const el = document.createElement('div');
+  const el = elem('div');
 
   if (className) {
     el.className = className;
@@ -15,7 +15,7 @@ const div = (className) => {
 const text = (str) => document.createTextNode(str);
 
 const p = (str) => {
-  const el = document.createElement('p');
+  const el = elem('p');
 
   if (str !== undefined) {
     el.appendChild(text(str));
@@ -41,35 +41,27 @@ const h1 = (str) => {
   return el;
 };
 
-const button = (str, onClick) => {
-  return click(children(elem('button'), text(str)), onClick);
-};
-
 const link = (str, href) => {
-  const a = document.createElement('a');
+  const a = children(
+    click(elem('a'), (ev) => {
+      ev.preventDefault();
+      shell.openExternal(href);
+    }),
+    text(str)
+  );
   a.href = href;
-  a.appendChild(text(str));
-
-  a.onclick = (ev) => {
-    ev.preventDefault();
-    shell.openExternal(href);
-  };
 
   return a;
 };
 
-const linkBlock = (className, str, href) => {
-  const el = div(className);
-  el.appendChild(link(str, href));
-  return el;
-};
+const linkBlock = (className, str, href) => children(div(className), link(str, href));
 
-const icon = name => {
-  return children(
-    classname(document.createElement('i'), 'material-icons'),
-    text(name)
-  );
-};
+const button = (str, onClick) => click(children(elem('button'), text(str)), onClick);
+
+const icon = name => children(
+  classname(elem('i'), 'material-icons'),
+  text(name)
+);
 
 const classname = (el, ...classes) => {
   classes.forEach(c => el.classList.add(c));
@@ -103,9 +95,9 @@ module.exports = {
   p,
   span,
   h1,
-  button,
   link,
   linkBlock,
+  button,
   icon,
   classname,
   children,

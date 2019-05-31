@@ -36,27 +36,33 @@ const keys = (() => {
   };
 
   window.addEventListener('keydown', (e) => {
-    e.preventDefault();
+    let stopped = false;
 
     const key = e.key.toLowerCase();
 
     if (down[key]) {
-      return false;
+      return;
     }
 
     if (track[(key)]) {
       down[key] = true;
 
       events.emit('change', {
+        stop: () => {
+          stopped = true;
+          e.preventDefault();
+        },
         down: Object.keys(down)
       });
     }
 
-    return false;
-  });
+    if (stopped) {
+      return false;
+    }
+  }, false);
 
   window.addEventListener('keyup', (e) => {
-    e.preventDefault();
+    let stopped = false;
 
     const key = e.key.toLowerCase();
 
@@ -64,12 +70,18 @@ const keys = (() => {
       delete down[key];
 
       events.emit('change', {
+        stop: () => {
+          stopped = true;
+          e.preventDefault();
+        },
         down: Object.keys(down)
       });
     }
 
-    return false;
-  });
+    if (stopped) {
+      return false;
+    }
+  }, false);
 
   return Object.defineProperties({
     SPACE,

@@ -7,10 +7,7 @@ function setOptions(select, values) {
   select.innerHTML = '';
 
   values.forEach((val) => {
-    const opt = dom.children(
-      document.createElement('option'),
-      document.createTextNode(val.label)
-    );
+    const opt = dom.children(dom.elem('option'), dom.text(val.label));
     opt.x_value = val.value;
 
     select.appendChild(opt);

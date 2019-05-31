@@ -25,7 +25,7 @@ module.exports = function createToggle({ name, values }) {
   const ev = new EventEmitter();
 
   const radios = values.map((value, idx) => {
-    const input = dom.props(document.createElement('input'), {
+    const input = dom.props(dom.elem('input'), {
       type: 'radio',
       name,
       value

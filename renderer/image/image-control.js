@@ -22,7 +22,7 @@ module.exports = ({ name, elem, events }) => {
   let rotateStyle = '';
   let zoomType = 'fit';
 
-  const img = document.createElement('img');
+  const img = dom.elem('img');
   const container = dom.div(`${name}-container`);
 
   container.appendChild(img);

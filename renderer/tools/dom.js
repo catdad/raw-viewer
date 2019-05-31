@@ -32,11 +32,14 @@ const empty = (elem) => {
   while (elem.firstChild) {
     elem.removeChild(elem.firstChild);
   }
+  return elem;
 };
 
 const elem = (tag) => document.createElement(tag);
 
 const text = (str) => document.createTextNode(str);
+
+const nill = () => text('');
 
 const div = (className) => classname(elem('div'), className);
 
@@ -69,6 +72,7 @@ const button = (str, onClick) => click(children(elem('button'), text(str)), onCl
 const icon = name => children(classname(elem('i'), 'material-icons'), text(name));
 
 module.exports = {
+  nill,
   text,
   div,
   p,

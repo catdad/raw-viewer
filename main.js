@@ -65,7 +65,7 @@ function createWindow () {
   Promise.all([
     config.read(),
     exiftool.open()
-  ]).then(function () {
+  ]).then(() => {
     Menu.setApplicationMenu(menu.create(events, config.getProp('experiments')));
 
     const windowOptions = {
@@ -99,7 +99,7 @@ function createWindow () {
       slashes: true
     }));
 
-    mainWindow.on('closed', function () {
+    mainWindow.on('closed', () => {
       mainWindow = null;
     });
 
@@ -114,11 +114,11 @@ function createWindow () {
       config.setProp('window.height', size[1]);
     }, 500));
 
-    mainWindow.on('maximize', function () {
+    mainWindow.on('maximize', () => {
       config.setProp('window.maximized', true);
     });
 
-    mainWindow.on('unmaximize', function () {
+    mainWindow.on('unmaximize', () => {
       config.setProp('window.maximized', false);
     });
 
@@ -155,7 +155,7 @@ function createWindow () {
       mainWindow.close();
       mainWindow = null;
     });
-  }).catch(function (err) {
+  }).catch((err) => {
     throw err;
   });
 }
@@ -181,7 +181,7 @@ app.once('before-quit', onClose);
 app.on('ready', createWindow);
 
 // Quit when all windows are closed.
-app.on('window-all-closed', function () {
+app.on('window-all-closed', () => {
   // On OS X it is common for applications and their menu bar
   // to stay active until the user quits explicitly with Cmd + Q
   if (process.platform === 'darwin' || stayAlive) {
@@ -191,7 +191,7 @@ app.on('window-all-closed', function () {
   }
 });
 
-app.on('activate', function () {
+app.on('activate', () => {
   // On OS X it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   if (mainWindow === null) {

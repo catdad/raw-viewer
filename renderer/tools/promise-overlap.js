@@ -1,7 +1,7 @@
 function createOverlapDebouncer() {
   let lock;
 
-  return (func) => {
+  return (func, afterLock) => {
     return function recursiveWait(...args) {
       if (lock) {
         return lock.then(() => {
@@ -15,7 +15,14 @@ function createOverlapDebouncer() {
 
       lock.then((data) => {
         lock = null;
-        return Promise.resolve(data);
+
+        if (afterLock) {
+          return afterLock().then(() => {
+            return Promise.resolve(data);
+          });
+        } else {
+          return Promise.resolve(data);
+        }
       }).catch(err => {
         lock = null;
         return Promise.reject(err);

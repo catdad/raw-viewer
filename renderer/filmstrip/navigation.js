@@ -134,15 +134,44 @@ module.exports = ({ wrapper, displayImage, direction, events }) => {
   });
 
   const navigateTo = noOverlap(async (target) => {
-    if (!target) {
+    if (target) {
+      await displayImage(target);
+      await resolveVisible();
+    } else {
       // no target is loading, unload current image
       const thumbnails = getAllThumbnails();
       events.emit('image:unload', { hasFilteredImages: !!thumbnails.length });
+    }
+  });
+
+  const onFilter = noOverlap(async ({ rating, type }) => {
+    if (rating === expectRating && type === expectType) {
       return;
     }
 
-    await displayImage(target);
-    await resolveVisible();
+    expectRating = rating === undefined ? expectRating : rating;
+    expectType = type === undefined ? expectType : type;
+
+    try {
+      await resolveVisible();
+    } catch (e) {
+      events.emit('error', e);
+    }
+  }, async () => {
+    // execute this after the overlap lock
+
+    // find selected thumbnail
+    let selected = findSelected(wrapper, false);
+    let isVisible = selected ? ok(selected) : false;
+
+    if (isVisible) {
+      await navigateTo(selected);
+    } else {
+      // the currently selected thumbnail is filtred out,
+      // so find the first available one and select it
+      const next = findNextTarget(wrapper, 'right', true, true);
+      await navigateTo(next);
+    }
   });
 
   if (direction === 'horizontal') {
@@ -186,35 +215,7 @@ module.exports = ({ wrapper, displayImage, direction, events }) => {
       });
   });
 
-  events.on('image:filter', ({ rating, type }) => {
-    if (rating === expectRating && type === expectType) {
-      return;
-    }
-
-    expectRating = rating === undefined ? expectRating : rating;
-    expectType = type === undefined ? expectType : type;
-
-    resolveVisible().then(() => {
-      // find selected thumbnail
-      let selected = findSelected(wrapper, false);
-      let isVisible = !!selected;
-
-      if (selected) {
-        isVisible = ok(selected);
-      }
-
-      if (isVisible) {
-        return navigateTo(selected);
-      }
-
-      // the currently selected thumbnail is filtred out,
-      // so find the first available one and select it
-      const next = findNextTarget(wrapper, 'right', true, true);
-      navigateTo(next);
-    }).catch(err => {
-      events.emit('error', err);
-    });
-  });
+  events.on('image:filter', onFilter);
 
   return {
     resolveVisible,

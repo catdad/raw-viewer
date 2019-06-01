@@ -82,7 +82,7 @@ const derive = (meta) => {
 };
 
 module.exports = ({ events }) => {
-  const elem = dom.div(name);
+  const elem = dom.classname(dom.div(name), 'scrollbar');
 
   async function saveImage({ filepath, imageUrl, name }) {
     const outfile = await dialog.showSaveDialog({

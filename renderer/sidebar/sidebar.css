@@ -1,5 +1,6 @@
 .sidebar {
   padding: var(--main-pad);
+  overflow: auto;
 }
 
 .sidebar p {
@@ -27,4 +28,8 @@
 .sidebar-kv .metavalue {
   font-size: 1.1em;
   line-height: 1;
+}
+
+.sidebar.scrollbar::-webkit-scrollbar-track {
+  background: var(--main-surface);
 }

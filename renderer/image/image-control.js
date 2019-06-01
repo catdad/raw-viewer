@@ -3,6 +3,7 @@ const log = require('../../lib/log.js')('image-control');
 const keys = require('../tools/keyboard.js');
 const dom = require('../tools/dom.js');
 const svg = require('../tools/svg.js');
+const noOverlap = require('../tools/promise-overlap.js')();
 
 function int(num) {
   return Math.floor(num);
@@ -13,32 +14,6 @@ function evenInt(num) {
 
   return i % 2 ? i - 1 : i;
 }
-
-const noOverlap = (func) => {
-  let lock;
-
-  async function waitForLock() {
-    try {
-      if (lock) {
-        await lock;
-      }
-    } catch (e) {} // eslint-disable-line no-empty
-  }
-
-  return async (...args) => {
-    await waitForLock();
-
-    lock = func(...args);
-
-    try {
-      return await lock;
-    } catch (e) {
-      throw e;
-    } finally {
-      lock = null;
-    }
-  };
-};
 
 module.exports = ({ name, elem, events }) => {
   let box;

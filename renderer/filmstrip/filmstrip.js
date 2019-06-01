@@ -3,6 +3,7 @@ const style = true;
 
 const log = require('../../lib/log.js')(name);
 const dom = require('../tools/dom.js');
+const noOverlap = require('../tools/promise-overlap.js')();
 const dragDrop = require('../tools/ipc-draganddrop.js');
 const readMetaAndDataUrl = require('./read-image.js');
 const navigation = require('./navigation.js');
@@ -45,7 +46,7 @@ module.exports = ({ events }, opts) => {
     events.emit('error', msg || err);
   }
 
-  async function displayImage(thumb) {
+  const displayImage = noOverlap(async (thumb) => {
     if (thumb.load) {
       await thumb.load();
     }
@@ -81,7 +82,7 @@ module.exports = ({ events }, opts) => {
         block: 'center' // vertical alignment
       });
     }
-  }
+  });
 
   function ctrlSelect(thumb) {
     thumb.classList.toggle(SELECTED_SECONDARY);

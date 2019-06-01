@@ -1,29 +1,53 @@
 function createOverlapDebouncer() {
+  let lock;
+
   return (func) => {
-    let lock;
-
-    async function waitForLock() {
-      try {
-        if (lock) {
-          await lock;
-        }
-      } catch (e) {} // eslint-disable-line no-empty
-    }
-
-    return async (...args) => {
-      await waitForLock();
+    return function recursiveWait(...args) {
+      if (lock) {
+        return lock.then(() => {
+          return recursiveWait(...args);
+        }).catch(() => {
+          return recursiveWait(...args);
+        });
+      }
 
       lock = func(...args);
 
-      try {
-        return await lock;
-      } catch (e) {
-        throw e;
-      } finally {
+      lock.then((data) => {
         lock = null;
-      }
+        return Promise.resolve(data);
+      }).catch(err => {
+        lock = null;
+        return Promise.reject(err);
+      });
+
+      return lock;
     };
   };
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 module.exports = createOverlapDebouncer;

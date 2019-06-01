@@ -190,29 +190,26 @@ module.exports = ({ wrapper, displayImage, direction, events }) => {
   });
 
   // handle keyboard navigation
-  keys.on('change', () => {
+  keys.on('change', (ev) => {
     const isPrev = keys.includes(keys.LEFT) || keys.includes(keys.UP);
     const isNext = keys.includes(keys.RIGHT) || keys.includes(keys.DOWN);
     const isDelete = keys.includes(keys.DELETE) || keys.includes(keys.BACKSPACE);
 
-    Promise.resolve()
-      .then(() => {
-        if (isDelete) {
-          return deleteSelected()
-            .then(({ target }) => navigateTo(target));
-        }
+    if (isDelete) {
+      deleteSelected()
+        .then(({ target }) => navigateTo(target))
+        .catch(err => events.emit('error', err));
+      return;
+    }
 
-        if (isPrev || isNext) {
-          const target = findNextTarget(wrapper, isPrev ? 'left' : 'right');
+    if (isPrev || isNext) {
+      ev.stop();
+      const target = findNextTarget(wrapper, isPrev ? 'left' : 'right');
 
-          if (target) {
-            return navigateTo(target);
-          }
-        }
-      })
-      .catch((err) => {
-        events.emit('error', err);
-      });
+      if (target) {
+        navigateTo(target).catch(err => events.emit('error', err));
+      }
+    }
   });
 
   events.on('image:filter', onFilter);

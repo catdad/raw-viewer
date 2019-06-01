@@ -34,6 +34,7 @@ function findSelected(wrapper, includeSecondary = false) {
 }
 
 function findNextTarget(wrapper, direction, includeSelected = false) {
+function findNextTarget(wrapper, direction, includeSelected = false, allowFallback = false) {
   const next     = direction === 'left' ? 'previousSibling' : 'nextSibling';
   const fallback = direction === 'left' ? 'nextSibling' : 'previousSibling';
 
@@ -53,7 +54,7 @@ function findNextTarget(wrapper, direction, includeSelected = false) {
       }
     }
 
-    if (isFallback) {
+    if (isFallback || !allowFallback) {
       return null;
     }
 

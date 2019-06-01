@@ -180,8 +180,6 @@ module.exports = ({ name, elem, events }) => {
     if (hasFilteredImages) {
       container.classList.add('filtered');
     }
-
-    log.warn('UNLOAD CURRENT IMAGE', hasFilteredImages);
   }
 
   const debouncedZoomToBestFit = debounce(zoomToBestFit, 100);

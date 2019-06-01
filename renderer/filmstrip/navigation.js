@@ -3,6 +3,7 @@ const throttle = require('p-throttle');
 
 const log = require('../../lib/log.js')('filmstrip-nav');
 const keys = require('../tools/keyboard.js');
+const noOverlap = require('../tools/promise-overlap.js')();
 const { findSelected, findNextTarget, show, hide, ok } = require('./selection-helpers.js');
 
 function isInView(containerBB, elBB) {
@@ -165,24 +166,24 @@ module.exports = ({ wrapper, displayImage, direction, events }) => {
     const isNext = keys.includes(keys.RIGHT) || keys.includes(keys.DOWN);
     const isDelete = keys.includes(keys.DELETE) || keys.includes(keys.BACKSPACE);
 
-    if (isDelete) {
-      deleteSelected()
-        .then(({ target }) => navigateTo(target))
-        .then(() => {})
-        .catch((err) => {
-          events.emit('error', err);
-        });
+    Promise.resolve()
+      .then(() => {
+        if (isDelete) {
+          return deleteSelected()
+            .then(({ target }) => navigateTo(target));
+        }
 
-      return;
-    }
+        if (isPrev || isNext) {
+          const target = findNextTarget(wrapper, isPrev ? 'left' : 'right');
 
-    if (isPrev || isNext) {
-      const target = findNextTarget(wrapper, isPrev ? 'left' : 'right');
-
-      if (target) {
-        navigateTo(target);
-      }
-    }
+          if (target) {
+            return navigateTo(target);
+          }
+        }
+      })
+      .catch((err) => {
+        events.emit('error', err);
+      });
   });
 
   events.on('image:filter', ({ rating, type }) => {

@@ -215,7 +215,11 @@ module.exports = ({ events }, opts) => {
     wrapper.appendChild(fragment);
 
     // render the first image as soon as we have it
-    await navigateTo(wrapper.firstChild);
+    try {
+      await navigateTo(wrapper.firstChild);
+    } catch (e) {
+      events.emit('error', new Error('failed to load initial image'));
+    }
   }
 
   events.on('window:resize', () => {

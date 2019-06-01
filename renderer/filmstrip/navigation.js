@@ -122,7 +122,7 @@ module.exports = ({ wrapper, displayImage, direction, events }) => {
     }
   }, 1, 200);
 
-  async function deleteSelected() {
+  const deleteSelected = noOverlap(async () => {
     const selected = findSelected(wrapper, true);
     const target = findNextTarget(wrapper, 'right', true, true);
 
@@ -130,9 +130,9 @@ module.exports = ({ wrapper, displayImage, direction, events }) => {
     selected.forEach(elem => wrapper.removeChild(elem));
 
     return { target };
-  }
+  });
 
-  async function navigateTo(target) {
+  const navigateTo = noOverlap(async (target) => {
     if (!target) {
       // no target is loading, unload current image
       const thumbnails = getAllThumbnails();
@@ -142,7 +142,7 @@ module.exports = ({ wrapper, displayImage, direction, events }) => {
 
     await displayImage(target);
     await resolveVisible();
-  }
+  });
 
   if (direction === 'horizontal') {
     // translate vertical scrolling to horizontal

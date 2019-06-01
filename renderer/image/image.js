@@ -4,6 +4,7 @@ const log = require('../../lib/log.js')(name);
 
 const dom = require('../tools/dom.js');
 const keys = require('../tools/keyboard.js');
+const noOverlap = require('../tools/promise-overlap.js')();
 const imageControl = require('./image-control.js');
 
 function registerMouse(elem) {
@@ -69,25 +70,31 @@ module.exports = ({ events }) => {
 
   registerMouse(elem);
 
-  events.on('image:zoom', ({ scale }) => zoom(scale, { forceCenter: true }));
-
-  events.on('image:load', ({ imageUrl, rotation, filepath }) => {
-    log.timing(`display image ${filepath}`, async () => {
-      await load({ imageUrl, rotation });
-    }).then(() => {
+  const onLoad = noOverlap(async ({ imageUrl, rotation, filepath }) => {
+    try {
+      await log.timing(`display image ${filepath}`, async () => {
+        await load({ imageUrl, rotation });
+      });
       events.emit('meta:load', { filepath, imageUrl });
-    }).catch(err => {
+    } catch (err) {
       events.emit('error', err);
-    });
+    }
   });
 
-  events.on('image:unload', ({ hasFilteredImages }) => {
-    log.timing('unload image', async () => {
-      await unload({ hasFilteredImages });
-    }).then(() => {
+  const onUnload = noOverlap(async ({ hasFilteredImages }) => {
+    try {
+      await log.timing('unload image', async () => {
+        await unload({ hasFilteredImages });
+      });
       events.emit('meta:unload');
-    }).catch(err => events.emit('error', err));
+    } catch (err) {
+      events.emit('error', err);
+    }
   });
+
+  events.on('image:zoom', ({ scale }) => zoom(scale, { forceCenter: true }));
+  events.on('image:load', onLoad);
+  events.on('image:unload', onUnload);
 
   return { elem, style };
 };

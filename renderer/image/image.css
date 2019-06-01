@@ -40,7 +40,10 @@
   padding-bottom: 20px;
 }
 .image .image-container.empty::after {
-  content: "this folder seems empty";
+  content: "this folder seems empty \000a drop another folder here to open it";
+  white-space: pre-wrap;
   text-align: center;
   font-size: 1rem;
+  font-style: italic;
+  line-height: 2;
 }

@@ -10,7 +10,7 @@ function hide(thumb) {
 }
 
 function ok(thumb) {
-  return thumb.style.display !== 'none';
+  return thumb ? thumb.style.display !== 'none' : false;
 }
 
 function findSelected(wrapper, includeSecondary = false) {
@@ -30,10 +30,13 @@ function findSelected(wrapper, includeSecondary = false) {
     }
   }
 
-  return result;
+  if (includeSecondary) {
+    return result;
+  }
+
+  return null;
 }
 
-function findNextTarget(wrapper, direction, includeSelected = false) {
 function findNextTarget(wrapper, direction, includeSelected = false, allowFallback = false) {
   const next     = direction === 'left' ? 'previousSibling' : 'nextSibling';
   const fallback = direction === 'left' ? 'nextSibling' : 'previousSibling';

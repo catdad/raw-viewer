@@ -124,7 +124,7 @@ module.exports = ({ wrapper, displayImage, direction, events }) => {
 
   async function deleteSelected() {
     const selected = findSelected(wrapper, true);
-    const target = findNextTarget(wrapper, 'right', true);
+    const target = findNextTarget(wrapper, 'right', true, true);
 
     await trash(selected.map(elem => elem.x_filepath));
     selected.forEach(elem => wrapper.removeChild(elem));
@@ -177,7 +177,11 @@ module.exports = ({ wrapper, displayImage, direction, events }) => {
     }
 
     if (isPrev || isNext) {
-      navigateTo(findNextTarget(wrapper, isPrev ? 'left' : 'right'));
+      const target = findNextTarget(wrapper, isPrev ? 'left' : 'right');
+
+      if (target) {
+        navigateTo(target);
+      }
     }
   });
 
@@ -189,7 +193,24 @@ module.exports = ({ wrapper, displayImage, direction, events }) => {
     expectRating = rating === undefined ? expectRating : rating;
     expectType = type === undefined ? expectType : type;
 
-    resolveVisible().catch(err => {
+    resolveVisible().then(() => {
+      // find selected thumbnail
+      let selected = findSelected(wrapper, false);
+      let isVisible = !!selected;
+
+      if (selected) {
+        isVisible = ok(selected);
+      }
+
+      if (isVisible) {
+        return navigateTo(selected);
+      }
+
+      // the currently selected thumbnail is filtred out,
+      // so find the first available one and select it
+      const next = findNextTarget(wrapper, 'right', true, true);
+      navigateTo(next);
+    }).catch(err => {
       events.emit('error', err);
     });
   });

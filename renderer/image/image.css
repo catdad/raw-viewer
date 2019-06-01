@@ -47,3 +47,9 @@
   font-style: italic;
   line-height: 2;
 }
+.image .image-container.empty.filtered::before {
+  content: "🔎";
+}
+.image .image-container.empty.filtered::after {
+  content: "some images are hidden by the filters";
+}

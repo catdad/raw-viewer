@@ -143,6 +143,7 @@ module.exports = ({ name, elem, events }) => {
     const explicitBefore = calculateBeforeScrollOffset();
 
     container.classList.remove('empty');
+    container.classList.remove('filtered');
     container.removeChild(img);
 
     img.src = '';
@@ -174,6 +175,10 @@ module.exports = ({ name, elem, events }) => {
     container.classList.add('empty');
     container.style.width = '50%';
     container.style.height = '50%';
+
+    if (hasFilteredImages) {
+      container.classList.add('filtered');
+    }
 
     log.warn('UNLOAD CURRENT IMAGE', hasFilteredImages);
   }

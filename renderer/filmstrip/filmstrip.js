@@ -131,7 +131,7 @@ module.exports = ({ events }, opts) => {
     dragDrop(thumb, filepath);
   }
 
-  function thumbnail() {
+  function createThumbnail() {
     const imgWrap = dom.div('thumbnail');
     const img = dom.elem('img');
 
@@ -140,7 +140,7 @@ module.exports = ({ events }, opts) => {
     return { imgWrap, img };
   }
 
-  const { resolveVisible } = navigation({ wrapper, displayImage, direction, events });
+  const { resolveVisible, navigateTo } = navigation({ wrapper, displayImage, direction, events });
 
   async function loadThumbnails({ files }) {
     wrapper.innerHTML = '';
@@ -148,7 +148,7 @@ module.exports = ({ events }, opts) => {
     const fragment = document.createDocumentFragment();
 
     for (let { file, filepath, type } of files) {
-      let { imgWrap, img } = thumbnail();
+      let { imgWrap, img } = createThumbnail();
 
       imgWrap.setAttribute('data-filename', file);
       imgWrap.x_filepath = filepath;
@@ -212,12 +212,10 @@ module.exports = ({ events }, opts) => {
       fragment.appendChild(imgWrap);
     }
 
-    // render the first image as soon as we have it
-    fragment.firstChild.load().then(thumb => thumb.click());
-
     wrapper.appendChild(fragment);
 
-    await resolveVisible();
+    // render the first image as soon as we have it
+    await navigateTo(wrapper.firstChild);
   }
 
   events.on('window:resize', () => {

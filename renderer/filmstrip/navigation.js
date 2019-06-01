@@ -40,6 +40,10 @@ module.exports = ({ wrapper, displayImage, direction, events }) => {
   let expectRating = { from: 0, to: 5 };
   let expectType = '*';
 
+  function getAllThumbnails() {
+    return [].slice.call(wrapper.querySelectorAll('.thumbnail'));
+  }
+
   function applyFilter(thumb) {
     const isVisible = ok(thumb);
     const shouldBeVisible = filter.rating(expectRating, thumb.x_rating) &&
@@ -73,7 +77,7 @@ module.exports = ({ wrapper, displayImage, direction, events }) => {
 
   // display visible images
   const resolveVisible = throttle(async function self() {
-    const thumbnails = [].slice.call(wrapper.querySelectorAll('.thumbnail'));
+    const thumbnails = getAllThumbnails();
 
     async function findImageToLoad(wrapperBox) {
       for (let thumb of thumbnails) {
@@ -89,7 +93,7 @@ module.exports = ({ wrapper, displayImage, direction, events }) => {
 
     async function recurseThumbnails() {
       // find visible area each time, as this may change
-      // between iterations of this function
+      // between iterations of this function, like when scrolling
       const wrapperBox = wrapper.getBoundingClientRect();
 
       // load the first image we find that needs to be loaded
@@ -128,14 +132,22 @@ module.exports = ({ wrapper, displayImage, direction, events }) => {
     return { target };
   }
 
-  function navigateTo(target) {
+  async function navigateTo(target) {
     if (!target) {
+      // no target is loading, unload current image
+      const thumbnails = getAllThumbnails();
+
+      if (thumbnails.length) {
+        log.warn('NOTHING TO LOAD, PHOTOS HIDDEN BY FILTER');
+      } else {
+        log.warn('NOTHING TO LOAD, DIRECTORY EMPTY');
+      }
+
       return;
     }
 
-    displayImage(target);
-
-    resolveVisible();
+    await displayImage(target);
+    await resolveVisible();
   }
 
   if (direction === 'horizontal') {
@@ -161,9 +173,8 @@ module.exports = ({ wrapper, displayImage, direction, events }) => {
 
     if (isDelete) {
       deleteSelected()
-        .then(({ target }) => {
-          navigateTo(target);
-        })
+        .then(({ target }) => navigateTo(target))
+        .then(() => {})
         .catch((err) => {
           events.emit('error', err);
         });
@@ -190,6 +201,7 @@ module.exports = ({ wrapper, displayImage, direction, events }) => {
   });
 
   return {
-    resolveVisible
+    resolveVisible,
+    navigateTo,
   };
 };

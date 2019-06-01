@@ -7,13 +7,9 @@ const log = require('../../lib/log.js')('exiftool-child');
 const dcrawBin = require('./dcraw-bin.js');
 const bufferToUrl = require('./bufferToUrl.js');
 const metacache = require('./file-cache.js');
+const { unknown } = require('./svg.js');
 
 const exiftool = require('../../lib/exiftool.js');
-
-const unknown = (function () {
-  const svg = fs.readFileSync(path.resolve(__dirname, 'unknown.svg'), 'utf8');
-  return `data:image/svg+xml;base64,${Buffer.from(svg).toString('base64')}`;
-}());
 
 const ROTATION = {
   'Horizontal (normal)': 0,

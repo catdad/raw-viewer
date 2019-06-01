@@ -2,6 +2,7 @@ const { debounce } = require('lodash');
 const log = require('../../lib/log.js')('image-control');
 const keys = require('../tools/keyboard.js');
 const dom = require('../tools/dom.js');
+const svg = require('../tools/svg.js');
 
 function int(num) {
   return Math.floor(num);
@@ -141,14 +142,14 @@ module.exports = ({ name, elem, events }) => {
 
     const explicitBefore = calculateBeforeScrollOffset();
 
+    container.classList.remove('empty');
     container.removeChild(img);
+
     img.src = '';
-
     elem.onclick = onclick;
-
     img.style.transform = '';
-    img.src = imageUrl;
 
+    img.src = imageUrl;
     await img.decode();
 
     container.appendChild(img);
@@ -168,6 +169,15 @@ module.exports = ({ name, elem, events }) => {
     }
   }
 
+  async function unload({ hasFilteredImages }) {
+    await load({ imageUrl: svg.invisible, rotation: 0 });
+    container.classList.add('empty');
+    container.style.width = '50%';
+    container.style.height = '50%';
+
+    log.warn('UNLOAD CURRENT IMAGE', hasFilteredImages);
+  }
+
   const debouncedZoomToBestFit = debounce(zoomToBestFit, 100);
 
   events.on('window:resize', () => {
@@ -181,6 +191,7 @@ module.exports = ({ name, elem, events }) => {
   return {
     dom: container,
     load,
+    unload,
     zoom
   };
 };

@@ -51,7 +51,7 @@ function registerMouse(elem) {
 
 module.exports = ({ events }) => {
   const elem = dom.classname(dom.div(), `${name}`, 'scrollbar');
-  const { dom: controlDom, load, zoom } = imageControl({ name, elem, events });
+  const { dom: controlDom, load, unload, zoom } = imageControl({ name, elem, events });
 
   elem.appendChild(controlDom);
 
@@ -71,12 +71,20 @@ module.exports = ({ events }) => {
 
   events.on('image:zoom', ({ scale }) => zoom(scale, { forceCenter: true }));
 
-  events.on('image:load', async ({ imageUrl, rotation, filepath }) => {
-    await log.timing(`display image ${filepath}`, async () => {
+  events.on('image:load', ({ imageUrl, rotation, filepath }) => {
+    log.timing(`display image ${filepath}`, async () => {
       await load({ imageUrl, rotation });
+    }).then(() => {
+      events.emit('meta:load', { filepath, imageUrl });
+    }).catch(err => {
+      events.emit('error', err);
     });
+  });
 
-    events.emit('meta:load', { filepath, imageUrl });
+  events.on('image:unload', ({ hasFilteredImages }) => {
+    log.timing('unload image', async () => {
+      await unload({ hasFilteredImages });
+    }).catch(err => events.emit('error', err));
   });
 
   return { elem, style };

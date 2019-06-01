@@ -136,13 +136,7 @@ module.exports = ({ wrapper, displayImage, direction, events }) => {
     if (!target) {
       // no target is loading, unload current image
       const thumbnails = getAllThumbnails();
-
-      if (thumbnails.length) {
-        log.warn('NOTHING TO LOAD, PHOTOS HIDDEN BY FILTER');
-      } else {
-        log.warn('NOTHING TO LOAD, DIRECTORY EMPTY');
-      }
-
+      events.emit('image:unload', { hasFilteredImages: !!thumbnails.length });
       return;
     }
 

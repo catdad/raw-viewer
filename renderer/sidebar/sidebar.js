@@ -9,6 +9,7 @@ const exiftool = require('../tools/exiftool-child.js');
 const dom = require('../tools/dom.js');
 const log = require('../../lib/log.js')(name);
 const config = require('../../lib/config.js');
+const noOverlap = require('../tools/promise-overlap.js')();
 
 //const keyWhitelist = [
 //  'Model',
@@ -114,7 +115,7 @@ module.exports = ({ events }) => {
     );
   }
 
-  async function loadInfo({ filepath, imageUrl }) {
+  const loadInfo = noOverlap(async ({ filepath, imageUrl }) => {
     const [ meta, renderFromRaw ] = await Promise.all([
       log.timing(
         `exif ${filepath}`,
@@ -179,9 +180,14 @@ module.exports = ({ events }) => {
     );
 
     dom.children(dom.empty(elem), fragment);
-  }
+  });
+
+  const unloadInfo = noOverlap(async () => {
+    dom.empty(elem);
+  });
 
   events.on('meta:load', loadInfo);
+  events.on('meta:unload', unloadInfo);
 
   return { elem, style };
 };

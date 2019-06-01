@@ -84,6 +84,8 @@ module.exports = ({ events }) => {
   events.on('image:unload', ({ hasFilteredImages }) => {
     log.timing('unload image', async () => {
       await unload({ hasFilteredImages });
+    }).then(() => {
+      events.emit('meta:unload');
     }).catch(err => events.emit('error', err));
   });
 

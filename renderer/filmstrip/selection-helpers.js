@@ -34,24 +34,33 @@ function findSelected(wrapper, includeSecondary = false) {
 }
 
 function findNextTarget(wrapper, direction, includeSelected = false) {
-  const next = direction === 'left' ? 'previousSibling' : 'nextSibling';
+  const next     = direction === 'left' ? 'previousSibling' : 'nextSibling';
+  const fallback = direction === 'left' ? 'nextSibling' : 'previousSibling';
 
-  const mainSelected = findSelected(wrapper);
-  const allSelected = includeSelected ?
-    findSelected(wrapper, true) :
-    [mainSelected];
+  function internal(sibling, isFallback) {
+    const mainSelected = findSelected(wrapper);
+    const allSelected = includeSelected ?
+      findSelected(wrapper, true) :
+      [mainSelected];
 
-  let target = mainSelected;
+    let target = mainSelected;
 
-  while (target && target[next]) {
-    target = target[next];
+    while (target && target[sibling]) {
+      target = target[sibling];
 
-    if (target && ok(target) && !allSelected.includes(target)) {
-      return target;
+      if (target && ok(target) && !allSelected.includes(target)) {
+        return target;
+      }
     }
+
+    if (isFallback) {
+      return null;
+    }
+
+    return internal(fallback, true);
   }
 
-  return null;
+  return internal(next, false);
 }
 
 module.exports = {

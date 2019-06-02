@@ -97,9 +97,11 @@ const upload = async (filename) => {
   }
 };
 
+console.time('done in');
 (async () => {
   await fs.remove(dirs[platform]);
 
+  console.time('package built in');
   await packager({
     dir: root,
     afterCopy: [wrapHook(async (buildPath) => {
@@ -110,6 +112,7 @@ const upload = async (filename) => {
     })],
     out: 'dist'
   });
+  console.timeEnd('package built in');
 
   let filepath;
 
@@ -125,8 +128,10 @@ const upload = async (filename) => {
     await upload(filepath);
   }
 })().then(() => {
+  console.timeEnd('done in');
   console.log('Build complete');
 }).catch(err => {
+  console.timeEnd('done in');
   console.log('Build failed');
   console.error(err);
   process.exitCode = 1;

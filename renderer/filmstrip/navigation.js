@@ -160,8 +160,9 @@ module.exports = ({ wrapper, displayImage, direction, events }) => {
   }, async () => {
     // execute this after the overlap lock
 
-    // find selected thumbnail
-    let selected = findSelected(wrapper, false);
+    // find selected thumbnail... if none is selected
+    // assume we should view the first image
+    const selected = findSelected(wrapper, false) || getAllThumbnails().filter(a => ok(a))[0];
     let isVisible = selected ? ok(selected) : false;
 
     if (isVisible) {

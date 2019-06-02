@@ -42,6 +42,7 @@ module.exports = ({ events }) => {
 
   events.on('directory:load', ({ dir }) => {
     ondir(dir).then((result) => {
+      events.emit('directory:replace', result);
       events.emit('directory:discover', result);
     }).catch((err) => {
       events.emit('error', err);

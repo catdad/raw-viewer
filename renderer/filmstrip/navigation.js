@@ -3,6 +3,7 @@ const throttle = require('p-throttle');
 
 const log = require('../../lib/log.js')('filmstrip-nav');
 const keys = require('../tools/keyboard.js');
+const noOverlap = require('../tools/promise-overlap.js')();
 const { findSelected, findNextTarget, show, hide, ok } = require('./selection-helpers.js');
 
 function isInView(containerBB, elBB) {
@@ -40,6 +41,10 @@ module.exports = ({ wrapper, displayImage, direction, events }) => {
   let expectRating = { from: 0, to: 5 };
   let expectType = '*';
 
+  function getAllThumbnails() {
+    return [].slice.call(wrapper.querySelectorAll('.thumbnail'));
+  }
+
   function applyFilter(thumb) {
     const isVisible = ok(thumb);
     const shouldBeVisible = filter.rating(expectRating, thumb.x_rating) &&
@@ -73,7 +78,7 @@ module.exports = ({ wrapper, displayImage, direction, events }) => {
 
   // display visible images
   const resolveVisible = throttle(async function self() {
-    const thumbnails = [].slice.call(wrapper.querySelectorAll('.thumbnail'));
+    const thumbnails = getAllThumbnails();
 
     async function findImageToLoad(wrapperBox) {
       for (let thumb of thumbnails) {
@@ -89,7 +94,7 @@ module.exports = ({ wrapper, displayImage, direction, events }) => {
 
     async function recurseThumbnails() {
       // find visible area each time, as this may change
-      // between iterations of this function
+      // between iterations of this function, like when scrolling
       const wrapperBox = wrapper.getBoundingClientRect();
 
       // load the first image we find that needs to be loaded
@@ -118,25 +123,57 @@ module.exports = ({ wrapper, displayImage, direction, events }) => {
     }
   }, 1, 200);
 
-  async function deleteSelected() {
+  const deleteSelected = noOverlap(async () => {
     const selected = findSelected(wrapper, true);
-    const target = findNextTarget(wrapper, 'right', true);
+    const target = findNextTarget(wrapper, 'right', true, true);
 
     await trash(selected.map(elem => elem.x_filepath));
     selected.forEach(elem => wrapper.removeChild(elem));
 
     return { target };
-  }
+  });
 
-  function navigateTo(target) {
-    if (!target) {
+  const navigateTo = noOverlap(async (target) => {
+    if (target) {
+      await displayImage(target);
+      await resolveVisible();
+    } else {
+      // no target is loading, unload current image
+      const thumbnails = getAllThumbnails();
+      events.emit('image:unload', { hasFilteredImages: !!thumbnails.length });
+    }
+  });
+
+  const onFilter = noOverlap(async ({ rating, type }) => {
+    if (rating === expectRating && type === expectType) {
       return;
     }
 
-    displayImage(target);
+    expectRating = rating === undefined ? expectRating : rating;
+    expectType = type === undefined ? expectType : type;
 
-    resolveVisible();
-  }
+    try {
+      await resolveVisible();
+    } catch (e) {
+      events.emit('error', e);
+    }
+  }, async () => {
+    // execute this after the overlap lock
+
+    // find selected thumbnail... if none is selected
+    // assume we should view the first image
+    const selected = findSelected(wrapper, false) || getAllThumbnails().filter(a => ok(a))[0];
+    let isVisible = selected ? ok(selected) : false;
+
+    if (isVisible) {
+      await navigateTo(selected);
+    } else {
+      // the currently selected thumbnail is filtred out,
+      // so find the first available one and select it
+      const next = findNextTarget(wrapper, 'right', true, true);
+      await navigateTo(next);
+    }
+  });
 
   if (direction === 'horizontal') {
     // translate vertical scrolling to horizontal
@@ -154,42 +191,32 @@ module.exports = ({ wrapper, displayImage, direction, events }) => {
   });
 
   // handle keyboard navigation
-  keys.on('change', () => {
+  keys.on('change', (ev) => {
     const isPrev = keys.includes(keys.LEFT) || keys.includes(keys.UP);
     const isNext = keys.includes(keys.RIGHT) || keys.includes(keys.DOWN);
     const isDelete = keys.includes(keys.DELETE) || keys.includes(keys.BACKSPACE);
 
     if (isDelete) {
       deleteSelected()
-        .then(({ target }) => {
-          navigateTo(target);
-        })
-        .catch((err) => {
-          events.emit('error', err);
-        });
-
+        .then(({ target }) => navigateTo(target))
+        .catch(err => events.emit('error', err));
       return;
     }
 
     if (isPrev || isNext) {
-      navigateTo(findNextTarget(wrapper, isPrev ? 'left' : 'right'));
+      ev.stop();
+      const target = findNextTarget(wrapper, isPrev ? 'left' : 'right');
+
+      if (target) {
+        navigateTo(target).catch(err => events.emit('error', err));
+      }
     }
   });
 
-  events.on('image:filter', ({ rating, type }) => {
-    if (rating === expectRating && type === expectType) {
-      return;
-    }
-
-    expectRating = rating === undefined ? expectRating : rating;
-    expectType = type === undefined ? expectType : type;
-
-    resolveVisible().catch(err => {
-      events.emit('error', err);
-    });
-  });
+  events.on('image:filter', onFilter);
 
   return {
-    resolveVisible
+    resolveVisible,
+    navigateTo,
   };
 };

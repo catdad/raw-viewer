@@ -3,6 +3,7 @@ const style = true;
 
 const log = require('../../lib/log.js')(name);
 const dom = require('../tools/dom.js');
+const noOverlap = require('../tools/promise-overlap.js')();
 const dragDrop = require('../tools/ipc-draganddrop.js');
 const readMetaAndDataUrl = require('./read-image.js');
 const navigation = require('./navigation.js');
@@ -45,7 +46,7 @@ module.exports = ({ events }, opts) => {
     events.emit('error', msg || err);
   }
 
-  async function displayImage(thumb) {
+  const displayImage = noOverlap(async (thumb) => {
     if (thumb.load) {
       await thumb.load();
     }
@@ -81,7 +82,7 @@ module.exports = ({ events }, opts) => {
         block: 'center' // vertical alignment
       });
     }
-  }
+  });
 
   function ctrlSelect(thumb) {
     thumb.classList.toggle(SELECTED_SECONDARY);
@@ -131,7 +132,7 @@ module.exports = ({ events }, opts) => {
     dragDrop(thumb, filepath);
   }
 
-  function thumbnail() {
+  function createThumbnail() {
     const imgWrap = dom.div('thumbnail');
     const img = dom.elem('img');
 
@@ -140,7 +141,7 @@ module.exports = ({ events }, opts) => {
     return { imgWrap, img };
   }
 
-  const { resolveVisible } = navigation({ wrapper, displayImage, direction, events });
+  const { resolveVisible, navigateTo } = navigation({ wrapper, displayImage, direction, events });
 
   async function loadThumbnails({ files }) {
     wrapper.innerHTML = '';
@@ -148,7 +149,7 @@ module.exports = ({ events }, opts) => {
     const fragment = document.createDocumentFragment();
 
     for (let { file, filepath, type } of files) {
-      let { imgWrap, img } = thumbnail();
+      let { imgWrap, img } = createThumbnail();
 
       imgWrap.setAttribute('data-filename', file);
       imgWrap.x_filepath = filepath;
@@ -212,12 +213,14 @@ module.exports = ({ events }, opts) => {
       fragment.appendChild(imgWrap);
     }
 
-    // render the first image as soon as we have it
-    fragment.firstChild.load().then(thumb => thumb.click());
-
     wrapper.appendChild(fragment);
 
-    await resolveVisible();
+    // render the first image as soon as we have it
+    try {
+      await navigateTo(wrapper.firstChild);
+    } catch (e) {
+      events.emit('error', new Error('failed to load initial image'));
+    }
   }
 
   events.on('window:resize', () => {

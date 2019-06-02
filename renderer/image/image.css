@@ -23,3 +23,33 @@
   transform-origin: center;
   will-change: transform;
 }
+
+.image .image-container.empty {
+  max-height: 50%;
+  max-width: 50%;
+  display: flex;
+  flex-direction: column;
+}
+.image .image-container.empty img {
+  display: none;
+}
+.image .image-container.empty::before {
+  content: "😿";
+  text-align: center;
+  font-size: 10rem;
+  padding-bottom: 20px;
+}
+.image .image-container.empty::after {
+  content: "this folder seems empty \000a drop another folder here to open it";
+  white-space: pre-wrap;
+  text-align: center;
+  font-size: 1rem;
+  font-style: italic;
+  line-height: 2;
+}
+.image .image-container.empty.filtered::before {
+  content: "🔎";
+}
+.image .image-container.empty.filtered::after {
+  content: "some images are hidden by the filters";
+}

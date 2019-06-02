@@ -54,7 +54,7 @@ module.exports = ({ events }) => {
 
   dom.children(elem, zoom.elem, ratingFilter.elem, typeFilter.elem);
 
-  events.on('directory:discover', ({ files }) => {
+  events.on('directory:replace', ({ files }) => {
     // reset values to default
     ratingFilter.value = defaultRating;
     typeFilter.value = defaultType;

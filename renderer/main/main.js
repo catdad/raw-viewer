@@ -100,6 +100,7 @@ async function start(elem) {
   }
 
   events.on('error', (err) => {
+    log.error('caught error', err);
     events.emit('toast:error', {
       title: 'App Error:',
       text: err.toString()

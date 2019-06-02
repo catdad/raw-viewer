@@ -10,7 +10,7 @@ function hide(thumb) {
 }
 
 function ok(thumb) {
-  return thumb.style.display !== 'none';
+  return thumb ? thumb.style.display !== 'none' : false;
 }
 
 function findSelected(wrapper, includeSecondary = false) {
@@ -30,28 +30,41 @@ function findSelected(wrapper, includeSecondary = false) {
     }
   }
 
-  return result;
-}
-
-function findNextTarget(wrapper, direction, includeSelected = false) {
-  const next = direction === 'left' ? 'previousSibling' : 'nextSibling';
-
-  const mainSelected = findSelected(wrapper);
-  const allSelected = includeSelected ?
-    findSelected(wrapper, true) :
-    [mainSelected];
-
-  let target = mainSelected;
-
-  while (target && target[next]) {
-    target = target[next];
-
-    if (target && ok(target) && !allSelected.includes(target)) {
-      return target;
-    }
+  if (includeSecondary) {
+    return result;
   }
 
   return null;
+}
+
+function findNextTarget(wrapper, direction, includeSelected = false, allowFallback = false) {
+  const next     = direction === 'left' ? 'previousSibling' : 'nextSibling';
+  const fallback = direction === 'left' ? 'nextSibling' : 'previousSibling';
+
+  function internal(sibling, isFallback) {
+    const mainSelected = findSelected(wrapper);
+    const allSelected = includeSelected ?
+      findSelected(wrapper, true) :
+      [mainSelected];
+
+    let target = mainSelected;
+
+    while (target && target[sibling]) {
+      target = target[sibling];
+
+      if (target && ok(target) && !allSelected.includes(target)) {
+        return target;
+      }
+    }
+
+    if (isFallback || !allowFallback) {
+      return null;
+    }
+
+    return internal(fallback, true);
+  }
+
+  return internal(next, false);
 }
 
 module.exports = {

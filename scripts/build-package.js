@@ -68,6 +68,7 @@ const darwinZip = async () => {
 
   const args = [
     '-r',
+    '--quiet',
     '--symlinks',
     filepath,
     './'

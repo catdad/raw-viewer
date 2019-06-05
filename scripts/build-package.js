@@ -123,6 +123,7 @@ console.time('done in');
 
   let filepath;
 
+  console.time('package zipped in');
   if (platform === 'win32') {
     filepath = await winZip();
   } else if (platform === 'darwin') {
@@ -130,9 +131,12 @@ console.time('done in');
   } else if (platform === 'linux') {
     filepath = await linuxTar();
   }
+  console.timeEnd('package zipped in');
 
   if (argv.upload && filepath) {
+    console.time('uploaded in');
     await upload(filepath);
+    console.timeEnd('uploaded in');
   }
 })().then(() => {
   console.timeEnd('done in');

@@ -37,7 +37,7 @@ The first time you run it, it will fail to verify the app and show a message say
 
 If you are a developer and know more about how to sign the application, please let me knowat issue [#191](https://github.com/catdad/raw-viewer/issues/191).
 
-If you no longer with to use this app, you can just delete the folder where you unzipped it -- but don't worry, all your photos as well as their ratings will stay right where you left then.
+If you no longer with to use this app, you can just delete the folder where you unzipped it -- but don't worry, all your photos as well as their ratings will stay right where you left them.
 
 # Linux
 

@@ -6,7 +6,7 @@ const pipeline = promisify(stream.pipeline);
 const path = require('path');
 const fs = require('fs-extra');
 const fetch = require('node-fetch');
-const unzip = require('unzip');
+const unzip = require('unzipper');
 const tar = require('tar');
 
 const { exiftoolDir, platform } = require('../lib/third-party.js');

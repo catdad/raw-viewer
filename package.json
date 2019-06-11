@@ -1,7 +1,7 @@
 {
   "name": "raw-viewer",
   "productName": "Raw Viewer",
-  "version": "1.0.0-beta4",
+  "version": "1.0.0-beta5",
   "description": "raw-viewer",
   "main": "main.js",
   "scripts": {

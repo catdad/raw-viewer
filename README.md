@@ -33,7 +33,7 @@ If you no longer wish to use this app, you can just delete the folder where you 
 
 This is a self-contained portable app. Unzip the download and run `Raw Viewer`.
 
-The first time you run it, it will fail to verify the app and tell you that you cannot run it. If this happens, open System Preferences > Security & Privacy. There, you will see a message at the bottom saying that Raw Viewer was prevented from opening with an "Open Anyway" button. Click that button and now you will able to run the app. You will only need to do this once on your computer.
+The first time you run it, it will fail to verify the app and show a message saying "Raw Viewer can't be opened because it is from an unidentified developer". If this happens, open _System Preferences_ > _Security & Privacy_. There, you will see a message at the bottom saying "Raw Viewer was blocked from opening because it is not from an identified developer" with an "Open Anyway" button next to it. Click that button and now you will able to run the app. You will only need to do this once on your computer.
 
 If you are a developer and know more about how to sign the application, please let me knowat issue [#191](https://github.com/catdad/raw-viewer/issues/191).
 

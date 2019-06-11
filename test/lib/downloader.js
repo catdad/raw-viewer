@@ -5,7 +5,7 @@ const fetch = require('node-fetch');
 
 const { images, file } = require('./fixtures.js');
 
-(async () => {
+require('../../scripts/lib.run.js')('images', async () => {
   for (let name in images) {
     const url = images[name];
     const res = await fetch(url);
@@ -17,9 +17,4 @@ const { images, file } = require('./fixtures.js');
     const buffer = await res.buffer();
     await fs.outputFile(file(name), buffer);
   }
-})().then(() => {
-  console.log('done downloading images');
-}).catch(err => {
-  console.error(err);
-  process.exitCode = 1;
 });

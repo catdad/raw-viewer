@@ -125,7 +125,7 @@ module.exports = ({ events }, opts) => {
       }
 
       displayImage(thumb).catch(err => {
-        onError(err, `failed to load ${file}`);
+        onError(err, `failed to load "${file}"`);
       });
     });
 
@@ -191,7 +191,7 @@ module.exports = ({ events }, opts) => {
             filepath, file, type, meta
           });
         } catch (e) {
-          onError(e, `failed to load ${file}`);
+          onError(e, `failed to load "${file}"`);
           img.src = '';
         }
 

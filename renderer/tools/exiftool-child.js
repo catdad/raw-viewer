@@ -62,7 +62,6 @@ async function readShortMeta(filepath) {
     return placeholder;
   }
 
-
   let value;
   try {
     value = await log.timing(

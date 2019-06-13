@@ -54,7 +54,7 @@ module.exports = ({ events }, opts) => {
     const filepath = thumb.x_filepath;
     const meta = thumb.x_meta;
 
-    const { url, rotation } = await log.timing(
+    const { url, rotation, disabled } = await log.timing(
       `reading meta and full image ${filepath}`,
       async () => await readMetaAndDataUrl({ filepath, meta, type: 'full' })
     );
@@ -73,7 +73,8 @@ module.exports = ({ events }, opts) => {
     events.emit('image:load', {
       filepath: filepath,
       imageUrl: url,
-      rotation: rotation
+      rotation: rotation,
+      disabled: !!disabled
     });
 
     if (isClipped(parentBB, thumbBB)) {

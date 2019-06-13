@@ -76,7 +76,9 @@ module.exports = ({ events }) => {
         await load({ imageUrl, rotation });
       });
 
-      if (!disabled) {
+      if (disabled) {
+        events.emit('meta:unload');
+      } else {
         events.emit('meta:load', { filepath, imageUrl });
       }
     } catch (err) {

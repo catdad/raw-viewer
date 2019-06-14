@@ -54,7 +54,7 @@ module.exports = ({ events }, opts) => {
     const filepath = thumb.x_filepath;
     const meta = thumb.x_meta;
 
-    const { url, rotation } = await log.timing(
+    const { url, rotation, disabled } = await log.timing(
       `reading meta and full image ${filepath}`,
       async () => await readMetaAndDataUrl({ filepath, meta, type: 'full' })
     );
@@ -73,7 +73,8 @@ module.exports = ({ events }, opts) => {
     events.emit('image:load', {
       filepath: filepath,
       imageUrl: url,
-      rotation: rotation
+      rotation: rotation,
+      disabled: !!disabled
     });
 
     if (isClipped(parentBB, thumbBB)) {
@@ -125,7 +126,7 @@ module.exports = ({ events }, opts) => {
       }
 
       displayImage(thumb).catch(err => {
-        onError(err, `failed to load ${file}`);
+        onError(err, `failed to load "${file}"`);
       });
     });
 
@@ -191,7 +192,7 @@ module.exports = ({ events }, opts) => {
             filepath, file, type, meta
           });
         } catch (e) {
-          onError(e, `failed to load ${file}`);
+          onError(e, `failed to load "${file}"`);
           img.src = '';
         }
 

@@ -70,12 +70,17 @@ module.exports = ({ events }) => {
 
   registerMouse(elem);
 
-  const onLoad = noOverlap(async ({ imageUrl, rotation, filepath }) => {
+  const onLoad = noOverlap(async ({ imageUrl, rotation, filepath, disabled }) => {
     try {
       await log.timing(`display image ${filepath}`, async () => {
         await load({ imageUrl, rotation });
       });
-      events.emit('meta:load', { filepath, imageUrl });
+
+      if (disabled) {
+        events.emit('meta:unload');
+      } else {
+        events.emit('meta:load', { filepath, imageUrl });
+      }
     } catch (err) {
       events.emit('error', err);
     }

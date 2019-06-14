@@ -62,12 +62,13 @@ async function readShortMeta(filepath) {
     return placeholder;
   }
 
-  const value = await log.timing(
-    `read short meta ${filepath}`,
-    async () => await exiftool.readShortMeta(filepath)
-  );
-
-  if (value.error) {
+  let value;
+  try {
+    value = await log.timing(
+      `read short meta ${filepath}`,
+      async () => await exiftool.readShortMeta(filepath)
+    );
+  } catch (e) {
     return placeholder;
   }
 

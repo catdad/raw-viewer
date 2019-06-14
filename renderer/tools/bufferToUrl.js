@@ -3,9 +3,7 @@ function bufferToUrl(buff, type = 'image/jpeg') {
 }
 
 function urlToBuffer(url) {
-  const base64 = url.split(';base64,').pop();
-  const buffer = Buffer.from(base64, 'base64');
-  return buffer;
+  return Buffer.from(url.split(';base64,').pop(), 'base64');
 }
 
 module.exports = { bufferToUrl, urlToBuffer };

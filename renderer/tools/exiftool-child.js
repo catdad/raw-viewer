@@ -2,6 +2,7 @@ const path = require('path');
 const fs = require('fs-extra');
 const sharp = require('sharp');
 const prettyBytes = require('pretty-bytes');
+const { readPsd } = require('ag-psd');
 
 const log = require('../../lib/log.js')('exiftool-child');
 const dcrawBin = require('./dcraw-bin.js');
@@ -97,6 +98,21 @@ async function readFile(filepath) {
   return await log.timing(`read file ${filepath}`, () => fs.readFile(filepath));
 }
 
+async function readFilePsd(filepath) {
+  return await log.timing(
+    `read psd ${filepath}`,
+    async () => {
+      const file = await log.timing('psd read', () => fs.readFile(filepath));
+      const psd = await log.timing('psd parse', () => readPsd(file, {
+        skipLayerImageData: true
+      }));
+      const canvas = psd.canvas;
+      const imgUrl = await log.timing('psd canvas', () => canvas.toDataURL('image/jpeg'));
+      return await log.timing('psd buffer', () => bufferToUrl.reverse(imgUrl));
+    }
+  );
+}
+
 async function resizeLargeJpeg({ filepath, buffer, length }) {
   const before = buffer.length;
 
@@ -138,14 +154,15 @@ async function readJpegBufferFromMeta({ filepath, start, length }) {
   });
 }
 
-async function readJpegFromMeta({ filepath, start, length, url }) {
+async function readJpegFromMeta({ filepath, start, length, url, isPsd }) {
   if (url) {
     return url;
   }
 
-  let buffer = isPlainImage(filepath) ?
-    await readFile(filepath) :
-    await readJpegBufferFromMeta({ filepath, start, length });
+  let buffer = isPsd ? await readFilePsd(filepath) :
+    isPlainImage(filepath) ?
+      await readFile(filepath) :
+      await readJpegBufferFromMeta({ filepath, start, length });
 
   if (length && length > 9999999) {
     // this image is probably too big, something suspicious is happening
@@ -164,7 +181,9 @@ async function readThumbFromMeta(data) {
 
   let buffer;
 
-  if (isPlainImage(data.filepath)) {
+  if (data.isPsd) {
+    buffer = await readFilePsd(data.filepath);
+  } else if (isPlainImage(data.filepath)) {
     buffer = await readFile(data.filepath);
   } else if (data.thumbStart && data.thumbLength) {
     // sometimes, the raw file will store a full size preview

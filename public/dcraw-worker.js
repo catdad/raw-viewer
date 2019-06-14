@@ -3,7 +3,7 @@
 const fs = require('fs-extra');
 const dcraw = require('dcraw');
 
-const bufferToUrl = require('../renderer/tools/bufferToUrl.js');
+const { bufferToUrl } = require('../renderer/tools/bufferToUrl.js');
 const log = require('../lib/log.js')('worker');
 
 async function readFileBuffer(filepath) {

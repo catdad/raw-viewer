@@ -6,7 +6,7 @@ const { readPsd } = require('ag-psd');
 
 const log = require('../../lib/log.js')('exiftool-child');
 const dcrawBin = require('./dcraw-bin.js');
-const bufferToUrl = require('./bufferToUrl.js');
+const { bufferToUrl, urlToBuffer } = require('./bufferToUrl.js');
 const metacache = require('./file-cache.js');
 const { unknown } = require('./svg.js');
 
@@ -108,7 +108,7 @@ async function readFilePsd(filepath) {
       }));
       const canvas = psd.canvas;
       const imgUrl = await log.timing('psd canvas', () => canvas.toDataURL('image/jpeg'));
-      return await log.timing('psd buffer', () => bufferToUrl.reverse(imgUrl));
+      return await log.timing('psd buffer', () => urlToBuffer(imgUrl));
     }
   );
 }

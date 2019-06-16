@@ -5,6 +5,7 @@ const { dialog } = require('electron').remote;
 const name = 'sidebar';
 const style = true;
 
+const { urlToBuffer } = require('../tools/bufferToUrl.js');
 const exiftool = require('../tools/exiftool-child.js');
 const dom = require('../tools/dom.js');
 const log = require('../../lib/log.js')(name);
@@ -106,8 +107,7 @@ module.exports = ({ events }) => {
     await log.timing(
       `save jpeg preview to ${outfile}`,
       async () => {
-        const base64 = imageUrl.split(';base64,').pop();
-        const buffer = Buffer.from(base64, 'base64');
+        const buffer = urlToBuffer(imageUrl);
 
         await fs.outputFile(outfile, buffer);
         await exiftool.copyMeta(filepath, outfile);

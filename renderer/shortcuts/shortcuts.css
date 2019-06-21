@@ -1,0 +1,62 @@
+.shortcuts {
+  --size: 3rem;
+  --space: calc(var(--size) / 2);
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 100%;
+}
+
+.shortcuts .table {
+  display: flex;
+  flex-direction: column;
+  font-size: 1rem;
+}
+
+.shortcuts .row {
+  display: flex;
+  margin: 0 0 var(--space) 0;
+}
+
+.shortcuts .cell {
+  display: flex;
+  align-items: center;
+}
+
+.shortcuts .cell.keys {
+  flex: 1;
+  font-weight: bold;
+  justify-content: center;
+}
+
+.shortcuts .cell.description {
+  flex: 1;
+  padding-left: var(--space);
+}
+
+.shortcuts .cell .sep {
+  padding: 0 10px;
+}
+
+.shortcuts .cell i {
+  position: relative;
+  font-size: 2rem;
+}
+
+.shortcuts .cell .key {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: var(--main-surface-pop);
+  border: 2px solid var(--text-main);
+  height: var(--size);
+  min-width: var(--size);
+  border-radius: calc(var(--size) / 4);
+  margin: 0 5px;
+}
+
+.shortcuts .cell span {
+  display: inline-block;
+}

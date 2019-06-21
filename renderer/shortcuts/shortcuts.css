@@ -1,6 +1,11 @@
 .shortcuts {
   --size: 3rem;
   --space: calc(var(--size) / 2);
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 100%;
 }
 
 .shortcuts .table {

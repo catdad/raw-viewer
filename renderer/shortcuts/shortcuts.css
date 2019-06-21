@@ -25,13 +25,13 @@
 }
 
 .shortcuts .cell.left {
-  flex: 2;
+  flex: 1;
   font-weight: bold;
   justify-content: center;
 }
 
 .shortcuts .cell.right {
-  flex: 3;
+  flex: 1;
   padding-left: var(--space);
 }
 

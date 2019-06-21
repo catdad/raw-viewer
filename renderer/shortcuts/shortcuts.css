@@ -11,14 +11,18 @@
 
 .shortcuts .row {
   display: flex;
-  line-height: calc(var(--size) - 0.5rem);
   margin: 0 0 var(--space) 0;
+}
+
+.shortcuts .cell {
+  display: flex;
+  align-items: center;
 }
 
 .shortcuts .cell.left {
   flex: 2;
   font-weight: bold;
-  text-align: center;
+  justify-content: center;
 }
 
 .shortcuts .cell.right {
@@ -32,13 +36,16 @@
 
 .shortcuts .cell i {
   position: relative;
-  top: calc(var(--size) / 5);
   font-size: 2rem;
 }
 
 .shortcuts .cell .key {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
   background: rgba(255, 255, 255, 0.05);
-  border: 4px solid var(--main-border);
+  border: 2px solid var(--text-main);
   height: var(--size);
   min-width: var(--size);
   border-radius: calc(var(--size) / 4);

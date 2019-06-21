@@ -15,11 +15,8 @@
   margin: 0 0 var(--space) 0;
 }
 
-.shortcuts .cell {
-  flex: 2;
-}
-
 .shortcuts .cell.left {
+  flex: 2;
   font-weight: bold;
   text-align: center;
 }

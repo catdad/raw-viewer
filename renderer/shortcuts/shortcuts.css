@@ -24,13 +24,13 @@
   align-items: center;
 }
 
-.shortcuts .cell.left {
+.shortcuts .cell.keys {
   flex: 1;
   font-weight: bold;
   justify-content: center;
 }
 
-.shortcuts .cell.right {
+.shortcuts .cell.description {
   flex: 1;
   padding-left: var(--space);
 }

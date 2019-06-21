@@ -23,11 +23,11 @@ const combo = (keys, description) => {
   return dom.children(
     dom.div('row'),
     dom.children(
-      dom.classname(dom.div(), 'cell', 'left'),
+      dom.classname(dom.div(), 'cell', 'keys'),
       ...actions(...keys)
     ),
     dom.children(
-      dom.classname(dom.div(), 'cell', 'right'),
+      dom.classname(dom.div(), 'cell', 'description'),
       dom.text(description)
     )
   );

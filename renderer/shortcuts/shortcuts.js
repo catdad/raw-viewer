@@ -4,24 +4,30 @@ const style = true;
 const dom = require('../tools/dom.js');
 
 const actions = (...keys) => {
-  return keys.map(key => {
-    if (key === 'click') {
-      return dom.classname(dom.span(key), 'click');
+  return keys.reduce((m, key, i) => {
+    if (i !== 0) {
+      m.push(dom.classname(dom.span('+'), 'sep'));
     }
 
-    return dom.classname(dom.span(key), 'key');
-  });
+    if (key === 'click') {
+      m.push(dom.icon('mouse'));
+    } else {
+      m.push(dom.classname(dom.span(key), 'key'));
+    }
+
+    return m;
+  }, []);
 };
 
 const combo = (keys, description) => {
   return dom.children(
     dom.div('row'),
     dom.children(
-      dom.div('cell'),
+      dom.classname(dom.div(), 'cell', 'left'),
       ...actions(...keys)
     ),
     dom.children(
-      dom.div('cell'),
+      dom.classname(dom.div(), 'cell', 'right'),
       dom.text(description)
     )
   );
@@ -33,7 +39,13 @@ module.exports = ({ events }) => {
     dom.children(
       dom.div('table'),
       combo(['Z', 'click'], 'zoom in on image'),
-      combo(['Z', 'Alt', 'click'], 'zoom out on image')
+      combo(['Z', 'Alt', 'click'], 'zoom out on image'),
+      combo(['0'], 'rate the current image 0 starts'),
+      combo(['1'], 'rate the current image 1 start'),
+      combo(['2'], 'rate the current image 2 starts'),
+      combo(['3'], 'rate the current image 3 starts'),
+      combo(['4'], 'rate the current image 4 starts'),
+      combo(['5'], 'rate the current image 5 starts'),
     )
   );
 

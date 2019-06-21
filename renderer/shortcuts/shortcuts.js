@@ -38,8 +38,8 @@ module.exports = ({ events }) => {
     dom.div(name),
     dom.children(
       dom.div('table'),
-      combo(['Z', 'click'], 'zoom in on image'),
-      combo(['Z', 'Alt', 'click'], 'zoom out on image'),
+      combo(['Z', 'click'], 'zoom in on the image'),
+      combo(['Z', 'Alt', 'click'], 'zoom out on the image'),
       combo(['0'], 'rate the current image 0 starts'),
       combo(['1'], 'rate the current image 1 start'),
       combo(['2'], 'rate the current image 2 starts'),

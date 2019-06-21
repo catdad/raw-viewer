@@ -1,0 +1,34 @@
+.shortcuts {
+  --size: 3rem;
+}
+
+.shortcuts .key {
+  background: rgba(255, 255, 255, 0.05);
+  border: 4px solid var(--main-border);
+  height: var(--size);
+  min-width: var(--size);
+  border-radius: calc(var(--size) / 4);
+  margin: 0 5px;
+}
+
+.shortcuts .table {
+  display: flex;
+  flex-direction: column;
+  font-size: 1.1rem;
+}
+
+.shortcuts .row {
+  display: flex;
+  line-height: var(--size);
+  margin: 0 0 calc(var(--size) / 4) 0;
+}
+
+.shortcuts .cell {
+  flex: 1;
+  text-align: center;
+  font-weight: bold;
+}
+
+.shortcuts .cell span {
+  display: inline-block;
+}

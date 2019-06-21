@@ -75,6 +75,7 @@ function renderApp(elem, opts) {
   render('controls', elem, opts);
   render('image', elem, opts);
   render('about', elem, opts);
+  render('shortcuts', elem, opts);
   render('updater', elem, opts);
   render('dropzone', elem, opts);
   render('toast', elem, opts);

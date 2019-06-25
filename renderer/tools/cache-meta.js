@@ -1,6 +1,6 @@
 const { get, set } = require('lodash');
-const watcher = require('fs-watch-file')({ persistent: false });
-const log = require('../../lib/log.js')('file-cache');
+const log = require('../../lib/log.js')('cache-meta');
+const watcher = require('./cache-watcher.js');
 
 const cache = {};
 
@@ -10,12 +10,14 @@ function read(filepath, key) {
 
 function add(filepath, key, data) {
   watcher.add(filepath);
+
   cache[filepath] = set(cache[filepath] || {}, key, data);
   log.info(`caching ${key} ${filepath}`);
 }
 
 function remove(filepath) {
   watcher.remove(filepath);
+
   delete cache[filepath];
   log.info(`removing ${filepath}`);
 }
@@ -25,22 +27,9 @@ function reset() {
     remove(key);
   }
 
-  watcher.close();
-  init();
+  watcher.reset();
 }
 
-function init() {
-  watcher.on('change', ({ filepath }) => {
-    log.info(`external change ${filepath}`);
-    remove(filepath);
-  });
-
-  watcher.on('error', err => {
-    remove(err.filepath);
-    log.error(err);
-  });
-}
-
-init();
+watcher.on('change', filepath => remove(filepath));
 
 module.exports = { read, add, remove, reset };

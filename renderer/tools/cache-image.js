@@ -19,12 +19,18 @@ const file = async (filepath, key = '') => {
   return path.resolve(dir, hash(`${mtime}-${key}-{filepath}`));
 };
 
-const silentTiming = async (title, func) => {
+// we won't bother with any cache errors, if we can't read or
+// write to the cache, we will just generate the resource
+// from scratch more times
+const silentTiming = async (title, func, logError = true) => {
   return await log.timing(title, async () => {
     try {
       return await func();
     } catch (e) {
-      log.error('ignoring image cache error:', e);
+      if (logError) {
+        log.error('ignoring image cache error:', e);
+      }
+
       return null;
     }
   });
@@ -33,13 +39,8 @@ const silentTiming = async (title, func) => {
 const read = noOverlap(async (filepath, key) => {
   return await silentTiming(`reading cached ${key} ${filepath}`, async () => {
     const location = await file(filepath, key);
-
-    try {
-      return await fs.readFile(location);
-    } catch (e) {
-      return;
-    }
-  });
+    return await fs.readFile(location);
+  }, false);
 });
 
 const add = noOverlap(async (filepath, key, data) => {

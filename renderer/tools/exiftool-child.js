@@ -8,6 +8,7 @@ const log = require('../../lib/log.js')('exiftool-child');
 const dcrawBin = require('./dcraw-bin.js');
 const { bufferToUrl, urlToBuffer } = require('./bufferToUrl.js');
 const metacache = require('./cache-meta.js');
+const imagecache = require('./cache-image.js');
 const { unknown } = require('./svg.js');
 
 const exiftool = require('../../lib/exiftool.js');
@@ -220,8 +221,16 @@ async function copyMeta(filepath, targetpath) {
 }
 
 async function rawRender(filepath) {
+  const cached = await imagecache.read(filepath, 'raw');
+
+  if (cached) {
+    return bufferToUrl(cached);
+  }
+
   return await log.timing(`render ${filepath} from RAW`, async () => {
     const jpeg = await dcrawBin(filepath, { type: 'raw' });
+    await imagecache.add(filepath, 'raw', jpeg);
+
     return bufferToUrl(jpeg);
   });
 }

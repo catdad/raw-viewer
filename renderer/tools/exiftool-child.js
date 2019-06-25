@@ -100,6 +100,13 @@ async function readFile(filepath) {
 }
 
 async function readFilePsd(filepath) {
+  const cacheKey = 'psd-render';
+  const buffer = await imagecache.read(filepath, cacheKey);
+
+  if (buffer) {
+    return buffer;
+  }
+
   return await log.timing(
     `read psd ${filepath}`,
     async () => {
@@ -109,7 +116,11 @@ async function readFilePsd(filepath) {
       }));
       const canvas = psd.canvas;
       const imgUrl = await log.timing('psd canvas', () => canvas.toDataURL('image/jpeg'));
-      return await log.timing('psd buffer', () => urlToBuffer(imgUrl));
+      const buffer = await log.timing('psd buffer', () => urlToBuffer(imgUrl));
+
+      imagecache.add(filepath, cacheKey, buffer);
+
+      return buffer;
     }
   );
 }

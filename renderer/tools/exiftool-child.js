@@ -7,7 +7,7 @@ const { readPsd } = require('ag-psd');
 const log = require('../../lib/log.js')('exiftool-child');
 const dcrawBin = require('./dcraw-bin.js');
 const { bufferToUrl, urlToBuffer } = require('./bufferToUrl.js');
-const metacache = require('./file-cache.js');
+const metacache = require('./cache-meta.js');
 const { unknown } = require('./svg.js');
 
 const exiftool = require('../../lib/exiftool.js');

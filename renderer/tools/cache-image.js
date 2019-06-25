@@ -4,6 +4,7 @@ const path = require('path');
 const fs = require('fs-extra');
 const electron = require('electron');
 const app = electron.app || electron.remote.app;
+const getWindow = electron.getCurrentWindow || electron.remote.getCurrentWindow;
 
 const log = require('../../lib/log.js')('cache-image');
 const noOverlap = require('./promise-overlap.js')();
@@ -48,17 +49,34 @@ const add = noOverlap(async (filepath, key, data) => {
   });
 });
 
-const remove = noOverlap(async (filepath, key) => {
-  await silentTiming(`removing ${key}, ${filepath}`, async () => {
-    const location = await file(filepath, key);
-    await fs.unlink(location);
-  });
+const purge = async () => {
+  const browserWindow = getWindow();
+  const unlink = noOverlap((p) => fs.unlink(p));
+
+  const thirtyDaysAgo = new Date();
+  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+  const files = await noOverlap(() => fs.readdir(dir))();
+
+  log.info(`found ${files.length} cached images`);
+
+  for (let idx in files) {
+    browserWindow.setProgressBar((+idx + 1) / files.length);
+    const filepath = path.resolve(dir, files[idx]);
+    const { atime } = await fs.stat(filepath);
+
+    if (atime < thirtyDaysAgo) {
+      await unlink(filepath);
+    }
+  }
+
+  browserWindow.setProgressBar(-1);
+};
+
+purge().then(() => {
+  log.info('cache has been cleaned');
+}).catch(err => {
+  log.error('cache failed to clean', err);
 });
 
-const reset = noOverlap(async () => {
-  await silentTiming('reset image cache', async () => {
-    await fs.emptyDir(dir);
-  });
-});
-
-module.exports = { read, add, remove, reset };
+module.exports = { read, add };

@@ -63,6 +63,8 @@ const purge = async () => {
   for (let idx in files) {
     browserWindow.setProgressBar((+idx + 1) / files.length);
     const filepath = path.resolve(dir, files[idx]);
+    // files will be purged if they have not been accessed
+    // in the last 30 days
     const { atime } = await fs.stat(filepath);
 
     if (atime < thirtyDaysAgo) {

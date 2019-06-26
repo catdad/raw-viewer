@@ -22,12 +22,15 @@ const file = async (filepath, key = '') => {
 // we won't bother with any cache errors, if we can't read or
 // write to the cache, we will just generate the resource
 // from scratch more times
-const silent = prom => prom.catch(e => {
-  log.error('ignoring image cache error:', e);
+const silent = (prom, log = true) => prom.catch(e => {
+  if (log) {
+    log.error('ignoring image cache error:', e);
+  }
+
   return null;
 });
 
-const read = noOverlap((location) => silent(fs.readFile(location)));
+const read = noOverlap((location) => silent(fs.readFile(location), false));
 const write = noOverlap((location, data) => silent(fs.outputFile(location, data)));
 
 const cacheable = async (filepath, key, func) => {

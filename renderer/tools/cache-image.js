@@ -22,33 +22,36 @@ const file = async (filepath, key = '') => {
 // we won't bother with any cache errors, if we can't read or
 // write to the cache, we will just generate the resource
 // from scratch more times
-const silentTiming = async (title, func, logError = true) => {
-  return await log.timing(title, async () => {
-    try {
-      return await func();
-    } catch (e) {
-      if (logError) {
-        log.error('ignoring image cache error:', e);
-      }
+const silent = prom => prom.catch(e => {
+  log.error('ignoring image cache error:', e);
+  return null;
+});
 
-      return null;
-    }
-  });
+const read = noOverlap((location) => silent(fs.readFile(location)));
+const write = noOverlap((location, data) => silent(fs.outputFile(location, data)));
+
+const cacheable = async (filepath, key, func) => {
+  const location = await file(filepath, key);
+
+  let result = await log.timing(
+    `reading cached ${key} ${filepath}`,
+    () => read(location)
+  );
+
+  if (result) {
+    return result;
+  }
+
+  result = await func();
+
+  await log.timing(
+    `writing cached ${key} ${filepath}`,
+    () => write(location, result),
+    true
+  );
+
+  return result;
 };
-
-const read = noOverlap(async (filepath, key) => {
-  return await silentTiming(`reading cached ${key} ${filepath}`, async () => {
-    const location = await file(filepath, key);
-    return await fs.readFile(location);
-  }, false);
-});
-
-const add = noOverlap(async (filepath, key, data) => {
-  await silentTiming(`caching ${key} ${filepath}`, async () => {
-    const location = await file(filepath, key);
-    await fs.outputFile(location, data);
-  });
-});
 
 const purge = async () => {
   const browserWindow = getWindow();
@@ -82,4 +85,4 @@ purge().then(() => {
   log.error('cache failed to clean', err);
 });
 
-module.exports = { read, add };
+module.exports = { cacheable };

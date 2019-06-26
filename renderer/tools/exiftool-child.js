@@ -100,29 +100,22 @@ async function readFile(filepath) {
 }
 
 async function readFilePsd(filepath) {
-  const cacheKey = 'psd-render';
-  const buffer = await imagecache.read(filepath, cacheKey);
+  return await imagecache.cacheable(filepath, 'psd-render', async () => {
+    return await log.timing(
+      `read psd ${filepath}`,
+      async () => {
+        const file = await log.timing('psd read', () => fs.readFile(filepath));
+        const psd = await log.timing('psd parse', () => readPsd(file, {
+          skipLayerImageData: true
+        }));
+        const canvas = psd.canvas;
+        const imgUrl = await log.timing('psd canvas', () => canvas.toDataURL('image/jpeg'));
+        const buffer = await log.timing('psd buffer', () => urlToBuffer(imgUrl));
 
-  if (buffer) {
-    return buffer;
-  }
-
-  return await log.timing(
-    `read psd ${filepath}`,
-    async () => {
-      const file = await log.timing('psd read', () => fs.readFile(filepath));
-      const psd = await log.timing('psd parse', () => readPsd(file, {
-        skipLayerImageData: true
-      }));
-      const canvas = psd.canvas;
-      const imgUrl = await log.timing('psd canvas', () => canvas.toDataURL('image/jpeg'));
-      const buffer = await log.timing('psd buffer', () => urlToBuffer(imgUrl));
-
-      imagecache.add(filepath, cacheKey, buffer);
-
-      return buffer;
-    }
-  );
+        return buffer;
+      }
+    );
+  });
 }
 
 async function resizeLargeJpeg({ filepath, buffer, length }) {
@@ -232,17 +225,11 @@ async function copyMeta(filepath, targetpath) {
 }
 
 async function rawRender(filepath) {
-  const cached = await imagecache.read(filepath, 'raw');
-
-  if (cached) {
-    return bufferToUrl(cached);
-  }
-
-  return await log.timing(`render ${filepath} from RAW`, async () => {
-    const jpeg = await dcrawBin(filepath, { type: 'raw' });
-    await imagecache.add(filepath, 'raw', jpeg);
-
-    return bufferToUrl(jpeg);
+  return imagecache.cacheable(filepath, 'raw', async () => {
+    return await log.timing(`render ${filepath} from RAW`, async () => {
+      const jpeg = await dcrawBin(filepath, { type: 'raw' });
+      return bufferToUrl(jpeg);
+    });
   });
 }
 

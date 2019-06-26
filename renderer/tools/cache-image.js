@@ -19,9 +19,8 @@ const file = async (filepath, key = '') => {
   return path.resolve(dir, hash(`${mtime}-${key}-{filepath}`));
 };
 
-// we won't bother with any cache errors, if we can't read or
-// write to the cache, we will just generate the resource
-// from scratch more times
+// we won't bother with any cache errors, if we can't read or write to the cache,
+// we will just generate the resource from scratch more times
 const silent = (prom, log = true) => prom.catch(e => {
   if (log) {
     log.error('ignoring image cache error:', e);
@@ -70,8 +69,7 @@ const purge = async () => {
   for (let idx in files) {
     browserWindow.setProgressBar((+idx + 1) / files.length);
     const filepath = path.resolve(dir, files[idx]);
-    // files will be purged if they have not been accessed
-    // in the last 30 days
+    // files will be purged if they have not been accessed in the last 30 days
     const { atime } = await fs.stat(filepath);
 
     if (atime < thirtyDaysAgo) {

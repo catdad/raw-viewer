@@ -32,6 +32,7 @@ const silent = (prom, log = true) => prom.catch(e => {
 
 const read = noOverlap((location) => silent(fs.readFile(location), false));
 const write = noOverlap((location, data) => silent(fs.outputFile(location, data)));
+const unlink = noOverlap((location) => silent(fs.unlink(location)));
 
 const cacheable = async (filepath, key, func) => {
   const location = await file(filepath, key);
@@ -58,7 +59,6 @@ const cacheable = async (filepath, key, func) => {
 
 const purge = async () => {
   const browserWindow = getWindow();
-  const unlink = noOverlap((p) => fs.unlink(p));
 
   const thirtyDaysAgo = new Date();
   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);

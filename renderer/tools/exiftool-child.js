@@ -7,7 +7,8 @@ const { readPsd } = require('ag-psd');
 const log = require('../../lib/log.js')('exiftool-child');
 const dcrawBin = require('./dcraw-bin.js');
 const { bufferToUrl, urlToBuffer } = require('./bufferToUrl.js');
-const metacache = require('./file-cache.js');
+const metacache = require('./cache-meta.js');
+const imagecache = require('./cache-image.js');
 const { unknown } = require('./svg.js');
 
 const exiftool = require('../../lib/exiftool.js');
@@ -99,18 +100,22 @@ async function readFile(filepath) {
 }
 
 async function readFilePsd(filepath) {
-  return await log.timing(
-    `read psd ${filepath}`,
-    async () => {
-      const file = await log.timing('psd read', () => fs.readFile(filepath));
-      const psd = await log.timing('psd parse', () => readPsd(file, {
-        skipLayerImageData: true
-      }));
-      const canvas = psd.canvas;
-      const imgUrl = await log.timing('psd canvas', () => canvas.toDataURL('image/jpeg'));
-      return await log.timing('psd buffer', () => urlToBuffer(imgUrl));
-    }
-  );
+  return await imagecache.cacheable(filepath, 'psd-render', async () => {
+    return await log.timing(
+      `read psd ${filepath}`,
+      async () => {
+        const file = await log.timing('psd read', () => fs.readFile(filepath));
+        const psd = await log.timing('psd parse', () => readPsd(file, {
+          skipLayerImageData: true
+        }));
+        const canvas = psd.canvas;
+        const imgUrl = await log.timing('psd canvas', () => canvas.toDataURL('image/jpeg'));
+        const buffer = await log.timing('psd buffer', () => urlToBuffer(imgUrl));
+
+        return buffer;
+      }
+    );
+  });
 }
 
 async function resizeLargeJpeg({ filepath, buffer, length }) {
@@ -220,9 +225,11 @@ async function copyMeta(filepath, targetpath) {
 }
 
 async function rawRender(filepath) {
-  return await log.timing(`render ${filepath} from RAW`, async () => {
-    const jpeg = await dcrawBin(filepath, { type: 'raw' });
-    return bufferToUrl(jpeg);
+  return imagecache.cacheable(filepath, 'raw', async () => {
+    return await log.timing(`render ${filepath} from RAW`, async () => {
+      const jpeg = await dcrawBin(filepath, { type: 'raw' });
+      return bufferToUrl(jpeg);
+    });
   });
 }
 

@@ -1,6 +1,6 @@
 const { get, set } = require('lodash');
 const watcher = require('fs-watch-file')({ persistent: false });
-const log = require('../../lib/log.js')('file-cache');
+const log = require('../../lib/log.js')('cache-meta');
 
 const cache = {};
 

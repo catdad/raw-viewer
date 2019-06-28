@@ -18,6 +18,7 @@ const menu = require('./lib/menu.js');
 const exiftool = require('./lib/exiftool.js');
 const log = require('./lib/log.js')('main');
 const debounce = require('./lib/debounce.js');
+const analytics = require('./lib/analytics.js');
 
 log.info(`electron node version: ${process.version}`);
 
@@ -155,6 +156,8 @@ function createWindow () {
       mainWindow.close();
       mainWindow = null;
     });
+
+    analytics.screenview('main');
   }).catch((err) => {
     throw err;
   });

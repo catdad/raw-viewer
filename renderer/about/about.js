@@ -4,6 +4,7 @@ const style = true;
 const pkg = require('../../package.json');
 const dom = require('../tools/dom.js');
 const appName = pkg.productName || pkg.name;
+const analytics = require('../../lib/analytics.js');
 
 module.exports = ({ events }) => {
   const elem = dom.children(
@@ -33,6 +34,7 @@ module.exports = ({ events }) => {
   );
 
   events.on('about', () => {
+    analytics.screenview('about');
     events.emit('modal', { content: elem });
   });
 

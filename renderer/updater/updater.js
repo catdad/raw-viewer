@@ -4,6 +4,7 @@ const fetch = require('node-fetch');
 const name = 'updater';
 const style = true;
 const log = require('../../lib/log.js')(name);
+const analytics = require('../../lib/analytics.js');
 
 const pkg = require('../../package.json');
 const dom = require('../tools/dom.js');
@@ -42,7 +43,7 @@ module.exports = ({ events }) => {
     )
   );
 
-  events.on('check-for-update', async () => {
+  async function checkForUpdate() {
     dom.empty(elem);
     elem.appendChild(head);
 
@@ -74,6 +75,16 @@ module.exports = ({ events }) => {
     elem.appendChild(foot);
 
     events.emit('modal', { content: elem });
+  }
+
+  events.on('check-for-update', () => {
+    analytics.screenview('update');
+    checkForUpdate().then(() => {
+      log.info('succeded checking for updates');
+    }).catch(err => {
+      log.error('check for update error', err);
+      events.emit('error', new Error('failed to check for updates'));
+    });
   });
 
   return { style };

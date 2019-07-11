@@ -185,19 +185,25 @@ async function readJpegFromMeta({ filepath, start, length, url, isPsd }) {
     return url;
   }
 
-  let buffer = isPsd ? await readFilePsd(filepath) :
-    isPlainImage(filepath) ?
-      await readFile(filepath) :
-      await readJpegBufferFromMeta({ filepath, start, length });
+  return await timing({
+    category: 'read-jpeg-from-meta',
+    variable: extension(filepath),
+    func: async () => {
+      let buffer = isPsd ? await readFilePsd(filepath) :
+        isPlainImage(filepath) ?
+          await readFile(filepath) :
+          await readJpegBufferFromMeta({ filepath, start, length });
 
-  if (length && length > 9999999) {
-    // this image is probably too big, something suspicious is happening
-    // ... it's probably a CR3 file, but I've seen it happen for other
-    // formats as well
-    buffer = await resizeLargeJpeg({ filepath, buffer, length });
-  }
+      if (length && length > 9999999) {
+        // this image is probably too big, something suspicious is happening
+        // ... it's probably a CR3 file, but I've seen it happen for other
+        // formats as well
+        buffer = await resizeLargeJpeg({ filepath, buffer, length });
+      }
 
-  return bufferToUrl(buffer);
+      return bufferToUrl(buffer);
+    }
+  });
 }
 
 async function readThumbFromMeta(data) {

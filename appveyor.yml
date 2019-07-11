@@ -3,6 +3,8 @@ version: '{branch} #{build}'
 environment:
   matrix:
     - nodejs_version: "10"
+  global:
+    FORCE_COLOR: 1
 
 install:
   - ps: Install-Product node $env:nodejs_version x64
@@ -12,7 +14,6 @@ install:
   - npm install
 
 test_script:
-  - set FORCE_COLOR=1
   - npm test
 
 after_test:

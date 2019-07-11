@@ -21,6 +21,10 @@ const ROTATION = {
   'Rotate 270 CW': 270
 };
 
+function extension(filepath) {
+  return path.extname(filepath).replace(/^\./, '').toLowerCase();
+}
+
 function isPlainImage(filepath) {
   const ext = path.extname(filepath).toLowerCase();
   return ['.jpeg', '.jpg', '.png'].includes(ext);
@@ -34,7 +38,11 @@ async function readFullMeta(filepath) {
     return existing;
   }
 
-  const result = await exiftool.readFullMeta(filepath);
+  const result = await timing({
+    category: 'read-full-meta-child',
+    variable: extension(filepath),
+    func: async () => await exiftool.readFullMeta(filepath)
+  });
   metacache.add(filepath, name, result);
 
   return result;
@@ -70,6 +78,8 @@ async function readShortMeta(filepath) {
   try {
     value = await timing({
       label: `read short meta ${filepath}`,
+      category: 'read-short-meta-child',
+      variable: extension(filepath),
       func: async () => await exiftool.readShortMeta(filepath)
     });
   } catch (e) {

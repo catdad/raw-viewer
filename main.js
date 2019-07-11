@@ -158,6 +158,7 @@ function createWindow () {
     });
 
     analytics.screenview('main');
+    analytics.event('version', app.getVersion());
   }).catch((err) => {
     throw err;
   });

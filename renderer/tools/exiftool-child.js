@@ -213,29 +213,37 @@ async function readThumbFromMeta(data) {
 
   let buffer;
 
-  if (data.isPsd) {
-    buffer = await readFilePsd(data.filepath);
-  } else if (isPlainImage(data.filepath)) {
-    buffer = await readFile(data.filepath);
-  } else if (data.thumbStart && data.thumbLength) {
-    // sometimes, the raw file will store a full size preview
-    // and a thumbnail, and in those cases, using the smaller
-    // image will be faster... though the resize makes large
-    // images pretty fast, so maybe it's not worth?
-    buffer = await timing({
-      label: `read thumb ${data.filepath}`,
-      func: async () => await readFilePart({
-        filepath: data.filepath,
-        start: data.thumbStart,
-        length: data.thumbLength
-      })
-    });
-  } else {
-    buffer = await readJpegBufferFromMeta(data);
-  }
+  await timing({
+    category: 'read-thumb-from-meta',
+    variable: extension(data.filepath),
+    func: async () => {
+      if (data.isPsd) {
+        buffer = await readFilePsd(data.filepath);
+      } else if (isPlainImage(data.filepath)) {
+        buffer = await readFile(data.filepath);
+      } else if (data.thumbStart && data.thumbLength) {
+        // sometimes, the raw file will store a full size preview
+        // and a thumbnail, and in those cases, using the smaller
+        // image will be faster... though the resize makes large
+        // images pretty fast, so maybe it's not worth?
+        buffer = await timing({
+          label: `read thumb ${data.filepath}`,
+          func: async () => await readFilePart({
+            filepath: data.filepath,
+            start: data.thumbStart,
+            length: data.thumbLength
+          })
+        });
+      } else {
+        buffer = await readJpegBufferFromMeta(data);
+      }
+    }
+  });
 
   buffer = await timing({
     label: `resize thumb ${data.filepath}`,
+    category: 'resize-thumbnail',
+    variable: extension(data.filepath),
     func: async () => await sharp(buffer).resize(200).toBuffer()
   });
 

@@ -9,7 +9,7 @@ const create = async configObj => {
 
   await clean(file);
   await fs.writeFile(file, JSON.stringify(Object.assign({}, configObj, {
-    anonymousId: 'cf000000-0000-0000-0000-000000000000'
+    anonymousId: '00000000-0000-4000-8000-0000000000c1'
   })));
 
   return file;

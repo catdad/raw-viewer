@@ -4,7 +4,9 @@ const sharp = require('sharp');
 const prettyBytes = require('pretty-bytes');
 const { readPsd } = require('ag-psd');
 
-const log = require('../../lib/log.js')('exiftool-child');
+const name = 'exiftool-child';
+const log = require('../../lib/log.js')(name);
+const timing = require('../../lib/timing.js')(name);
 const dcrawBin = require('./dcraw-bin.js');
 const { bufferToUrl, urlToBuffer } = require('./bufferToUrl.js');
 const metacache = require('./cache-meta.js');
@@ -66,10 +68,10 @@ async function readShortMeta(filepath) {
 
   let value;
   try {
-    value = await log.timing(
-      `read short meta ${filepath}`,
-      async () => await exiftool.readShortMeta(filepath)
-    );
+    value = await timing({
+      label: `read short meta ${filepath}`,
+      func: async () => await exiftool.readShortMeta(filepath)
+    });
   } catch (e) {
     return placeholder;
   }
@@ -85,25 +87,31 @@ async function readShortMeta(filepath) {
 }
 
 async function readFilePart({ filepath, start, length }) {
-  return log.timing(`read file part ${filepath}`, async () => {
-    let buffer = Buffer.alloc(length);
-    const fd = await fs.open(filepath, 'r');
-    await fs.read(fd, buffer, 0, length, start);
-    await fs.close(fd);
+  return timing({
+    label: `read file part ${filepath}`,
+    func: async () => {
+      let buffer = Buffer.alloc(length);
+      const fd = await fs.open(filepath, 'r');
+      await fs.read(fd, buffer, 0, length, start);
+      await fs.close(fd);
 
-    return buffer;
+      return buffer;
+    }
   });
 }
 
 async function readFile(filepath) {
-  return await log.timing(`read file ${filepath}`, () => fs.readFile(filepath));
+  return await timing({
+    label: `read file ${filepath}`,
+    func: () => fs.readFile(filepath)
+  });
 }
 
 async function readFilePsd(filepath) {
   return await imagecache.cacheable(filepath, 'psd-render', async () => {
-    return await log.timing(
-      `read psd ${filepath}`,
-      async () => {
+    return await timing({
+      label: `read psd ${filepath}`,
+      func: async () => {
         const file = await log.timing('psd read', () => fs.readFile(filepath));
         const psd = await log.timing('psd parse', () => readPsd(file, {
           skipLayerImageData: true
@@ -114,16 +122,16 @@ async function readFilePsd(filepath) {
 
         return buffer;
       }
-    );
+    });
   });
 }
 
 async function resizeLargeJpeg({ filepath, buffer, length }) {
   const before = buffer.length;
 
-  buffer = await log.timing(
-    `resize large jpeg for ${filepath}`,
-    async () => {
+  buffer = await timing({
+    label: `resize large jpeg for ${filepath}`,
+    func: async () => {
       const { size: filebytes } = await fs.stat(filepath);
 
       if (filebytes / 2 < length) {
@@ -134,7 +142,7 @@ async function resizeLargeJpeg({ filepath, buffer, length }) {
 
       return buffer;
     }
-  );
+  });
 
   const diff = before - buffer.length;
   const pretty = prettyBytes(diff * -1);
@@ -148,14 +156,17 @@ async function resizeLargeJpeg({ filepath, buffer, length }) {
 async function readJpegBufferFromMeta({ filepath, start, length }) {
   if (start && length) {
     // we can get a fast jpeg image
-    return await log.timing(
-      `read preview ${filepath}`,
-      async () => await readFilePart({ filepath, start, length })
-    );
+    return await timing({
+      label: `read preview ${filepath}`,
+      func: async () => await readFilePart({ filepath, start, length })
+    });
   }
 
-  return await log.timing(`dcraw extract preview ${filepath}`, async () => {
-    return await dcrawBin(filepath, { type: 'preview' });
+  return await timing({
+    label: `dcraw extract preview ${filepath}`,
+    func: async () => {
+      return await dcrawBin(filepath, { type: 'preview' });
+    }
   });
 }
 
@@ -195,22 +206,22 @@ async function readThumbFromMeta(data) {
     // and a thumbnail, and in those cases, using the smaller
     // image will be faster... though the resize makes large
     // images pretty fast, so maybe it's not worth?
-    buffer = await log.timing(
-      `read thumb ${data.filepath}`,
-      async () => await readFilePart({
+    buffer = await timing({
+      label: `read thumb ${data.filepath}`,
+      func: async () => await readFilePart({
         filepath: data.filepath,
         start: data.thumbStart,
         length: data.thumbLength
       })
-    );
+    });
   } else {
     buffer = await readJpegBufferFromMeta(data);
   }
 
-  buffer = await log.timing(
-    `resize thumb ${data.filepath}`,
-    async () => await sharp(buffer).resize(200).toBuffer()
-  );
+  buffer = await timing({
+    label: `resize thumb ${data.filepath}`,
+    func: async () => await sharp(buffer).resize(200).toBuffer()
+  });
 
   return bufferToUrl(buffer);
 }
@@ -226,9 +237,12 @@ async function copyMeta(filepath, targetpath) {
 
 async function rawRender(filepath) {
   return imagecache.cacheable(filepath, 'raw', async () => {
-    return await log.timing(`render ${filepath} from RAW`, async () => {
-      const jpeg = await dcrawBin(filepath, { type: 'raw' });
-      return bufferToUrl(jpeg);
+    return await timing({
+      label: `render ${filepath} from RAW`,
+      func: async () => {
+        const jpeg = await dcrawBin(filepath, { type: 'raw' });
+        return bufferToUrl(jpeg);
+      }
     });
   });
 }

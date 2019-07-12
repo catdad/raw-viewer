@@ -5,11 +5,10 @@ const files = {};
 
 const create = async configObj => {
   const file = tempy.file({ extension: 'json' });
-  files[file] = true;
-
   await clean(file);
   await fs.writeFile(file, JSON.stringify(configObj));
 
+  files[file] = true;
   return file;
 };
 

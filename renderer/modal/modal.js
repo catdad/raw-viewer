@@ -11,6 +11,7 @@ module.exports = ({ events }) => {
 
   elem.addEventListener('click', () => {
     elem.classList.add('hidden');
+    events.emit('modal:closed');
   });
 
   container.addEventListener('click', (ev) => {

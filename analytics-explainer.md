@@ -2,11 +2,11 @@
 
 The purpose of this document is to be transparent about the analytics being collected, as well as explain a bit about how I am going to use them. To start, all analytics are anonymous. Their purpose is to help me make the application better, and I have no intention to track users.
 
-Below is a breakdown of each piece of data collection and what I will be using it for:
+Below is a breakdown of each piece of data being collected and what I will be using it for:
 
 ## User ID
 
-Each user will be assigned an ID using a random number generator (`uuid`, to be specific). This ID in no way identifies anything personal about the user. Rather, it just creates the idea of a user. The reason for this bit of data is so that I can tell how many active users I have. If the app is unsuccessful, I may ultimately stop developing it. The user ID allows me to tell how many users there are, how many new users I get over time, and how many users continuously use the application over time.
+Each user will be assigned an ID using a random number generator (`uuid`, to be specific). This ID in no way identifies anything personal about the user. Rather, it just creates the idea of a user. The reason for this bit of data is so that I can tell how many active users I have. If the application is unsuccessful, I may ultimately stop developing it. The user ID allows me to tell how many users there are, how many new users there are over time, and how many users continuously use the application over time.
 
 ## Image file type
 
@@ -18,7 +18,7 @@ This data has two purposes. First, part of this data is the actual camera make. 
 
 In this category, I also collect the lens model, focal length, f-stop, shutter speed, and ISO for images. I have absolutely no use for this data, other than I am a photography nerd. As photographers, we love to talk about these things, so I am just plain curious.
 
-I do not have access to any of your actual photographs, and they will never be tracked by me.
+I do not have access to any of your actual images, and they will never be tracked by me.
 
 ## Computer metadata
 
@@ -30,7 +30,7 @@ Finally, I track your screen resolution and number of screens. The user interfac
 
 ## Interactions
 
-Over time, as I add and tweak features, I will need to know which features are popular and which features are never used. Since I develop this application in my free time, this will help me concentrate my development efforts and make sure I am working on the things that are most useful to you. This includes which buttons or keyboard shortcuts are used, which modals are used, etc.
+Over time, as I add and tweak features, I will need to know which features are popular and which features are never used. Since I develop this application in my free time, this will help me concentrate my development efforts and make sure I am working on the things that are most useful to you. This includes which buttons or keyboard shortcuts are used, which modals are used, how long particular tasks take to complete, etc.
 
 ## Questions
 

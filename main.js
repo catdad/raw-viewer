@@ -159,6 +159,7 @@ function createWindow () {
 
     analytics.screenview('main');
     analytics.event('version', app.getVersion());
+    analytics.platformInfo();
   }).catch((err) => {
     throw err;
   });

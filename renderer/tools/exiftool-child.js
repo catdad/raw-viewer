@@ -263,6 +263,8 @@ async function rawRender(filepath) {
   return imagecache.cacheable(filepath, 'raw', async () => {
     return await timing({
       label: `render ${filepath} from RAW`,
+      category: 'raw-render',
+      variable: extension(filepath),
       func: async () => {
         const jpeg = await dcrawBin(filepath, { type: 'raw' });
         return bufferToUrl(jpeg);

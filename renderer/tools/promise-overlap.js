@@ -11,9 +11,7 @@ function createOverlapDebouncer() {
         });
       }
 
-      lock = func(...args);
-
-      lock.then((data) => {
+      lock = func(...args).then((data) => {
         lock = null;
 
         if (afterLock) {

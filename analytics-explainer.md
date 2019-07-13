@@ -1,6 +1,6 @@
 # Analytics explainer
 
-The purpose of this document is to be transparent about the analytics being collected, as well as explain a bit about how I am going to use them. To start, all analytics are annonymous. Their purpose is to help me make the application better, and I have no intention to track users.
+The purpose of this document is to be transparent about the analytics being collected, as well as explain a bit about how I am going to use them. To start, all analytics are anonymous. Their purpose is to help me make the application better, and I have no intention to track users.
 
 Below is a breakdown of each piece of data collection and what I will be using it for:
 
@@ -10,7 +10,7 @@ Each user will be assigned an ID using a random number generator (`uuid`, to be 
 
 ## Image file type
 
-The main purpose of the application is to view RAW images. However, since every RAW format has different requirements, I have to make some tradeoffs in optimizations at times in order to support all formats. File type data will be used to determine popular formats and make sure that those are the formats that are most optimized.
+The main purpose of the application is to view RAW images. However, since every RAW format has different requirements, I have to make some trade-offs in optimizations at times in order to support all formats. File type data will be used to determine popular formats and make sure that those are the formats that are most optimized.
 
 ## Image metadata
 
@@ -22,7 +22,7 @@ I do not have access to any of your actual photographs, and they will never be t
 
 ## Computer metadata
 
-This is information about your computer. I will record the kind of CPU you have -- including model, clock speed, and number of cores -- and total computer memory as well as percentage of free memory. Developers tend to have pretty high-end computers, but because the application is fast on my machine does not mean it will be fast for all of you. I need to know what kind of processors are common among users so that I can make sure I am benchmarking and optimizing for those processors.
+This is information about your computer. I will record the kind of CPU you have -- including model, clock speed, and number of cores -- and total computer memory as well as percentage of free memory. Developers tend to have pretty high-end computers, but because the application is fast on my machine does not mean it will be fast for all of you. I need to know what kind of processors are common among users so that I can make sure I am bench-marking and optimizing for those processors.
 
 I will also track operating systems. While Electron does abstract some OS things, there are still times that I will need to differentiate between operating systems. Some examples are supporting MacOS dark mode or Windows dark mode, supporting frameless windows, etc. This application also contains some compiled native code in order to be as fast as possible. All of this stuff is dependent on the operating system, which is why I need to know what is popular specifically among my users.
 

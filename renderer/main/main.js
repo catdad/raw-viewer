@@ -44,6 +44,15 @@ function applyStyle(css) {
   );
 }
 
+function reportExperiments(experiments) {
+  const list = experiments || {};
+  const knownKeys = ['renderFromRaw', 'filmstripOnLeft', 'framelessWindow'];
+
+  knownKeys.forEach(key => {
+    analytics.event('experiment', key, list[key] ? 'on' : 'off');
+  });
+}
+
 function render(name, parentElem, opts) {
   const modname = path.resolve(__dirname, '..', name, `${name}`);
   const mod = require(`${modname}.js`)({ events }, opts);
@@ -114,12 +123,7 @@ async function start(elem) {
     analytics.screenview('main');
   });
   analytics.screenview('main');
-
-  if (experiments && Object.keys(experiments).length) {
-    for (let key in experiments) {
-      analytics.event('experiment', key, experiments[key] ? 'on' : 'off');
-    }
-  }
+  reportExperiments(experiments);
 
   if (lastDirectory) {
     try {

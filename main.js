@@ -67,7 +67,11 @@ function createWindow () {
     config.read(),
     exiftool.open()
   ]).then(() => {
-    Menu.setApplicationMenu(menu.create(events, config.getProp('experiments')));
+    Menu.setApplicationMenu(menu.create({
+      events,
+      experiments: config.getProp('experiments'),
+      disableAnalytics: !!config.getProp('disableAnalytics')
+    }));
 
     const windowOptions = {
       width: config.getProp('window.width') || 1000,

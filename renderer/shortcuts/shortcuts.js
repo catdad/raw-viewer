@@ -1,6 +1,7 @@
 const name = 'shortcuts';
 const style = true;
 
+const analytics = require('../../lib/analytics.js');
 const dom = require('../tools/dom.js');
 
 const actions = (...keys) => {
@@ -50,6 +51,7 @@ module.exports = ({ events }) => {
   );
 
   events.on('shortcuts', () => {
+    analytics.screenview('shortcuts');
     events.emit('modal', { content: elem });
   });
 

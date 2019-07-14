@@ -10,6 +10,7 @@ const { throttle } = require('lodash');
 
 const dom = require('../tools/dom.js');
 const config = require('../../lib/config.js');
+const analytics = require('../../lib/analytics.js');
 const stylepath = path.resolve(__dirname, `${name}.css`);
 
 const events = new EventEmitter();
@@ -107,6 +108,11 @@ async function start(elem) {
       text: err.toString()
     });
   });
+
+  events.on('modal:closed', () => {
+    analytics.screenview('main');
+  });
+  analytics.screenview('main');
 
   if (lastDirectory) {
     try {

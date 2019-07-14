@@ -30,7 +30,7 @@ Finally, I track your screen resolution and number of screens. The user interfac
 
 ## Interactions
 
-Over time, as I add and tweak features, I will need to know which features are popular and which features are never used. Since I develop this application in my free time, this will help me concentrate my development efforts and make sure I am working on the things that are most useful to you. This includes which buttons or keyboard shortcuts are used, which modals are used, how long particular tasks take to complete, etc.
+Over time, as I add and tweak features, I will need to know which features are popular and which features are never used. Since I develop this application in my free time, this will help me concentrate my development efforts and make sure I am working on the things that are most useful to you. This includes which buttons or keyboard shortcuts are used, which modals are used, which experiments are turned on or off, how long particular tasks take to complete, etc.
 
 ## Questions
 

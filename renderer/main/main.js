@@ -84,10 +84,11 @@ function renderApp(elem, opts) {
 }
 
 async function start(elem) {
-  const [lastDirectory, filmstripOnLeft, framelessWindow] = await config.getProp([
+  const [lastDirectory, filmstripOnLeft, framelessWindow, experiments] = await config.getProp([
     'client.lastDirectory',
     'experiments.filmstripOnLeft',
-    'experiments.framelessWindow'
+    'experiments.framelessWindow',
+    'experiments'
   ]);
 
   const appOpts = {
@@ -113,6 +114,12 @@ async function start(elem) {
     analytics.screenview('main');
   });
   analytics.screenview('main');
+
+  if (experiments && Object.keys(experiments).length) {
+    for (let key in experiments) {
+      analytics.event('experiment', key, experiments[key] ? 'on' : 'off');
+    }
+  }
 
   if (lastDirectory) {
     try {

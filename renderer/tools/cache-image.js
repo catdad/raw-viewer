@@ -16,7 +16,7 @@ const hash = (str) => crypto.createHash('md5').update(str).digest('hex');
 const file = async (filepath, key = '') => {
   // get timestamp for the file's last modification
   const { mtime } = await fs.stat(filepath);
-  return path.resolve(dir, hash(`${mtime}-${key}-{filepath}`));
+  return path.resolve(dir, hash(`${mtime}-${key}-${filepath}`));
 };
 
 // we won't bother with any cache errors, if we can't read or write to the cache,

@@ -12,7 +12,7 @@ const version = '1.0.0-rc1.0.0';
 
 const urls = {
   win32: `https://github.com/catdad-experiments/gpr-tools-release/releases/download/${version}/gpr_tools_windows.exe`,
-  osx:   `https://github.com/catdad-experiments/gpr-tools-release/releases/download/${version}/gpr_tools_osx`,
+  darwin:   `https://github.com/catdad-experiments/gpr-tools-release/releases/download/${version}/gpr_tools_osx`,
   linux: `https://github.com/catdad-experiments/gpr-tools-release/releases/download/${version}/gpr_tools_linux`,
 };
 

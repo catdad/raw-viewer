@@ -26,15 +26,18 @@ const responseStream = async url => {
   return res.body;
 };
 
+const platform = process.platform;
+
 require('./lib.run.js')(`gpr_tools v${version}`, async () => {
   await fs.ensureDir(gprtoolsDir);
 
-  if (!urls[process.platform]) {
-    throw new Error(`${process.platform} is not supported`);
+  if (!urls[platform]) {
+    throw new Error(`${platform} is not supported`);
   }
 
-  const body = await responseStream(urls[process.platform]);
+  const body = await responseStream(urls[platform]);
+  const opts = platform === 'win32' ? {} : { mode: 0o755 };
 
-  await pipeline(body, fs.createWriteStream(gprtools));
+  await pipeline(body, fs.createWriteStream(gprtools, opts));
 });
 

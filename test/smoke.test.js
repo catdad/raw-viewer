@@ -1,4 +1,5 @@
 const { expect } = require('chai');
+const Jimp = require('jimp');
 
 const {
   start, stop,
@@ -6,7 +7,9 @@ const {
   elementAttribute
 } = require('./lib/app-provider.js');
 const config = require('./lib/config-provider.js');
-const { names, path: fixturePath } = require('./lib/fixtures.js');
+const { images, path: fixturePath } = require('./lib/fixtures.js');
+
+const { urlToBuffer } = require('../renderer/tools/bufferToUrl.js');
 
 describe('[smoke tests]', () => {
   const all = async (...promises) => {
@@ -30,6 +33,13 @@ describe('[smoke tests]', () => {
     );
   }
 
+  async function hashImage(dataUrl) {
+    const original = urlToBuffer(dataUrl);
+    const img = await Jimp.read(original);
+    img.resize(50, Jimp.AUTO);
+    return img.hash();
+  }
+
   beforeEach(cleanup);
   afterEach(cleanup);
 
@@ -44,7 +54,7 @@ describe('[smoke tests]', () => {
   });
 
   it('loads fixture images', async () => {
-    expect(names.length).to.be.above(0);
+    expect(images.length).to.be.above(0);
 
     const configPath = await config.create({
       client: {
@@ -53,14 +63,19 @@ describe('[smoke tests]', () => {
     });
     await start(configPath);
 
-    const elements = await waitForElementCount('.filmstrip .thumbnail', names.length);
+    const elements = await waitForElementCount('.filmstrip .thumbnail', images.length);
 
-    for (let i in names) {
-      const name = names[i];
+    for (let i in images) {
+      const { name, hash } = images[i];
+
       const element = elements[i];
 
       const filename = await elementAttribute(element, 'data-filename');
       expect(filename).to.equal(name);
+
+      const [ img ] = await waitForElementCount(`.filmstrip .thumbnail:nth-child(${+i + 1}) img`, 1);
+      const dataUrl = await elementAttribute(img, 'src');
+      expect(await hashImage(dataUrl)).to.equal(hash);
     }
   });
 });

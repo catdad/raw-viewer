@@ -61,6 +61,7 @@
     "eslint": "^5.16.0",
     "figures": "^3.0.0",
     "form-data": "^2.3.3",
+    "jimp": "^0.6.4",
     "mocha": "^6.1.4",
     "rootrequire": "^1.0.0",
     "spectron": "^5.0.0",

@@ -3,7 +3,7 @@ const Jimp = require('jimp');
 
 const {
   start, stop,
-  waitForVisible, waitForElementCount,
+  waitForVisible, waitForElementCount, waitForThrowable,
   elementAttribute
 } = require('./lib/app-provider.js');
 const config = require('./lib/config-provider.js');
@@ -74,7 +74,13 @@ describe('[smoke tests]', () => {
       expect(filename).to.equal(name);
 
       const [ img ] = await waitForElementCount(`.filmstrip .thumbnail:nth-child(${+i + 1}) img`, 1);
-      const dataUrl = await elementAttribute(img, 'src');
+      const dataUrl = await waitForThrowable(async () => {
+        const dataUrl = await elementAttribute(img, 'src');
+        expect(dataUrl).to.be.a('string');
+        expect(`${dataUrl.slice(0, 40)}...`).to.match(/^data/);
+        return dataUrl;
+      });
+
       expect(await hashImage(dataUrl)).to.equal(hash);
     }
   });

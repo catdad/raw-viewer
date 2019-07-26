@@ -13,6 +13,10 @@ const images = [{
   url: drive('1Siv7Ez8vhPXPb0YY1CkQnZTKaSYoJuLy'),
   hash: /^ccW0oQU[NP]NxM$/
   // gpr tools for mac differ slightly but images still look fine
+}, {
+  name: '0003.dng',
+  url: drive('17rnPIW4nk8DQnEFpXc2X_HdVodhholWX'),
+  hash: /^anasB32a1aE$/
 }];
 
 module.exports = {

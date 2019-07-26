@@ -11,9 +11,9 @@ const { gprtools, gprtoolsDir } = require('../lib/third-party.js');
 const version = '1.0.0-rc1.0.0';
 
 const urls = {
-  win32: `https://github.com/catdad-experiments/gpr-tools-release/releases/download/${version}/gpr_tools_windows.exe`,
-  darwin:   `https://github.com/catdad-experiments/gpr-tools-release/releases/download/${version}/gpr_tools_osx`,
-  linux: `https://github.com/catdad-experiments/gpr-tools-release/releases/download/${version}/gpr_tools_linux`,
+  win32:  `https://github.com/catdad-experiments/gpr-tools-release/releases/download/${version}/gpr_tools_windows.exe`,
+  darwin: `https://github.com/catdad-experiments/gpr-tools-release/releases/download/${version}/gpr_tools_osx`,
+  linux:  `https://github.com/catdad-experiments/gpr-tools-release/releases/download/${version}/gpr_tools_linux`,
 };
 
 const responseStream = async url => {

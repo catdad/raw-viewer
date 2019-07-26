@@ -81,7 +81,7 @@ describe('[smoke tests]', () => {
         return dataUrl;
       });
 
-      expect(await hashImage(dataUrl)).to.equal(hash, `hash for ${name} did not match`);
+      expect(await hashImage(dataUrl)).to.match(hash, `hash for ${name} did not match`);
     }
   });
 });

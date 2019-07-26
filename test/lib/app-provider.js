@@ -71,10 +71,9 @@ const waitForElementCount = ensureApp(async (selector, count) => {
   let elements;
 
   await app.client.waitUntil(async () => {
-    const { value } = await app.client.elements(selector);
-    elements = value;
+    elements = await app.client.$$(selector);
     return elements.length === count;
-  });
+  }, 1000, `did not find ${count} of element "${selector}"`);
 
   return elements;
 });

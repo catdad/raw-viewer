@@ -76,8 +76,8 @@ describe('[smoke tests]', () => {
       const [ img ] = await waitForElementCount(`.filmstrip .thumbnail:nth-child(${+i + 1}) img`, 1);
       const dataUrl = await waitForThrowable(async () => {
         const dataUrl = await elementAttribute(img, 'src');
-        expect(dataUrl).to.be.a('string');
-        expect(`${dataUrl.slice(0, 40)}...`).to.match(/^data/);
+        expect(dataUrl).to.be.a('string', `${name} did not render to a string`);
+        expect(`${dataUrl.slice(0, 40)}...`).to.match(/^data/, `${name} did not render to a data url`);
         return dataUrl;
       });
 

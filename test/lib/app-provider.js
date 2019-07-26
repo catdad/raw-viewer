@@ -67,14 +67,35 @@ const ensureApp = (func) => (...args) => {
 
 const wrapWebdriver = (name) => ensureApp((...args) => app.client[name](...args));
 
+const waitForThrowable = ensureApp(async (func) => {
+  let result, error;
+
+  try {
+    await app.client.waitUntil(async () => {
+      try {
+        result = await func();
+      } catch (e) {
+        error = e;
+        return false;
+      }
+
+      error = null;
+      return true;
+    });
+  } catch (e) {
+    throw error || e;
+  }
+
+  return result;
+});
+
 const waitForElementCount = ensureApp(async (selector, count) => {
   let elements;
 
   await app.client.waitUntil(async () => {
-    const { value } = await app.client.elements(selector);
-    elements = value;
+    elements = await app.client.$$(selector);
     return elements.length === count;
-  });
+  }, 1000, `did not find ${count} of element "${selector}"`);
 
   return elements;
 });
@@ -89,6 +110,7 @@ module.exports = {
   stop,
   waitUntil: wrapWebdriver('waitUntil'),
   waitForVisible: wrapWebdriver('waitForVisible'),
+  waitForThrowable,
   waitForElementCount,
   elementAttribute,
   sleep

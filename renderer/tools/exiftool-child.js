@@ -14,6 +14,7 @@ const imagecache = require('./cache-image.js');
 const { unknown } = require('./svg.js');
 
 const exiftool = require('../../lib/exiftool.js');
+const gprtools = require('../../lib/gprtools.js');
 
 const ROTATION = {
   'Horizontal (normal)': 0,
@@ -28,6 +29,10 @@ function extension(filepath) {
 function isPlainImage(filepath) {
   const ext = path.extname(filepath).toLowerCase();
   return ['.jpeg', '.jpg', '.png'].includes(ext);
+}
+
+function isGpr(filepath) {
+  return path.extname(filepath).toLowerCase() === '.gpr';
 }
 
 async function readFullMeta(filepath) {
@@ -136,6 +141,15 @@ async function readFilePsd(filepath) {
   });
 }
 
+async function readGpr(filepath) {
+  return await imagecache.cacheable(filepath, 'gpr-render', async () => {
+    return await timing({
+      label: `read gpr ${filepath}`,
+      func: () => gprtools.jpg(filepath)
+    });
+  });
+}
+
 async function resizeLargeJpeg({ filepath, buffer, length }) {
   const before = buffer.length;
 
@@ -189,10 +203,11 @@ async function readJpegFromMeta({ filepath, start, length, url, isPsd }) {
     category: 'read-jpeg-from-meta',
     variable: extension(filepath),
     func: async () => {
-      let buffer = isPsd ? await readFilePsd(filepath) :
-        isPlainImage(filepath) ?
-          await readFile(filepath) :
-          await readJpegBufferFromMeta({ filepath, start, length });
+      let buffer = isPsd ?
+        await readFilePsd(filepath) :
+        isPlainImage(filepath) ? await readFile(filepath) :
+          isGpr(filepath) ? await readGpr(filepath) :
+            await readJpegBufferFromMeta({ filepath, start, length });
 
       if (length && length > 9999999) {
         // this image is probably too big, something suspicious is happening
@@ -221,6 +236,8 @@ async function readThumbFromMeta(data) {
         buffer = await readFilePsd(data.filepath);
       } else if (isPlainImage(data.filepath)) {
         buffer = await readFile(data.filepath);
+      } else if (isGpr(data.filepath)) {
+        buffer = await readGpr(data.filepath);
       } else if (data.thumbStart && data.thumbLength) {
         // sometimes, the raw file will store a full size preview
         // and a thumbnail, and in those cases, using the smaller

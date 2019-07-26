@@ -6,8 +6,8 @@ const fetch = require('node-fetch');
 const { images, file } = require('./fixtures.js');
 
 require('../../scripts/lib.run.js')('images', async () => {
-  for (let name in images) {
-    const url = images[name];
+  for (let image of images) {
+    const { url, name } = image;
     const res = await fetch(url);
 
     if (!res.ok) {

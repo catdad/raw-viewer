@@ -22,7 +22,7 @@ I do not have access to any of your actual images, and they will never be tracke
 
 ## Computer metadata
 
-This is information about your computer. I will record the kind of CPU you have -- including model, clock speed, and number of cores -- and total computer memory as well as percentage of free memory. Developers tend to have pretty high-end computers, but because the application is fast on my machine does not mean it will be fast for all of you. I need to know what kind of processors are common among users so that I can make sure I am bench-marking and optimizing for those processors.
+This is information about your computer. I will record the kind of CPU you have -- including model, clock speed, and number of cores -- and total computer memory as well as percentage of free memory. Developers tend to have pretty high-end computers, but because the application is fast on my machine does not mean it will be fast for all of you. I need to know what kind of processors are common among users so that I can make sure I am benchmarking and optimizing for those processors.
 
 I will also track operating systems. While Electron does abstract some OS things, there are still times that I will need to differentiate between operating systems. Some examples are supporting MacOS dark mode or Windows dark mode, supporting frameless windows, etc. This application also contains some compiled native code in order to be as fast as possible. All of this stuff is dependent on the operating system, which is why I need to know what is popular specifically among my users.
 

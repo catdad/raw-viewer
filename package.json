@@ -56,7 +56,7 @@
     "del": "^5.1.0",
     "devtron": "^1.4.0",
     "electron": "^5.0.6",
-    "electron-debug": "^2.2.0",
+    "electron-debug": "^3.0.1",
     "electron-packager": "^14.0.4",
     "electron-rebuild": "^1.8.4",
     "electronmon": "^0.4.0",

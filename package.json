@@ -5,7 +5,9 @@
   "description": "raw-viewer",
   "main": "main.js",
   "scripts": {
-    "postinstall": "electron-rebuild && node scripts/exiftool-install.js && node scripts/fonts-install.js && node scripts/gprtools-install.js",
+    "postinstall-rebuild": "electron-rebuild",
+    "postinstall-fetch": "node scripts/exiftool-install.js && node scripts/fonts-install.js && node scripts/gprtools-install.js",
+    "postinstall": "npm run -s postinstall-rebuild && npm run -s postinstall-fetch",
     "lint": "eslint main.js lib public renderer scripts test",
     "pretest": "node test/lib/downloader.js",
     "test": "mocha --timeout 30000 --slow 0 test/**.test.js",

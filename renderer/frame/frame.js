@@ -59,8 +59,9 @@ const defaultFrame = () => {
         const rect = e.target.getBoundingClientRect();
 
         menu[menuOpen ? 'closeContext' : 'openContext']({
-          x: rect.left,
-          y: rect.bottom
+          // these need to be ints, but might not be on scaled screens
+          x: Math.floor(rect.left),
+          y: Math.floor(rect.bottom)
         }).then(() => {
           throttledClose();
           log.info('frameless app menu action complete');

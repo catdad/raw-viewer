@@ -3,6 +3,7 @@
   display: flex;
   align-items: center;
   overflow-x: scroll;
+  overflow-y: hidden;
 
   --film-fill: var(--main-surface-pop);
   --film-border: var(--film-fill);
@@ -13,6 +14,15 @@
   --margin: calc((var(--spacing)) / 2);
 
   --rate-opacity: 0.75;
+}
+
+.experiment-filmstrip-left .filmstrip {
+  overflow-x: hidden;
+  overflow-y: scroll;
+}
+
+.filmstrip.scrollbar::-webkit-scrollbar-track {
+  background: var(--main-surface);
 }
 
 .experiment-filmstrip-left .filmstrip {
@@ -27,8 +37,6 @@
 .experiment-filmstrip-left .filmstrip-wrapper {
   height: 100%;
   flex-direction: column;
-  overflow-x: hidden;
-  overflow-y: scroll;
 }
 
 .filmstrip .thumbnail {

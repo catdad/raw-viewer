@@ -60,7 +60,7 @@ module.exports = ({ events }, opts) => {
     );
 
     // do DOM reads before we update anything
-    const parentBB = wrapper.getBoundingClientRect();
+    const parentBB = elem.getBoundingClientRect();
     const thumbBB = thumb.getBoundingClientRect();
 
     [].slice.call(wrapper.children).forEach(elem => {

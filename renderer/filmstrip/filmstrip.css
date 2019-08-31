@@ -2,6 +2,7 @@
   padding: 0;
   display: flex;
   align-items: center;
+  overflow-x: scroll;
 
   --film-fill: var(--main-surface-pop);
   --film-border: var(--film-fill);
@@ -21,8 +22,6 @@
 .filmstrip-wrapper {
   display: flex;
   flex-wrap: nowrap;
-  overflow-x: scroll;
-  overflow-y: visible;
 }
 
 .experiment-filmstrip-left .filmstrip-wrapper {
@@ -30,10 +29,6 @@
   flex-direction: column;
   overflow-x: hidden;
   overflow-y: scroll;
-}
-
-.filmstrip-wrapper::-webkit-scrollbar {
-  display: none;
 }
 
 .filmstrip .thumbnail {

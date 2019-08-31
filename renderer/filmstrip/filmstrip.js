@@ -36,8 +36,8 @@ function isClipped(containerBB, elBB) {
 module.exports = ({ events }, opts) => {
   const direction = opts.experiments.filmstripOnLeft ? 'vertical' : 'horizontal';
 
-  const elem = dom.div(name);
-  const wrapper = dom.div(`${name}-wrapper`);
+  const elem = dom.classname(dom.div(), name, 'scrollbar');
+  const wrapper = dom.classname(dom.div(), `${name}-wrapper`);
 
   elem.appendChild(wrapper);
 
@@ -142,7 +142,7 @@ module.exports = ({ events }, opts) => {
     return { imgWrap, img };
   }
 
-  const { resolveVisible, navigateTo } = navigation({ wrapper, displayImage, direction, events });
+  const { resolveVisible, navigateTo } = navigation({ elem, wrapper, displayImage, direction, events });
 
   async function loadThumbnails({ files }) {
     wrapper.innerHTML = '';

@@ -14,11 +14,12 @@ ENV FORCE_COLOR 1
 # - curl: also to get stuff
 # - xvfb: to run headless electron tests
 # - gnupg: apparently needed to run node
+# - zip and unzip: needed by electron-packager to build the package
 # - everything else: chromium dependencies (taken from puppeteer dockerfile)
 # - node: for testing things
 
 RUN apt update -qq
-RUN apt install --yes -qq build-essential wget xvfb curl gnupg \
+RUN apt install --yes -qq build-essential wget xvfb curl gnupg zip unzip \
     gconf-service libasound2 libatk1.0-0 libc6 libcairo2 libcups2 \
     libdbus-1-3 libexpat1 libfontconfig1 libgcc1 libgconf-2-4 libgdk-pixbuf2.0-0 libglib2.0-0 \
     libgtk-3-0 libnspr4 libpango-1.0-0 libpangocairo-1.0-0 libstdc++6 libx11-6 libx11-xcb1 libxcb1 \

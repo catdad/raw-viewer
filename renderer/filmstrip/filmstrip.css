@@ -73,6 +73,7 @@
   margin-left: var(--spacing);
 }
 .experiment-filmstrip-left .filmstrip .thumbnail:first-of-type {
+  margin-left: auto;
   margin-top: var(--spacing);
 }
 

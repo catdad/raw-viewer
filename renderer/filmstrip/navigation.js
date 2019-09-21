@@ -4,7 +4,7 @@ const throttle = require('p-throttle');
 const log = require('../../lib/log.js')('filmstrip-nav');
 const keys = require('../tools/keyboard.js');
 const noOverlap = require('../tools/promise-overlap.js')();
-const { findSelected, findNextTarget, show, hide, ok } = require('./selection-helpers.js');
+const { findSelected, findNextTarget, findFirst, findLast, show, hide, ok } = require('./selection-helpers.js');
 
 function isInView(containerBB, elBB) {
   return (!(
@@ -210,6 +210,16 @@ module.exports = ({ elem, wrapper, displayImage, direction, events }) => {
       if (target) {
         navigateTo(target).catch(err => events.emit('error', err));
       }
+
+      return;
+    }
+
+    if (keys.includes(keys.HOME)) {
+      return void navigateTo(findFirst(wrapper)).catch(err => events.emit('error', err));
+    }
+
+    if (keys.includes(keys.END)) {
+      return void navigateTo(findLast(wrapper)).catch(err => events.emit('error', err));
     }
   });
 

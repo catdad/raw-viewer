@@ -196,30 +196,25 @@ module.exports = ({ elem, wrapper, displayImage, direction, events }) => {
     const isNext = keys.includes(keys.RIGHT) || keys.includes(keys.DOWN);
     const isDelete = keys.includes(keys.DELETE) || keys.includes(keys.BACKSPACE);
 
-    if (isDelete) {
-      deleteSelected()
-        .then(({ target }) => navigateTo(target))
-        .catch(err => events.emit('error', err));
-      return;
-    }
+    let prom;
 
-    if (isPrev || isNext) {
+    if (isDelete) {
+      prom = deleteSelected().then(({ target }) => navigateTo(target));
+    } else if (isPrev || isNext) {
       ev.stop();
       const target = findNextTarget(wrapper, isPrev ? 'left' : 'right');
 
       if (target) {
-        navigateTo(target).catch(err => events.emit('error', err));
+        prom = navigateTo(target);
       }
-
-      return;
+    } else if (keys.includes(keys.HOME)) {
+      prom = navigateTo(findFirst(wrapper));
+    } else if (keys.includes(keys.END)) {
+      prom = navigateTo(findLast(wrapper));
     }
 
-    if (keys.includes(keys.HOME)) {
-      return void navigateTo(findFirst(wrapper)).catch(err => events.emit('error', err));
-    }
-
-    if (keys.includes(keys.END)) {
-      return void navigateTo(findLast(wrapper)).catch(err => events.emit('error', err));
+    if (prom) {
+      prom.catch(err => events.emit('error', err));
     }
   });
 

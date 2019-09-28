@@ -2,6 +2,8 @@
   padding: 0;
   display: flex;
   align-items: center;
+  overflow-x: scroll;
+  overflow-y: hidden;
 
   --film-fill: var(--main-surface-pop);
   --film-border: var(--film-fill);
@@ -15,25 +17,26 @@
 }
 
 .experiment-filmstrip-left .filmstrip {
+  overflow-x: hidden;
+  overflow-y: scroll;
+}
+
+.filmstrip.scrollbar::-webkit-scrollbar-track {
+  background: var(--main-surface);
+}
+
+.experiment-filmstrip-left .filmstrip {
   display: initial;
 }
 
 .filmstrip-wrapper {
   display: flex;
   flex-wrap: nowrap;
-  overflow-x: scroll;
-  overflow-y: visible;
 }
 
 .experiment-filmstrip-left .filmstrip-wrapper {
   height: 100%;
   flex-direction: column;
-  overflow-x: hidden;
-  overflow-y: scroll;
-}
-
-.filmstrip-wrapper::-webkit-scrollbar {
-  display: none;
 }
 
 .filmstrip .thumbnail {
@@ -70,6 +73,7 @@
   margin-left: var(--spacing);
 }
 .experiment-filmstrip-left .filmstrip .thumbnail:first-of-type {
+  margin-left: auto;
   margin-top: var(--spacing);
 }
 

@@ -67,9 +67,19 @@ function findNextTarget(wrapper, direction, includeSelected = false, allowFallba
   return internal(next, false);
 }
 
+function findFirst(wrapper) {
+  return [].slice.call(wrapper.children)[0];
+}
+
+function findLast(wrapper) {
+  return [].slice.call(wrapper.children, -1)[0];
+}
+
 module.exports = {
   findSelected,
   findNextTarget,
+  findFirst,
+  findLast,
   show, hide, ok,
   SELECTED, SELECTED_SECONDARY
 };

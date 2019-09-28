@@ -4,7 +4,7 @@ const throttle = require('p-throttle');
 const log = require('../../lib/log.js')('filmstrip-nav');
 const keys = require('../tools/keyboard.js');
 const noOverlap = require('../tools/promise-overlap.js')();
-const { findSelected, findNextTarget, show, hide, ok } = require('./selection-helpers.js');
+const { findSelected, findNextTarget, findFirst, findLast, show, hide, ok } = require('./selection-helpers.js');
 
 function isInView(containerBB, elBB) {
   return (!(
@@ -37,7 +37,7 @@ const filter = {
   }
 };
 
-module.exports = ({ wrapper, displayImage, direction, events }) => {
+module.exports = ({ elem, wrapper, displayImage, direction, events }) => {
   let expectRating = { from: 0, to: 5 };
   let expectType = '*';
 
@@ -95,10 +95,10 @@ module.exports = ({ wrapper, displayImage, direction, events }) => {
     async function recurseThumbnails() {
       // find visible area each time, as this may change
       // between iterations of this function, like when scrolling
-      const wrapperBox = wrapper.getBoundingClientRect();
+      const visibleBox = elem.getBoundingClientRect();
 
       // load the first image we find that needs to be loaded
-      const thumb = await findImageToLoad(wrapperBox);
+      const thumb = await findImageToLoad(visibleBox);
 
       if (thumb) {
         await thumb.load();
@@ -177,13 +177,13 @@ module.exports = ({ wrapper, displayImage, direction, events }) => {
 
   if (direction === 'horizontal') {
     // translate vertical scrolling to horizontal
-    wrapper.addEventListener('mousewheel', (ev) => {
-      wrapper.scrollLeft -= ev.wheelDeltaY;
+    elem.addEventListener('mousewheel', (ev) => {
+      elem.scrollLeft -= ev.wheelDeltaY;
       ev.preventDefault();
     });
   }
 
-  wrapper.addEventListener('scroll', () => {
+  elem.addEventListener('scroll', () => {
     resolveVisible().catch(err => {
       log.error('failed to load visible thumbnails', err);
       events.emit('error', err);
@@ -196,20 +196,25 @@ module.exports = ({ wrapper, displayImage, direction, events }) => {
     const isNext = keys.includes(keys.RIGHT) || keys.includes(keys.DOWN);
     const isDelete = keys.includes(keys.DELETE) || keys.includes(keys.BACKSPACE);
 
-    if (isDelete) {
-      deleteSelected()
-        .then(({ target }) => navigateTo(target))
-        .catch(err => events.emit('error', err));
-      return;
-    }
+    let prom;
 
-    if (isPrev || isNext) {
+    if (isDelete) {
+      prom = deleteSelected().then(({ target }) => navigateTo(target));
+    } else if (isPrev || isNext) {
       ev.stop();
       const target = findNextTarget(wrapper, isPrev ? 'left' : 'right');
 
       if (target) {
-        navigateTo(target).catch(err => events.emit('error', err));
+        prom = navigateTo(target);
       }
+    } else if (keys.includes(keys.HOME)) {
+      prom = navigateTo(findFirst(wrapper));
+    } else if (keys.includes(keys.END)) {
+      prom = navigateTo(findLast(wrapper));
+    }
+
+    if (prom) {
+      prom.catch(err => events.emit('error', err));
     }
   });
 

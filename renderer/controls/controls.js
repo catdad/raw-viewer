@@ -66,8 +66,12 @@ module.exports = ({ events }) => {
       type: defaultType
     });
 
-    const types = Array.from(new Set(files.map(file => file.type)))
-      .filter(val => !!val)
+    const types = Array.from(
+      new Set(
+        files
+          .filter(f => f.isFile && f.type)
+          .map(file => file.type)
+      ))
       .sort((a, b) => a.localeCompare(b));
 
     typeFilter.values = [{ label: 'all', value: '*' }]

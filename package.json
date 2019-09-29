@@ -62,14 +62,14 @@
     "electronmon": "^0.4.0",
     "eslint": "^5.16.0",
     "figures": "^3.0.0",
-    "form-data": "^2.5.0",
+    "form-data": "^2.5.1",
     "jimp": "^0.6.4",
     "mocha": "^6.2.1",
     "rootrequire": "^1.0.0",
     "spectron": "^8.0.0",
-    "tar": "^4.4.8",
+    "tar": "^4.4.13",
     "tempy": "^0.3.0",
-    "unzipper": "^0.10.0",
+    "unzipper": "^0.10.5",
     "xvfb-maybe": "^0.2.1",
     "yargs-parser": "^13.1.0"
   }

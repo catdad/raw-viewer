@@ -4,7 +4,8 @@ on: [push]
 env:
   CI: true
   FORCE_COLOR: 1
-  NODE: 12.x  
+  NODE: 12.x
+
 jobs:
   linux:
     runs-on: ubuntu-18.04
@@ -24,10 +25,14 @@ jobs:
       FORCE_COLOR: 1
     steps:
       - uses: actions/checkout@v1
-      - name: use node ${{ NODE }}
+      - name: use node
         uses: actions/setup-node@v1
         with:
-          node-version: ${{ NODE }}
+          node-version: $NODE
+      - name: info
+        run: |
+          node -v
+          npm -v
       - name: install
         run: npm install
       - name: test
@@ -43,10 +48,14 @@ jobs:
       FORCE_COLOR: 1
     steps:
       - uses: actions/checkout@v1
-      - name: use node ${{ NODE }}
+      - name: use node
         uses: actions/setup-node@v1
         with:
-          node-version: ${{ NODE }}
+          node-version: $NODE
+      - name: info
+        run: |
+          node -v
+          npm -v
       - name: install
         run: npm install
       - name: test

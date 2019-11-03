@@ -3,32 +3,49 @@ name: Node CI
 on: [push]
 
 jobs:
-  build:
+  linux:
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v1
+      - name: use node
+        uses: actions/setup-node@v1
+      - name: test
+        run: |
+          echo tests will go here
+          exit 1
+  macos:
+    runs-on: macOS-10.14
+    steps:
+      - uses: actions/checkout@v1
+      - name: use node ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: test
+        run: |
+          npm install
+          npm test
+      - name: build
+        run: |
+          npm run package -- --version $GITHUB_SHA
+          ls dist
+  windows:
     env:
       CI: true
-
-    runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [12.x]
-
+      FORCE_COLOR: 1
+    runs-on: windows-2019
     steps:
-    - uses: actions/checkout@v1
-    - name: use node ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
-      with:
-        node-version: ${{ matrix.node-version }}
-    - name: test
-      run: |
-        npm install
-        npm test
-        npm test
-      env:
-        CI: true
-    - name: build
-      run: |
-        npm run package -- --version $GITHUB_SHA
-      env:
-        CI: true
-    
+      - uses: actions/checkout@v1
+      - name: use node ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: test
+        run: |
+          call npm install
+          call npm test
+      - name: build
+        run: |
+          call npm run package -- --version $GITHUB_SHA
+          dir dist
+          

@@ -5,6 +5,9 @@ on: [push]
 jobs:
   linux:
     runs-on: ubuntu-18.04
+    env:
+      CI: true
+      FORCE_COLOR: 1
     steps:
       - uses: actions/checkout@v1
       - name: use node
@@ -12,40 +15,44 @@ jobs:
       - name: test
         run: |
           echo tests will go here
+          which docker
           exit 1
   macos:
     runs-on: macOS-10.14
+    env:
+      CI: true
+      FORCE_COLOR: 1
     steps:
       - uses: actions/checkout@v1
       - name: use node ${{ matrix.node-version }}
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
+      - name: install
+        run: npm install
       - name: test
-        run: |
-          npm install
-          npm test
+        run: npm test
       - name: build
         run: |
           npm run package -- --version $GITHUB_SHA
           ls dist
   windows:
+    runs-on: windows-2019
     env:
       CI: true
       FORCE_COLOR: 1
-    runs-on: windows-2019
     steps:
       - uses: actions/checkout@v1
       - name: use node ${{ matrix.node-version }}
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
+      - name: install
+        run: npm install
       - name: test
-        run: |
-          call npm install
-          call npm test
+        run: npm test
       - name: build
         run: |
-          call npm run package -- --version $GITHUB_SHA
+          npm run package -- --version $GITHUB_SHA
           dir dist
           

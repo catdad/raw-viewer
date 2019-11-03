@@ -11,13 +11,14 @@ jobs:
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v1
-      - name: use node
-        uses: actions/setup-node@v1
-      - name: test
+      - name: docker build
         run: |
-          echo tests will go here
-          which docker
-          exit 1
+          docker build --build-arg TRAVIS_COMMIT=${{ github.sha }} -t raw-viewer-build . -f- < .build-linux.dockerfile
+          docker images
+          docker run -d --rm --name rv raw-viewer-build  tail -f /dev/null
+          docker cp rv:/dist dist
+          docker kill rv
+          ls -la dist
   macos:
     runs-on: macOS-10.14
     env:
@@ -40,7 +41,7 @@ jobs:
       - name: build
         run: |
           npm run package -- --version ${{ github.sha }}
-          ls dist
+          ls -la dist
   windows:
     runs-on: windows-2019
     env:

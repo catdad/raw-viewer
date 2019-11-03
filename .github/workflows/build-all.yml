@@ -22,6 +22,7 @@ jobs:
       - name: artifacts
         uses: actions/upload-artifact@v1
         with:
+          name: linux-package
           path: dist/Raw-Viewer*.tar.gz
   macos:
     runs-on: macOS-10.14
@@ -49,6 +50,7 @@ jobs:
       - name: artifacts
         uses: actions/upload-artifact@v1
         with:
+          name: macos-package
           path: dist/Raw-Viewer*.zip
   windows:
     runs-on: windows-2019
@@ -76,4 +78,5 @@ jobs:
       - name: artifacts
         uses: actions/upload-artifact@v1
         with:
+          name: windows-package
           path: dist/Raw-Viewer*.zip

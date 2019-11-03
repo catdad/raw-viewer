@@ -1,13 +1,13 @@
 name: Node CI
 
 on: [push]
-
+env:
+  CI: true
+  FORCE_COLOR: 1
+  NODE: 12.x  
 jobs:
   linux:
     runs-on: ubuntu-18.04
-    env:
-      CI: true
-      FORCE_COLOR: 1
     steps:
       - uses: actions/checkout@v1
       - name: use node
@@ -24,17 +24,17 @@ jobs:
       FORCE_COLOR: 1
     steps:
       - uses: actions/checkout@v1
-      - name: use node ${{ matrix.node-version }}
+      - name: use node ${{ NODE }}
         uses: actions/setup-node@v1
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: ${{ NODE }}
       - name: install
         run: npm install
       - name: test
         run: npm test
       - name: build
         run: |
-          npm run package -- --version $GITHUB_SHA
+          npm run package -- --version ${{ GITHUB_SHA }}
           ls dist
   windows:
     runs-on: windows-2019
@@ -43,16 +43,16 @@ jobs:
       FORCE_COLOR: 1
     steps:
       - uses: actions/checkout@v1
-      - name: use node ${{ matrix.node-version }}
+      - name: use node ${{ NODE }}
         uses: actions/setup-node@v1
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: ${{ NODE }}
       - name: install
         run: npm install
       - name: test
         run: npm test
       - name: build
         run: |
-          npm run package -- --version $GITHUB_SHA
+          npm run package -- --version ${{ GITHUB_SHA }}
           dir dist
           

@@ -1,6 +1,7 @@
 {
   "name": "raw-viewer",
   "productName": "Raw Viewer",
+  "appId": "com.catdad.raw-viewer",
   "version": "1.0.0-beta9",
   "description": "raw-viewer",
   "main": "main.js",

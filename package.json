@@ -34,10 +34,13 @@
       "target": [
         "nsis",
         "portable"
-      ]
+      ],
+      "icon": "dist/icon.ico"
     },
     "nsis": {
-      "artifactName": "${name}-v${version}-setup.${ext}"
+      "artifactName": "${name}-v${version}-setup.${ext}",
+      "installerIcon": "dist/icon.ico",
+      "uninstallerIcon": "dist/icon.ico"
     },
     "portable": {
       "artifactName": "${name}-v${version}-portable.${ext}"
@@ -66,6 +69,7 @@
   },
   "devDependencies": {
     "archiver": "^3.0.0",
+    "canvas": "^2.6.0",
     "chai": "^4.2.0",
     "chalk": "^2.4.2",
     "del": "^5.1.0",
@@ -81,6 +85,7 @@
     "form-data": "^2.5.1",
     "jimp": "^0.6.4",
     "mocha": "^6.2.2",
+    "png-to-ico": "^2.0.6",
     "rootrequire": "^1.0.0",
     "shellton": "^5.0.0",
     "spectron": "^9.0.0",

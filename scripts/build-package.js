@@ -104,7 +104,7 @@ const windowsBuild = async () => {
   const prepackaged = dirs[platform];
 
   await shell({
-    task: `electron-builder --win --prepackaged "${prepackaged}"`,
+    task: `electron-builder --win --prepackaged "${prepackaged}" --publish never`,
     cwd: root,
     stdout: 'inherit',
     stderr: 'inherit'

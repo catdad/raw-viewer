@@ -140,7 +140,7 @@ console.time('done in');
       });
     })],
     out: 'dist',
-    icon: 'dist/icon'
+    icon: icon.path
   });
   console.timeEnd('package built in');
 

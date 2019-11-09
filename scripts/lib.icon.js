@@ -58,5 +58,14 @@ async function prepare() {
 
 module.exports = {
   compress,
-  prepare
+  prepare,
+  path: (() => {
+    if (process.platform === 'win32') {
+      return path.resolve(root, 'dist/icon.ico');
+    }
+
+    if (process.platform === 'darwin') {
+      return path.resolve(root, 'dist/icon.icns');
+    }
+  })()
 };

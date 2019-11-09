@@ -174,5 +174,6 @@ console.time('done in');
   console.timeEnd('done in');
   console.log('Build failed');
   console.error(err);
+  console.error(err.stack);
   process.exitCode = 1;
 });

@@ -11,6 +11,7 @@ const archiver = require('archiver');
 const argv = require('yargs-parser')(process.argv.slice(2));
 const version = argv.version || null;
 const tag = (typeof argv.tag === 'string') ? `v${argv.tag}` : null;
+const shellton = require('shellton');
 
 const pkg = require('../package.json');
 const { transferSh } = require('./lib.upload.js');
@@ -42,6 +43,10 @@ const ignore = [
   './.*',
   'appveyor.yml'
 ];
+
+const shell = (...args) => new Promise((resolve, reject) => {
+  shellton(...args, err => err ? reject(err) : resolve());
+});
 
 const winZip = async () => {
   const filepath = path.resolve(`dist/${name}-Windows-portable.zip`);
@@ -95,6 +100,17 @@ const linuxTar = async () => {
   return filepath;
 };
 
+const windowsBuild = async () => {
+  const prepackaged = dirs[platform];
+
+  await shell({
+    task: `electron-builder --win --prepackaged "${prepackaged}"`,
+    cwd: root,
+    stdout: 'inherit',
+    stderr: 'inherit'
+  });
+};
+
 const upload = async (filename) => {
   try {
     console.table(await transferSh(path.resolve(root, 'dist', filename)));
@@ -132,6 +148,12 @@ console.time('done in');
     filepath = await linuxTar();
   }
   console.timeEnd('package zipped in');
+
+  console.time('compiled package in');
+  if (platform === 'win32') {
+    await windowsBuild();
+  }
+  console.timeEnd('compiled package in');
 
   if (argv.upload && filepath) {
     console.time('uploaded in');

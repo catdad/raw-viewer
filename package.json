@@ -17,8 +17,7 @@
     "dev": "electronmon .",
     "exif-kill": "taskkill /IM exiftool.exe /F",
     "exif-find": "tasklist | findstr exiftool",
-    "package": "node scripts/build-package.js",
-    "package:win": "electron-builder --win --prepackaged \"dist\\Raw Viewer-win32-x64\""
+    "package": "node scripts/build-package.js"
   },
   "repository": {
     "type": "git",
@@ -32,7 +31,10 @@
   "homepage": "https://github.com/catdad/raw-viewer#readme",
   "build": {
     "win": {
-      "target": ["nsis", "portable"]
+      "target": [
+        "nsis",
+        "portable"
+      ]
     },
     "nsis": {
       "artifactName": "${name}-v${version}-setup.${ext}"
@@ -80,6 +82,7 @@
     "jimp": "^0.6.4",
     "mocha": "^6.2.2",
     "rootrequire": "^1.0.0",
+    "shellton": "^5.0.0",
     "spectron": "^9.0.0",
     "tar": "^4.4.13",
     "tempy": "^0.3.0",

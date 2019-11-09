@@ -14,6 +14,7 @@ const tag = (typeof argv.tag === 'string') ? `v${argv.tag}` : null;
 const shellton = require('shellton');
 
 const pkg = require('../package.json');
+const icon = require('./lib.icon.js');
 const { transferSh } = require('./lib.upload.js');
 
 const platform = process.platform;
@@ -35,6 +36,7 @@ const wrapHook = hook => {
 };
 
 const ignore = [
+  'assets/**',
   'dist/**',
   'scripts/**',
   'temp/**',
@@ -124,6 +126,10 @@ console.time('done in');
 (async () => {
   await fs.remove(dirs[platform]);
 
+  console.time('create icons');
+  await icon.prepare();
+  console.timeEnd('create icons');
+
   console.time('package built in');
   await packager({
     dir: root,
@@ -133,7 +139,8 @@ console.time('done in');
         dot: true
       });
     })],
-    out: 'dist'
+    out: 'dist',
+    icon: 'dist/icon'
   });
   console.timeEnd('package built in');
 

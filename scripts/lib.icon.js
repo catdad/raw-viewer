@@ -11,6 +11,7 @@ const name = path.resolve(root, 'assets/icon.svgz');
 
 const read = promisify(fs.readFile);
 const write = promisify(fs.writeFile);
+const dist = file => path.resolve(root, 'dist', file);
 
 const unzip = async name => promisify(zlib.unzip)(await read(name));
 
@@ -49,11 +50,11 @@ async function createIcns(svg) {
 
 async function prepare() {
   const svg = await unzip(name);
-  await write(path.resolve(root, 'dist/icon.svg'), svg);
 
-  await write(path.resolve(root, 'dist/icon.png'), await render(svg, 512));
-  await write(path.resolve(root, 'dist/icon.ico'), await createIco(svg));
-  await write(path.resolve(root, 'dist/icon.icns'), await createIcns(svg));
+  await write(dist('icon.svg'), svg);
+  await write(dist('icon.png'), await render(svg, 512));
+  await write(dist('icon.ico'), await createIco(svg));
+  await write(dist('icon.icns'), await createIcns(svg));
 }
 
 module.exports = {
@@ -61,11 +62,11 @@ module.exports = {
   prepare,
   path: (() => {
     if (process.platform === 'win32') {
-      return path.resolve(root, 'dist/icon.ico');
+      return dist('icon.ico');
     }
 
     if (process.platform === 'darwin') {
-      return path.resolve(root, 'dist/icon.icns');
+      return dist('icon.icns');
     }
   })()
 };

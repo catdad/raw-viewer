@@ -51,14 +51,9 @@ async function prepare() {
   const svg = await unzip(name);
   await write(path.resolve(root, 'dist/icon.svg'), svg);
 
-  const png = await render(svg, 512);
-  await write(path.resolve(root, 'dist/icon.png'), png);
-
-  const ico = await createIco(svg);
-  await write(path.resolve(root, 'dist/icon.ico'), ico);
-
-  const icns = await createIcns(svg);
-  await write(path.resolve(root, 'dist/icon.icns'), icns);
+  await write(path.resolve(root, 'dist/icon.png'), await render(svg, 512));
+  await write(path.resolve(root, 'dist/icon.ico'), await createIco(svg));
+  await write(path.resolve(root, 'dist/icon.icns'), await createIcns(svg));
 }
 
 module.exports = {

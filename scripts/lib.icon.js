@@ -1,7 +1,7 @@
 const { promisify } = require('util');
 const path = require('path');
 const zlib = require('zlib');
-const fs = require('fs');
+const fs = require('fs-extra');
 const root = require('rootrequire');
 const { createCanvas, loadImage } = require('canvas');
 const pngToIco = require('png-to-ico');
@@ -9,8 +9,8 @@ const icnsConvert = require('@fiahfy/icns-convert');
 
 const name = path.resolve(root, 'assets/icon.svgz');
 
-const read = promisify(fs.readFile);
-const write = promisify(fs.writeFile);
+const read = fs.readFile;
+const write = fs.outputFile;
 const dist = file => path.resolve(root, 'dist', file);
 
 const unzip = async name => promisify(zlib.unzip)(await read(name));

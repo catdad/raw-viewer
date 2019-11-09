@@ -24,6 +24,7 @@ function compress() {
 
 async function render(svg, size) {
   const img = await loadImage(svg);
+  img.width = img.height = size;
   const canvas = createCanvas(size, size);
   canvas.getContext('2d').drawImage(img, 0, 0);
 

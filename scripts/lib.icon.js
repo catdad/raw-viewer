@@ -13,11 +13,11 @@ const write = promisify(fs.writeFile);
 
 const unzip = async name => promisify(zlib.unzip)(await read(name));
 
-//function compress() {
-//  fs.createReadStream('./assets/icon-1000.svg')
-//    .pipe(zlib.createGzip({ level: 9 }))
-//    .pipe(fs.createWriteStream(name));
-//}
+function compress() {
+  fs.createReadStream('./assets/icon-1000.svg')
+    .pipe(zlib.createGzip({ level: 9 }))
+    .pipe(fs.createWriteStream(name));
+}
 
 async function render(svg, size) {
   const img = await loadImage(svg);
@@ -42,7 +42,7 @@ async function prepare() {
   await write(path.resolve(root, 'dist/icon.ico'), ico);
 }
 
-prepare()
-  .then(() => console.log('done'))
-  .catch(e => console.error(e));
-
+module.exports = {
+  compress,
+  prepare
+};

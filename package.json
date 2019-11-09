@@ -38,9 +38,7 @@
       "icon": "dist/icon.ico"
     },
     "nsis": {
-      "artifactName": "${name}-v${version}-setup.${ext}",
-      "installerIcon": "dist/icon.ico",
-      "uninstallerIcon": "dist/icon.ico"
+      "artifactName": "${name}-v${version}-setup.${ext}"
     },
     "portable": {
       "artifactName": "${name}-v${version}-portable.${ext}"

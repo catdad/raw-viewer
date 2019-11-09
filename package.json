@@ -6,7 +6,7 @@
   "description": "raw-viewer",
   "main": "main.js",
   "scripts": {
-    "postinstall-rebuild": "electron-rebuild",
+    "postinstall-rebuild": "electron-rebuild --types prod,optional",
     "postinstall-fetch": "node scripts/exiftool-install.js && node scripts/fonts-install.js && node scripts/gprtools-install.js",
     "postinstall": "npm run -s postinstall-rebuild && npm run -s postinstall-fetch",
     "lint": "eslint main.js lib public renderer scripts test",

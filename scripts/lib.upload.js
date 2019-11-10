@@ -9,6 +9,18 @@ const throwResErr = (res, body) => {
   throw new Error(`upload failed with ${res.status} ${res.statusText} and body:\n${body}`);
 };
 
+const fetchOk = async (...args) => {
+  const res = await fetch(...args);
+
+  const txt = await res.text();
+
+  if (!res.ok) {
+    throwResErr(res, txt);
+  }
+
+  return txt;
+};
+
 const expiresOn = (days) => {
   const date = new Date();
   date.setDate(date.getDate() + days);
@@ -25,9 +37,7 @@ const fileIo = async (filepath, name = null) => {
   console.log(`Uploading ${filepath} to ${url}`);
 
   const form = new FormData();
-  form.append('file', fs.createReadStream(filepath), {
-    filename: filename
-  });
+  form.append('file', fs.createReadStream(filepath), { filename });
 
   const res = await fetch(url, {
     method: 'POST',
@@ -99,4 +109,38 @@ const filePush = async (filepath, name = null) => {
   });
 };
 
-module.exports = { fileIo, transferSh, filePush };
+const wsend = async (filepath, name = null) => {
+  // based on:
+  // https://raw.githubusercontent.com/abemassry/wsend/master/wsend
+  // https://github.com/abemassry/node-wsend/blob/master/wsend.js
+
+  const filename = name || path.basename(filepath);
+  const host = 'https://wsend.net';
+
+  const id = await fetchOk(`${host}/createunreg`, {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/x-www-form-urlencoded'
+    },
+    body: 'start=1'
+  });
+
+  const form = new FormData();
+  form.append('uid', id.trim());
+  form.append('filehandle', fs.createReadStream(filepath), { filename });
+
+  const url = await fetchOk(`${host}/upload_cli`, {
+    method: 'POST',
+    headers: form.getHeaders(),
+    body: form
+  });
+
+  return {
+    filename,
+    url,
+    expiry: '30 days',
+    expires: expiresOn(30)
+  };
+};
+
+module.exports = { fileIo, transferSh, filePush, wsend };

@@ -15,6 +15,10 @@ const expiresOn = (days) => {
   return date.toISOString();
 };
 
+// https://0x0.st/
+// should work with form data, same as file.io
+// but it returns 400 Bad Request every time
+
 const fileIo = async (filepath, name = null) => {
   const url = 'https://file.io';
   const filename = name || path.basename(filepath);
@@ -51,9 +55,7 @@ const fileIo = async (filepath, name = null) => {
   };
 };
 
-const transferSh = async (filepath, name = null) => {
-  const filename = name || path.basename(filepath);
-  const url = `https://transfer.sh/${filename}`;
+const putFile = async (url, filepath) => {
 
   const res = await fetch(url, {
     method: 'PUT',
@@ -67,11 +69,34 @@ const transferSh = async (filepath, name = null) => {
   }
 
   return {
-    filename: filename,
-    url: txt,
-    expiry: '14 days',
-    expires: expiresOn(14)
+    url: txt.trim()
   };
 };
 
-module.exports = { fileIo, transferSh };
+const transferSh = async (filepath, name = null) => {
+  const filename = name || path.basename(filepath);
+  const url = `https://transfer.sh/${filename}`;
+
+  const res = await putFile(url, filepath);
+
+  return Object.assign({}, res, {
+    filename,
+    expiry: '14 days',
+    expires: expiresOn(14)
+  });
+};
+
+const filePush = async (filepath, name = null) => {
+  const filename = name || path.basename(filepath);
+  const url = `https://filepush.co/upload/${filename}`;
+
+  const res = await putFile(url, filepath);
+
+  return Object.assign({}, res, {
+    filename,
+    expiry: '7 days',
+    expires: expiresOn(7)
+  });
+};
+
+module.exports = { fileIo, transferSh, filePush };

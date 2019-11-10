@@ -14,7 +14,7 @@ const tag = (typeof argv.tag === 'string') ? `v${argv.tag}` : null;
 const shellton = require('shellton');
 
 const pkg = require('../package.json');
-const { transferSh } = require('./lib.upload.js');
+const { filePush: artifact } = require('./lib.upload.js');
 
 const platform = process.platform;
 
@@ -113,7 +113,7 @@ const windowsBuild = async () => {
 
 const upload = async (filename) => {
   try {
-    console.table(await transferSh(path.resolve(root, 'dist', filename)));
+    console.table(await artifact(path.resolve(root, 'dist', filename)));
   } catch (e) {
     console.log('upload failed with error:');
     console.log(e);

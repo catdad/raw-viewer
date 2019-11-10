@@ -39,17 +39,11 @@ const fileIo = async (filepath, name = null) => {
   const form = new FormData();
   form.append('file', fs.createReadStream(filepath), { filename });
 
-  const res = await fetch(url, {
+  const txt = await fetchOk(url, {
     method: 'POST',
     headers: form.getHeaders(),
     body: form
   });
-
-  const txt = await res.text();
-
-  if (!res.ok) {
-    throwResErr(res, txt);
-  }
 
   const json = JSON.parse(txt);
 
@@ -66,17 +60,10 @@ const fileIo = async (filepath, name = null) => {
 };
 
 const putFile = async (url, filepath) => {
-
-  const res = await fetch(url, {
+  const txt = await fetchOk(url, {
     method: 'PUT',
     body: fs.createReadStream(filepath)
   });
-
-  const txt = await res.text();
-
-  if (!res.ok) {
-    throwResErr(res, txt);
-  }
 
   return {
     url: txt.trim()

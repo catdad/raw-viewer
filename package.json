@@ -30,6 +30,17 @@
   },
   "homepage": "https://github.com/catdad/raw-viewer#readme",
   "build": {
+    "mac": {
+      "target": [
+        "dmg"
+      ],
+      "icon": "dist/icon.icns",
+      "darkModeSupport": true
+    },
+    "dmg": {
+      "icon": "dist/icon.icns",
+      "artifactName": "${name}-v${version}-setup.${ext}"
+    },
     "win": {
       "target": [
         "nsis",

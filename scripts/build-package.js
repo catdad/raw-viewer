@@ -102,11 +102,11 @@ const linuxTar = async () => {
   return filepath;
 };
 
-const windowsBuild = async () => {
+const build = async (args) => {
   const prepackaged = dirs[platform];
 
   await shell({
-    task: `electron-builder --win --prepackaged "${prepackaged}" --publish never`,
+    task: `electron-builder --prepackaged "${prepackaged}" --publish never ${args}`,
     cwd: root,
     stdout: 'inherit',
     stderr: 'inherit'
@@ -158,7 +158,9 @@ console.time('done in');
 
   console.time('compiled package in');
   if (platform === 'win32') {
-    await windowsBuild();
+    await build('--win');
+  } else if (platform === 'darwin') {
+    await build('--mac');
   }
   console.timeEnd('compiled package in');
 

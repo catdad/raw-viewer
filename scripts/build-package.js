@@ -15,7 +15,7 @@ const shellton = require('shellton');
 
 const pkg = require('../package.json');
 const icon = require('./lib.icon.js');
-const { filePush: artifact } = require('./lib.upload.js');
+const { wsend: artifact } = require('./lib.upload.js');
 
 const platform = process.platform;
 

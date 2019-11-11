@@ -123,6 +123,25 @@ const upload = async (filename) => {
   }
 };
 
+const autoUpload = async () => {
+  const patterns = [
+    /MacOS-portable\.zip$/,
+    /setup\.dmg$/,
+    /Linux-portable\.tar\.gz$/
+  ];
+
+  const dir = await fs.readdir(dist, { withFileTypes: true });
+  const files = dir
+    .filter(f => f.isFile())
+    .filter(f => !!patterns.find(p => !!p.test(f)));
+
+  console.log('found files:', files);
+
+  for (let file of files) {
+    await upload(file);
+  }
+};
+
 console.time('done in');
 (async () => {
   await fs.remove(dist);
@@ -145,15 +164,13 @@ console.time('done in');
   });
   console.timeEnd('package built in');
 
-  let filepath;
-
   console.time('package zipped in');
   if (platform === 'win32') {
-    filepath = await winZip();
+    await winZip();
   } else if (platform === 'darwin') {
-    filepath = await darwinZip();
+    await darwinZip();
   } else if (platform === 'linux') {
-    filepath = await linuxTar();
+    await linuxTar();
   }
   console.timeEnd('package zipped in');
 
@@ -165,9 +182,9 @@ console.time('done in');
   }
   console.timeEnd('compiled package in');
 
-  if (argv.upload && filepath) {
+  if (argv.upload) {
     console.time('uploaded in');
-    await upload(filepath);
+    await autoUpload();
     console.timeEnd('uploaded in');
   }
 })().then(() => {

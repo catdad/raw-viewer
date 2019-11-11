@@ -19,10 +19,11 @@ const { filePush: artifact } = require('./lib.upload.js');
 
 const platform = process.platform;
 
+const dist = path.resolve(root, 'dist');
 const dirs = {
-  win32: path.resolve(root, `dist/${pkg.productName}-win32-x64`),
-  darwin: path.resolve(root, `dist/${pkg.productName}-darwin-x64`),
-  linux: path.resolve(root, `dist/${pkg.productName}-linux-x64`),
+  win32: path.resolve(dist, `${pkg.productName}-win32-x64`),
+  darwin: path.resolve(dist, `${pkg.productName}-darwin-x64`),
+  linux: path.resolve(dist, `${pkg.productName}-linux-x64`),
 };
 
 const name = `Raw-Viewer-${tag || version || `v${pkg.version}-DEV`}`;
@@ -124,7 +125,7 @@ const upload = async (filename) => {
 
 console.time('done in');
 (async () => {
-  await fs.remove(dirs[platform]);
+  await fs.remove(dist);
 
   console.time('create icons');
   await icon.prepare();

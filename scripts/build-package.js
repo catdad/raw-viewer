@@ -133,12 +133,13 @@ const autoUpload = async () => {
   const dir = await fs.readdir(dist, { withFileTypes: true });
   const files = dir
     .filter(f => f.isFile())
+    .map(f => f.name)
     .filter(f => !!patterns.find(p => !!p.test(f)));
 
-  console.log('found files:', files);
+  console.log('uploading files:', files);
 
   for (let file of files) {
-    await upload(file);
+    await upload(path.resolve(dist, file));
   }
 };
 

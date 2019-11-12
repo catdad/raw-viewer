@@ -130,4 +130,45 @@ const wsend = async (filepath, name = null) => {
   };
 };
 
-module.exports = { fileIo, transferSh, filePush, wsend };
+// 512MB limit
+const oxo = async (filepath, name = null) => {
+  const filename = name || path.basename(filepath);
+  const url = 'https://0x0.st/';
+  console.log(`Uploading ${filepath} to ${url}`);
+
+  const form = new FormData();
+  form.append('file', fs.createReadStream(filepath), {
+    filename: filename,
+    contentType: null
+  });
+
+  // form-data uses stream1, and it does not write proper
+  // chunks, so it doesn't seem to work with 0x0
+  // so read everything into a buffer for now
+  const body = await new Promise((resolve, reject) => {
+    try {
+      const body = [];
+      form.on('data', chunk => body.push(Buffer.from(chunk)));
+      form.on('end', () => resolve(Buffer.concat(body)));
+      form.on('error', err => reject(err));
+      form.resume();
+    } catch (e) {
+      reject(e);
+    }
+  });
+
+  const txt = await fetchOk(url, {
+    method: 'POST',
+    headers: form.getHeaders(),
+    body
+  });
+
+  return {
+    filename: filename,
+    url: txt.trim(),
+    expiry: '30 days',
+    expires: expiresOn(30)
+  };
+};
+
+module.exports = { fileIo, transferSh, filePush, wsend, oxo };

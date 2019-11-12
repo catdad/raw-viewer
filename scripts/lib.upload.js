@@ -27,10 +27,6 @@ const expiresOn = (days) => {
   return date.toISOString();
 };
 
-// https://0x0.st/
-// should work with form data, same as file.io
-// but it returns 400 Bad Request every time
-
 const fileIo = async (filepath, name = null) => {
   const url = 'https://file.io';
   const filename = name || path.basename(filepath);

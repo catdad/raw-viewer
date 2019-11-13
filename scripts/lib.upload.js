@@ -27,6 +27,7 @@ const expiresOn = (days) => {
   return date.toISOString();
 };
 
+// 10GB limit, one download only
 const fileIo = async (filepath, name = null) => {
   const url = 'https://file.io';
   const filename = name || path.basename(filepath);
@@ -66,6 +67,7 @@ const putFile = async (url, filepath) => {
   };
 };
 
+// 2GM limit?, flaky af
 const transferSh = async (filepath, name = null) => {
   const filename = name || path.basename(filepath);
   const url = `https://transfer.sh/${filename}`;
@@ -79,6 +81,7 @@ const transferSh = async (filepath, name = null) => {
   });
 };
 
+// 32 MB limit
 const filePush = async (filepath, name = null) => {
   const filename = name || path.basename(filepath);
   const url = `https://filepush.co/upload/${filename}`;
@@ -92,6 +95,7 @@ const filePush = async (filepath, name = null) => {
   });
 };
 
+// 200MB limit
 const wsend = async (filepath, name = null) => {
   // based on:
   // https://raw.githubusercontent.com/abemassry/wsend/master/wsend

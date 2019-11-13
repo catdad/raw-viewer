@@ -19,10 +19,11 @@ const { wsend: artifact } = require('./lib.upload.js');
 
 const platform = process.platform;
 
+const dist = path.resolve(root, 'dist');
 const dirs = {
-  win32: path.resolve(root, `dist/${pkg.productName}-win32-x64`),
-  darwin: path.resolve(root, `dist/${pkg.productName}-darwin-x64`),
-  linux: path.resolve(root, `dist/${pkg.productName}-linux-x64`),
+  win32: path.resolve(dist, `${pkg.productName}-win32-x64`),
+  darwin: path.resolve(dist, `${pkg.productName}-darwin-x64`),
+  linux: path.resolve(dist, `${pkg.productName}-linux-x64`),
 };
 
 const name = `Raw-Viewer-${tag || version || `v${pkg.version}-DEV`}`;
@@ -102,11 +103,11 @@ const linuxTar = async () => {
   return filepath;
 };
 
-const windowsBuild = async () => {
+const build = async (args) => {
   const prepackaged = dirs[platform];
 
   await shell({
-    task: `electron-builder --win --prepackaged "${prepackaged}" --publish never`,
+    task: `electron-builder --prepackaged "${prepackaged}" --publish never ${args}`,
     cwd: root,
     stdout: 'inherit',
     stderr: 'inherit'
@@ -122,9 +123,29 @@ const upload = async (filename) => {
   }
 };
 
+const autoUpload = async () => {
+  const patterns = [
+    /MacOS-portable\.zip$/,
+    /setup\.dmg$/,
+    /Linux-portable\.tar\.gz$/
+  ];
+
+  const dir = await fs.readdir(dist, { withFileTypes: true });
+  const files = dir
+    .filter(f => f.isFile())
+    .map(f => f.name)
+    .filter(f => !!patterns.find(p => !!p.test(f)));
+
+  console.log('uploading files:', files);
+
+  for (let file of files) {
+    await upload(path.resolve(dist, file));
+  }
+};
+
 console.time('done in');
 (async () => {
-  await fs.remove(dirs[platform]);
+  await fs.remove(dist);
 
   console.time('create icons');
   await icon.prepare();
@@ -144,27 +165,27 @@ console.time('done in');
   });
   console.timeEnd('package built in');
 
-  let filepath;
-
   console.time('package zipped in');
   if (platform === 'win32') {
-    filepath = await winZip();
+    await winZip();
   } else if (platform === 'darwin') {
-    filepath = await darwinZip();
+    await darwinZip();
   } else if (platform === 'linux') {
-    filepath = await linuxTar();
+    await linuxTar();
   }
   console.timeEnd('package zipped in');
 
   console.time('compiled package in');
   if (platform === 'win32') {
-    await windowsBuild();
+    await build('--win');
+  } else if (platform === 'darwin') {
+    await build('--mac');
   }
   console.timeEnd('compiled package in');
 
-  if (argv.upload && filepath) {
+  if (argv.upload) {
     console.time('uploaded in');
-    await upload(filepath);
+    await autoUpload();
     console.timeEnd('uploaded in');
   }
 })().then(() => {

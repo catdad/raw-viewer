@@ -53,6 +53,16 @@
     },
     "portable": {
       "artifactName": "${name}-v${version}-portable.${ext}"
+    },
+    "linux": {
+      "target": [
+        "AppImage"
+      ],
+      "executableName": "raw-viewer",
+      "category": "Graphics"
+    },
+    "appImage": {
+      "artifactName": "${name}-v${version}.${ext}"
     }
   },
   "dependencies": {

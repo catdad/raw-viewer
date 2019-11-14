@@ -180,6 +180,8 @@ console.time('done in');
     await build('--win');
   } else if (platform === 'darwin') {
     await build('--mac');
+  } else if (platform === 'linux') {
+    await build('--linux');
   }
   console.timeEnd('compiled package in');
 

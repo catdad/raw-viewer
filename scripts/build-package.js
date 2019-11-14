@@ -127,7 +127,8 @@ const autoUpload = async () => {
   const patterns = [
     /MacOS-portable\.zip$/,
     /setup\.dmg$/,
-    /Linux-portable\.tar\.gz$/
+    /Linux-portable\.tar\.gz$/,
+    /\.AppImage$/
   ];
 
   const dir = await fs.readdir(dist, { withFileTypes: true });

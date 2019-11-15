@@ -58,7 +58,7 @@
       "target": [
         "AppImage"
       ],
-      "executableName": "raw-viewer",
+      "executableName": "Raw Viewer",
       "category": "Graphics"
     },
     "appImage": {

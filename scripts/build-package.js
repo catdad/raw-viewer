@@ -104,7 +104,7 @@ const linuxTar = async () => {
 };
 
 const build = async (args) => {
-  const prepackaged = dirs[platform];
+  const prepackaged = `${dirs[platform]}${platform === 'linux' ? '/' : ''}`;
 
   await shell({
     task: `electron-builder --prepackaged "${prepackaged}" --publish never ${args}`,

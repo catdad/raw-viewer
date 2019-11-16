@@ -7,7 +7,7 @@
   "main": "main.js",
   "scripts": {
     "postinstall-rebuild": "electron-rebuild --types prod,optional",
-    "postinstall-fetch": "node scripts/exiftool-install.js && node scripts/fonts-install.js && node scripts/gprtools-install.js",
+    "postinstall-fetch": "node scripts/exiftool-install.js && node scripts/fonts-install.js && node scripts/gprtools-install.js && node scripts/appicon-create.js",
     "postinstall": "npm run -s postinstall-rebuild && npm run -s postinstall-fetch",
     "lint": "eslint main.js lib public renderer scripts test",
     "pretest": "node test/lib/downloader.js",
@@ -53,6 +53,16 @@
     },
     "portable": {
       "artifactName": "${name}-v${version}-portable.${ext}"
+    },
+    "linux": {
+      "target": [
+        "AppImage"
+      ],
+      "executableName": "Raw Viewer",
+      "category": "Graphics"
+    },
+    "appImage": {
+      "artifactName": "${name}-v${version}.${ext}"
     }
   },
   "dependencies": {

@@ -104,7 +104,7 @@ const linuxTar = async () => {
 };
 
 const build = async (args) => {
-  const prepackaged = dirs[platform];
+  const prepackaged = `${dirs[platform]}${platform === 'linux' ? '/' : ''}`;
 
   await shell({
     task: `electron-builder --prepackaged "${prepackaged}" --publish never ${args}`,
@@ -127,7 +127,8 @@ const autoUpload = async () => {
   const patterns = [
     /MacOS-portable\.zip$/,
     /setup\.dmg$/,
-    /Linux-portable\.tar\.gz$/
+    /Linux-portable\.tar\.gz$/,
+    /\.AppImage$/
   ];
 
   const dir = await fs.readdir(dist, { withFileTypes: true });
@@ -180,6 +181,8 @@ console.time('done in');
     await build('--win');
   } else if (platform === 'darwin') {
     await build('--mac');
+  } else if (platform === 'linux') {
+    await build('--linux');
   }
   console.timeEnd('compiled package in');
 

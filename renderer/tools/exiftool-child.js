@@ -94,7 +94,7 @@ async function readShortMeta(filepath) {
 
   const result = Object.assign(value, {
     filepath,
-    rotation: ROTATION[value.orientation] || 0
+    rotation: value.isHeic ? 0 : ROTATION[value.orientation] || 0
   });
 
   metacache.add(filepath, name, result);

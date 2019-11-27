@@ -150,6 +150,10 @@ async function readGpr(filepath) {
   });
 }
 
+async function readFileHeic(filepath) {
+  throw new Error('HEIC is not implemented');
+}
+
 async function resizeLargeJpeg({ filepath, buffer, length }) {
   const before = buffer.length;
 
@@ -194,7 +198,7 @@ async function readJpegBufferFromMeta({ filepath, start, length }) {
   });
 }
 
-async function readJpegFromMeta({ filepath, start, length, url, isPsd }) {
+async function readJpegFromMeta({ filepath, start, length, url, isPsd, isHeic }) {
   if (url) {
     return url;
   }
@@ -205,9 +209,11 @@ async function readJpegFromMeta({ filepath, start, length, url, isPsd }) {
     func: async () => {
       let buffer = isPsd ?
         await readFilePsd(filepath) :
-        isPlainImage(filepath) ? await readFile(filepath) :
-          isGpr(filepath) ? await readGpr(filepath) :
-            await readJpegBufferFromMeta({ filepath, start, length });
+        isHeic ?
+          await readFileHeic(filepath) :
+          isPlainImage(filepath) ? await readFile(filepath) :
+            isGpr(filepath) ? await readGpr(filepath) :
+              await readJpegBufferFromMeta({ filepath, start, length });
 
       if (length && length > 9999999) {
         // this image is probably too big, something suspicious is happening
@@ -234,6 +240,8 @@ async function readThumbFromMeta(data) {
     func: async () => {
       if (data.isPsd) {
         buffer = await readFilePsd(data.filepath);
+      } else if (data.isHeic) {
+        buffer = await readFileHeic(data.filepath);
       } else if (isPlainImage(data.filepath)) {
         buffer = await readFile(data.filepath);
       } else if (isGpr(data.filepath)) {

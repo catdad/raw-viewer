@@ -15,6 +15,7 @@ const { unknown } = require('./svg.js');
 
 const exiftool = require('../../lib/exiftool.js');
 const gprtools = require('../../lib/gprtools.js');
+const libheif = require('../../lib/libheif.js');
 
 const ROTATION = {
   'Horizontal (normal)': 0,
@@ -151,7 +152,12 @@ async function readGpr(filepath) {
 }
 
 async function readFileHeic(filepath) {
-  throw new Error('HEIC is not implemented');
+  return await imagecache.cacheable(filepath, 'heif-render', async () => {
+    return await timing({
+      label: `read heif ${filepath}`,
+      func: () => libheif.jpg(filepath)
+    });
+  });
 }
 
 async function resizeLargeJpeg({ filepath, buffer, length }) {

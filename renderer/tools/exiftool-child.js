@@ -15,7 +15,7 @@ const { unknown } = require('./svg.js');
 
 const exiftool = require('../../lib/exiftool.js');
 const gprtools = require('../../lib/gprtools.js');
-const libheif = require('../../lib/libheif.js');
+const libheif = require('./libheif.js')(1);
 
 const ROTATION = {
   'Horizontal (normal)': 0,

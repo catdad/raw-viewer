@@ -21,7 +21,7 @@ const getData = (image, width, height) => new Promise((resolve, reject) => {
 
 const raw = async (filepath) => {
   const { data, image, width, height } = await timing({
-    label: `decode ${filepath}`,
+    label: `decode image ${filepath}`,
     func: async () => {
       const file = await fs.readFile(filepath);
       const decoder = new libheif.HeifDecoder();
@@ -40,7 +40,7 @@ const raw = async (filepath) => {
   });
 
   const arrayBuffer = await timing({
-    label: `copy data ${filepath}`,
+    label: `create buffer ${filepath}`,
     func: async () => await getData(image, width, height, 4)
   });
 

@@ -9,10 +9,9 @@ const timing = require('../../lib/timing.js')(name);
 // let workers = require('workers.js')(4);
 // let data = await workers.<name of func>(...args);
 
-module.exports = (count) => {
+const workerQueue = (workerPath, count) => {
   const workers = [];
   const queue = [];
-  const events = new EventEmitter();
 
   function flushQueue() {
     if (!queue.length) {
@@ -32,14 +31,21 @@ module.exports = (count) => {
         log.info(`spawn worker ${idx}`);
 
         // this path is relative to index.html
-        const worker = new Worker('./libheif-worker.js');
+        const worker = new Worker(workerPath);
+        const events = new EventEmitter();
+
+        Object.assign(worker, {
+          on: events.on.bind(events),
+          off: events.off.bind(events),
+          once: events.once.bind(events)
+        });
 
         worker.onmessage = ({ data: result }) => {
           if (result.type === 'ready') {
             return resolve(worker);
           }
 
-          events.emit(`done:${idx}`, result);
+          events.emit('message', result);
         };
 
         worker.idx = idx;
@@ -55,22 +61,46 @@ module.exports = (count) => {
     setImmediate(flushQueue);
   }
 
-  log.timing('worker init', () => spawnWorkers()).then(() => {
-    log.info('workers ready');
+  timing({
+    label: 'workers init',
+    func: () => spawnWorkers()
   }).catch(err => {
-    log.error('failed to create workers', err);
+    log.error('failed to create workers:', err);
   });
 
-  async function raw(filepath) {
-    return await new Promise((resolve, reject) => {
-      function doWork() {
-        const worker = workers.shift();
-        log.info(`convert ${filepath} on worker ${worker.idx}`);
+  async function withWorker(func) {
+    if (!workers.length) {
+      await new Promise(resolve => queue.push(() => resolve()));
+    }
 
-        events.once(`done:${worker.idx}`, res => {
+    const worker = workers.shift();
+    let result;
+
+    try {
+      result = await func(worker);
+    } catch (e) {
+      throw e;
+    } finally {
+      workers.push(worker);
+      setImmediate(flushQueue);
+    }
+
+    return result;
+  }
+
+  return { withWorker };
+};
+
+module.exports = (count) => {
+  const { withWorker } = workerQueue('./libheif-worker.js', count);
+
+  async function raw(filepath) {
+    return await withWorker(async worker => {
+      log.info(`convert ${filepath} on worker ${worker.idx}`);
+
+      return new Promise((resolve, reject) => {
+        worker.once('message', res => {
           log.info(`thread send overhead: ${Date.now() - res.epoch}ms`);
-          workers.push(worker);
-          setImmediate(flushQueue);
 
           if (res.error) {
             return reject(res.error);
@@ -80,14 +110,7 @@ module.exports = (count) => {
         });
 
         worker.postMessage({ filepath });
-      }
-
-      if (!workers.length) {
-        // there are no workers, add this exec to queue
-        return queue.push(doWork);
-      }
-
-      return doWork();
+      });
     });
   }
 

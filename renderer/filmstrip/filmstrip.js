@@ -144,7 +144,7 @@ module.exports = ({ events }, opts) => {
 
   const { resolveVisible, navigateTo } = navigation({ elem, wrapper, displayImage, direction, events });
 
-  async function loadThumbnails({ files }) {
+  async function createThumbnails({ files }) {
     wrapper.innerHTML = '';
 
     const fragment = document.createDocumentFragment();
@@ -229,7 +229,7 @@ module.exports = ({ events }, opts) => {
   });
 
   events.on('directory:discover', ({ files }) => {
-    log.timing('load thumbs', async () => await loadThumbnails({ files }));
+    log.timing('load thumbs', async () => await createThumbnails({ files }));
   });
 
   return { elem, style };

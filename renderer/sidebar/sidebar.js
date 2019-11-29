@@ -87,11 +87,11 @@ module.exports = ({ events }) => {
   const elem = dom.classname(dom.div(name), 'scrollbar');
 
   async function saveImage({ filepath, imageUrl, name }) {
-    const outfile = await dialog.showSaveDialog({
+    const { canceled, filePath: outfile } = await dialog.showSaveDialog({
       defaultPath: name
     });
 
-    if (!outfile) {
+    if (canceled || !outfile) {
       // user probably pressed Cancel, so do nothing
       return;
     }

@@ -1,3 +1,5 @@
+const name = 'directory';
+
 const path = require('path');
 const fs = require('fs-extra');
 const { dialog } = require('electron').remote;
@@ -5,8 +7,7 @@ const exiftool = require('../tools/exiftool-child.js');
 const collection = require('../tools/collection.js');
 const analytics = require('../../lib/analytics.js');
 const config = require('../../lib/config.js');
-
-//  const name = 'directory';
+const log = require('../../lib/log.js')(name);
 
 module.exports = ({ events }) => {
 
@@ -39,16 +40,20 @@ module.exports = ({ events }) => {
     });
   }
 
-  events.on('directory:open', () => {
-    const result = dialog.showOpenDialog({
-      properties: ['openDirectory']
-    });
+  events.on('directory:open', async () => {
+    try {
+      const { cancelled, filePaths } = await dialog.showOpenDialog({
+        properties: ['openDirectory']
+      });
 
-    if (!result) {
-      return;
+      if (cancelled || !filePaths || filePaths.length === 0) {
+        return;
+      }
+
+      events.emit('directory:load', { dir: filePaths[0] });
+    } catch (e) {
+      log.error('failed to get directory to open', e);
     }
-
-    events.emit('directory:load', { dir: result[0] });
   });
 
   events.on('directory:load', ({ dir }) => {

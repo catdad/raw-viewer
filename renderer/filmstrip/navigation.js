@@ -77,19 +77,25 @@ module.exports = ({ elem, wrapper, displayImage, direction, events }) => {
   }
 
   // display visible images
-  const resolveVisible = throttle(async function self() {
+  const resolveVisible = throttle(async function self(concurrent = 1) {
     const thumbnails = getAllThumbnails();
 
     async function findImageToLoad(wrapperBox) {
+      const result = [];
+
       for (let thumb of thumbnails) {
         thumb.x_isInView = isInView(wrapperBox, thumb.getBoundingClientRect());
 
         if (thumb.x_isInView && thumb.load) {
-          return thumb;
+          result.push(thumb);
+        }
+
+        if (result.length === concurrent) {
+          return result;
         }
       }
 
-      return null;
+      return result;
     }
 
     async function recurseThumbnails() {
@@ -98,10 +104,10 @@ module.exports = ({ elem, wrapper, displayImage, direction, events }) => {
       const visibleBox = elem.getBoundingClientRect();
 
       // load the first image we find that needs to be loaded
-      const thumb = await findImageToLoad(visibleBox);
+      const thumbs = await findImageToLoad(visibleBox);
 
-      if (thumb) {
-        await thumb.load();
+      if (thumbs.length) {
+        await Promise.all(thumbs.map(thumb => thumb.load()));
         // repeat loading first image
         await recurseThumbnails();
       }

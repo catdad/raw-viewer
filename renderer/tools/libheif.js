@@ -71,6 +71,7 @@ const workerQueue = (workerPath, count) => {
   async function withWorker(func) {
     if (!workers.length) {
       await new Promise(resolve => queue.push(() => resolve()));
+      return await withWorker(func);
     }
 
     const worker = workers.shift();

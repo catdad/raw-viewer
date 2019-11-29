@@ -26,6 +26,8 @@ const workerQueue = (workerPath, count) => {
   }
 
   async function spawnWorkers() {
+    let created = 0;
+
     function createWorker(idx) {
       return new Promise((resolve) => {
         log.info(`spawn worker ${idx}`);
@@ -54,11 +56,11 @@ const workerQueue = (workerPath, count) => {
       });
     }
 
-    while (workers.length < count) {
+    while (created < count) {
+      created += 1;
       workers.push(await createWorker(workers.length));
+      setImmediate(flushQueue);
     }
-
-    setImmediate(flushQueue);
   }
 
   timing({

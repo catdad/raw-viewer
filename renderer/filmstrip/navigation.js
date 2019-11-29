@@ -139,10 +139,10 @@ module.exports = ({ elem, wrapper, displayImage, direction, events }) => {
     return { target };
   });
 
-  const navigateTo = noOverlap(async (target) => {
+  const navigateTo = noOverlap(async (target, { concurrent = 1 } = {}) => {
     if (target) {
       await displayImage(target);
-      await resolveVisible();
+      await resolveVisible(concurrent);
     } else {
       // no target is loading, unload current image
       const thumbnails = getAllThumbnails();

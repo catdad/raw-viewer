@@ -6,6 +6,7 @@ const electron = require('electron');
 const app = electron.app || electron.remote.app;
 const getWindow = electron.getCurrentWindow || electron.remote.getCurrentWindow;
 
+const config = require('../../lib/config.js');
 const log = require('../../lib/log.js')('cache-image');
 const noOverlap = require('./promise-overlap.js')();
 
@@ -29,23 +30,46 @@ const silent = (prom, shouldLog = true) => prom.catch(e => {
   return null;
 });
 
+const allowCache = (() => {
+  let allowed;
+
+  return async () => {
+    if (allowed !== undefined) {
+      return allowed;
+    }
+
+    allowed = !(await config.getProp('experiments.disableCache'));
+
+    return allowed;
+  };
+})();
+
 const read = noOverlap((location) => silent(fs.readFile(location), false));
 const write = noOverlap((location, data) => silent(fs.outputFile(location, data)));
 const unlink = noOverlap((location) => silent(fs.unlink(location)));
 
 const cacheable = async (filepath, key, func) => {
-  const location = await file(filepath, key);
+  const allowed = await allowCache();
+  let location, result;
 
-  let result = await log.timing(
-    `reading cached ${key} ${filepath}`,
-    () => read(location)
-  );
+  if (allowed) {
+    location = await file(filepath, key);
 
-  if (result) {
-    return result;
+    result = await log.timing(
+      `reading cached ${key} ${filepath}`,
+      () => read(location)
+    );
+
+    if (result) {
+      return result;
+    }
   }
 
   result = await func();
+
+  if (!allowed) {
+    return result;
+  }
 
   await log.timing(
     `writing cached ${key} ${filepath}`,

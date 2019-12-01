@@ -2,26 +2,6 @@ const path = require('path');
 const fs = require('fs-extra');
 const sharp = require('sharp');
 const prettyBytes = require('pretty-bytes');
-const { readPsd, initializeCanvas } = require('ag-psd');
-const base64 = require('base64-js');
-
-const createCanvas = function (width, height) {
-  const canvas = new OffscreenCanvas(width, height);
-  canvas.width = width;
-  canvas.height = height;
-  return canvas;
-};
-const createCanvasFromData = function (data) {
-  const image = new Image();
-  image.src = 'data:image/jpeg;base64,' + base64.fromByteArray(data);
-  const canvas = new OffscreenCanvas(image.width, image.height);
-  canvas.width = image.width;
-  canvas.height = image.height;
-  canvas.getContext('2d').drawImage(image, 0, 0);
-  return canvas;
-};
-
-initializeCanvas(createCanvas, createCanvasFromData);
 
 const name = 'exiftool-child';
 const log = require('../../lib/log.js')(name);
@@ -35,6 +15,7 @@ const { unknown } = require('./svg.js');
 const exiftool = require('../../lib/exiftool.js');
 const gprtools = require('../../lib/gprtools.js');
 const libheif = require('./libheif.js')(1);
+const psd = require('./psd.js')(1);
 
 const ROTATION = {
   'Horizontal (normal)': 0,
@@ -146,18 +127,7 @@ async function readFilePsd(filepath) {
   return await imagecache.cacheable(filepath, 'psd-render', async () => {
     return await timing({
       label: `read psd ${filepath}`,
-      func: async () => {
-        const file = await log.timing('psd read', () => fs.readFile(filepath));
-        const psd = await log.timing('psd parse', () => readPsd(file, {
-          skipLayerImageData: true
-        }));
-        const canvas = psd.canvas;
-
-        const blob = await canvas.convertToBlob({ type: 'image/jpeg', quality: 0.92 });
-        const buffer = Buffer.from(await blob.arrayBuffer());
-
-        return buffer;
-      }
+      func: () => psd.jpg(filepath)
     });
   });
 }

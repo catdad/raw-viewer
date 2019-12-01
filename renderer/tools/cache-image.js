@@ -21,8 +21,8 @@ const file = async (filepath, key = '') => {
 
 // we won't bother with any cache errors, if we can't read or write to the cache,
 // we will just generate the resource from scratch more times
-const silent = (prom, log = true) => prom.catch(e => {
-  if (log) {
+const silent = (prom, shouldLog = true) => prom.catch(e => {
+  if (shouldLog) {
     log.error('ignoring image cache error:', e);
   }
 

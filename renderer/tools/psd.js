@@ -1,4 +1,4 @@
-const name = 'psdlib';
+const name = 'psd';
 const log = require('../../lib/log.js')(name);
 const timing = require('../../lib/timing.js')(name);
 const workerQueue = require('./worker-queue.js');

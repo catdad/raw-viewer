@@ -6,41 +6,17 @@ const fs = require('fs-extra');
 const name = 'psd-worker';
 const timing = require('../lib/timing.js')(name);
 
-const createCanvas = function (width, height) {
+const createCanvas = (width, height) => {
   const canvas = new OffscreenCanvas(width, height);
   canvas.width = width;
   canvas.height = height;
   return canvas;
 };
-const createCanvasFromData = function (data) {
+const createCanvasFromData = () => {
   throw new Error('createCanvasFromData not implemented for Web Workers');
-
-//  const canvas = new OffscreenCanvas(image.width, image.height);
-//  const ctx = canvas.getContext('2d');
-//  const imageData = ctx.createImageData(image.width, image.height);
-//
-//  for (let i = 0; i < data.length; i++) {
-//    imageData.data[i] = data[i];
-//  }
-//
-//  ctx.putImageData(imageData, 0, 0);
-//
-//  return canvas;
 };
 
 initializeCanvas(createCanvas, createCanvasFromData);
-
-//const getData = (image, width, height) => new Promise((resolve, reject) => {
-//  // use a clamped array for correct color, pass in fake canvas ImageData object
-//  image.display({ data: new Uint8ClampedArray(width*height*4), width, height }, (displayData) => {
-//    if (!displayData) {
-//      return reject(new Error('HEIF processing error'));
-//    }
-//
-//    // get the ArrayBuffer from the Uint8Array
-//    resolve(displayData.data.buffer);
-//  });
-//});
 
 const raw = async (filepath) => {
   return await timing({
@@ -75,7 +51,3 @@ onmessage = ({ data }) => {
 };
 
 postMessage({ type: 'ready', epoch: Date.now() });
-
-// Failed to execute 'postMessage' on 'DedicatedWorkerGlobalScope': An OffscreenCanvas could not be cloned because it was not transferred.: DataCloneError
-
-// Failed to execute 'postMessage' on 'DedicatedWorkerGlobalScope': An OffscreenCanvas could not be cloned because it had a rendering context.: DataCloneError

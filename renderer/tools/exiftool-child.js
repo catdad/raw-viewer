@@ -2,7 +2,26 @@ const path = require('path');
 const fs = require('fs-extra');
 const sharp = require('sharp');
 const prettyBytes = require('pretty-bytes');
-const { readPsd } = require('ag-psd');
+const { readPsd, initializeCanvas } = require('ag-psd');
+const base64 = require('base64-js');
+
+const createCanvas = function (width, height) {
+  const canvas = new OffscreenCanvas(width, height);
+  canvas.width = width;
+  canvas.height = height;
+  return canvas;
+};
+const createCanvasFromData = function (data) {
+  const image = new Image();
+  image.src = 'data:image/jpeg;base64,' + base64.fromByteArray(data);
+  const canvas = new OffscreenCanvas(image.width, image.height);
+  canvas.width = image.width;
+  canvas.height = image.height;
+  canvas.getContext('2d').drawImage(image, 0, 0);
+  return canvas;
+};
+
+initializeCanvas(createCanvas, createCanvasFromData);
 
 const name = 'exiftool-child';
 const log = require('../../lib/log.js')(name);
@@ -133,8 +152,9 @@ async function readFilePsd(filepath) {
           skipLayerImageData: true
         }));
         const canvas = psd.canvas;
-        const imgUrl = await log.timing('psd canvas', () => canvas.toDataURL('image/jpeg'));
-        const buffer = await log.timing('psd buffer', () => urlToBuffer(imgUrl));
+
+        const blob = await canvas.convertToBlob({ type: 'image/jpeg', quality: 0.92 });
+        const buffer = Buffer.from(await blob.arrayBuffer());
 
         return buffer;
       }

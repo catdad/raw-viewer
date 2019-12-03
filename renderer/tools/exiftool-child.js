@@ -29,7 +29,7 @@ function extension(filepath) {
 
 function isPlainImage(filepath) {
   const ext = path.extname(filepath).toLowerCase();
-  return ['.jpeg', '.jpg', '.png'].includes(ext);
+  return ['.jpeg', '.jpg', '.png', '.webp'].includes(ext);
 }
 
 function isGpr(filepath) {

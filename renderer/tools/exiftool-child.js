@@ -210,6 +210,7 @@ async function readJpegFromMeta({ filepath, start, length, url, isPsd, isHeic })
   }
 
   return await timing({
+    label: `read jpeg from meta ${filepath}`,
     category: 'read-jpeg-from-meta',
     variable: extension(filepath),
     func: async () => {

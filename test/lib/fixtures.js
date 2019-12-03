@@ -17,6 +17,10 @@ const images = [{
   name: '0003.dng',
   url: drive('17rnPIW4nk8DQnEFpXc2X_HdVodhholWX'),
   hash: /^anasB32a1aE$/
+}, {
+  name: '0004.webp',
+  url: drive('1X5FS1YspuSkWxaM1zkZE7X2qVWWMdKui'),
+  hash: /^awAQ20y52Eg$/
 }];
 
 module.exports = {

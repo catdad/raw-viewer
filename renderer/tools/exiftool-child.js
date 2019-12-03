@@ -29,11 +29,22 @@ function extension(filepath) {
 
 function isPlainImage(filepath) {
   const ext = path.extname(filepath).toLowerCase();
-  return ['.jpeg', '.jpg', '.png', '.webp'].includes(ext);
+  return ['.jpeg', '.jpg', '.png'].includes(ext);
+}
+
+// this can be displayed nativly in Electron, but it is
+// a bit difficult to test, so convert it for now
+function isPlainConvertable(filepath) {
+  const ext = path.extname(filepath).toLowerCase();
+  return ['.webp'].includes(ext);
 }
 
 function isGpr(filepath) {
   return path.extname(filepath).toLowerCase() === '.gpr';
+}
+
+async function sharpToJpg(filepath) {
+  return await sharp(await readFile(filepath)).jpeg().toBuffer();
 }
 
 async function readFullMeta(filepath) {
@@ -222,6 +233,8 @@ async function readJpegFromMeta({ filepath, start, length, url, isPsd, isHeic })
         buffer = await readFileHeic(filepath);
       } else if (isPlainImage(filepath)) {
         buffer = await readFile(filepath);
+      } else if (isPlainConvertable(filepath)) {
+        buffer = await sharpToJpg(filepath);
       } else if (isGpr(filepath)) {
         await readGpr(filepath);
       } else {
@@ -257,6 +270,8 @@ async function readThumbFromMeta(data) {
         buffer = await readFileHeic(data.filepath);
       } else if (isPlainImage(data.filepath)) {
         buffer = await readFile(data.filepath);
+      } else if (isPlainConvertable(data.filepath)) {
+        buffer = await sharpToJpg(data.filepath);
       } else if (isGpr(data.filepath)) {
         buffer = await readGpr(data.filepath);
       } else if (data.thumbStart && data.thumbLength) {

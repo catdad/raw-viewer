@@ -213,13 +213,19 @@ async function readJpegFromMeta({ filepath, start, length, url, isPsd, isHeic })
     category: 'read-jpeg-from-meta',
     variable: extension(filepath),
     func: async () => {
-      let buffer = isPsd ?
-        await readFilePsd(filepath) :
-        isHeic ?
-          await readFileHeic(filepath) :
-          isPlainImage(filepath) ? await readFile(filepath) :
-            isGpr(filepath) ? await readGpr(filepath) :
-              await readJpegBufferFromMeta({ filepath, start, length });
+      let buffer;
+
+      if (isPsd) {
+        buffer = await readFilePsd(filepath);
+      } else if (isHeic) {
+        buffer = await readFileHeic(filepath);
+      } else if (isPlainImage(filepath)) {
+        buffer = await readFile(filepath);
+      } else if (isGpr(filepath)) {
+        await readGpr(filepath);
+      } else {
+        buffer = await readJpegBufferFromMeta({ filepath, start, length });
+      }
 
       if (length && length > 9999999) {
         // this image is probably too big, something suspicious is happening

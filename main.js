@@ -13,6 +13,7 @@ const events = new EventEmitter();
 
 const { app, BrowserWindow, Menu, ipcMain, systemPreferences } = require('electron');
 
+require('./lib/app-id.js')(app);
 const config = require('./lib/config.js');
 const menu = require('./lib/menu.js');
 const exiftool = require('./lib/exiftool.js');
@@ -87,6 +88,10 @@ function createWindow () {
 
     if (process.platform === 'darwin' && config.getProp('experiments.framelessWindow')) {
       windowOptions.titleBarStyle = 'hidden';
+    }
+
+    if (process.platform === 'linux') {
+      windowOptions.icon = './third-party/icon.png';
     }
 
     // Create the browser window.

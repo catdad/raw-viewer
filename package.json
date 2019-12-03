@@ -1,13 +1,18 @@
 {
   "name": "raw-viewer",
   "productName": "Raw Viewer",
-  "version": "1.0.0-beta9",
+  "appId": "com.catdad.raw-viewer",
+  "version": "1.0.0-beta10",
   "description": "raw-viewer",
   "main": "main.js",
   "scripts": {
-    "postinstall-rebuild": "electron-rebuild",
-    "postinstall-fetch": "node scripts/exiftool-install.js && node scripts/fonts-install.js && node scripts/gprtools-install.js",
-    "postinstall": "npm run -s postinstall-rebuild && npm run -s postinstall-fetch",
+    "electron:rebuild": "electron-rebuild --types prod,optional",
+    "fetch:exiftool": "node scripts/exiftool-install.js",
+    "fetch:fonts": "node scripts/fonts-install.js",
+    "fetch:gprtools": "node scripts/gprtools-install.js",
+    "fetch:libheif": "node scripts/libheif-install.js",
+    "fetch:appicon": "node scripts/appicon-create.js",
+    "postinstall": "npm-run-all --silent electron:rebuild fetch:*",
     "lint": "eslint main.js lib public renderer scripts test",
     "pretest": "node test/lib/downloader.js",
     "test": "mocha --timeout 30000 --slow 0 test/**.test.js",
@@ -28,6 +33,42 @@
     "url": "https://github.com/catdad/raw-viewer/issues"
   },
   "homepage": "https://github.com/catdad/raw-viewer#readme",
+  "build": {
+    "mac": {
+      "target": [
+        "dmg"
+      ],
+      "icon": "dist/icon.icns",
+      "darkModeSupport": true
+    },
+    "dmg": {
+      "icon": "dist/icon.icns",
+      "artifactName": "${name}-v${version}-setup.${ext}"
+    },
+    "win": {
+      "target": [
+        "nsis",
+        "portable"
+      ],
+      "icon": "dist/icon.ico"
+    },
+    "nsis": {
+      "artifactName": "${name}-v${version}-setup.${ext}"
+    },
+    "portable": {
+      "artifactName": "${name}-v${version}-portable.${ext}"
+    },
+    "linux": {
+      "target": [
+        "AppImage"
+      ],
+      "executableName": "Raw Viewer",
+      "category": "Graphics"
+    },
+    "appImage": {
+      "artifactName": "${name}-v${version}.${ext}"
+    }
+  },
   "dependencies": {
     "ag-psd": "^6.2.0",
     "dcraw": "^1.0.3",
@@ -44,28 +85,34 @@
     "p-throttle": "^3.1.0",
     "pretty-bytes": "^5.2.0",
     "semver": "^6.1.0",
-    "sharp": "^0.23.1",
+    "sharp": "^0.23.3",
     "trash": "^5.2.0",
     "universal-analytics": "^0.4.20",
     "uuid": "^3.3.2"
   },
   "devDependencies": {
+    "@fiahfy/icns-convert": "0.0.6",
     "archiver": "^3.0.0",
+    "canvas": "^2.6.0",
     "chai": "^4.2.0",
     "chalk": "^2.4.2",
     "del": "^5.1.0",
     "devtron": "^1.4.0",
-    "electron": "^7.0.1",
+    "electron": "^7.1.2",
+    "electron-builder": "^22.1.0",
     "electron-debug": "^3.0.1",
     "electron-packager": "^14.1.0",
     "electron-rebuild": "^1.8.4",
-    "electronmon": "^0.6.0",
+    "electronmon": "^0.7.0",
     "eslint": "^5.16.0",
     "figures": "^3.1.0",
     "form-data": "^2.5.1",
     "jimp": "^0.6.4",
     "mocha": "^6.2.2",
+    "npm-run-all": "^4.1.5",
+    "png-to-ico": "^2.0.6",
     "rootrequire": "^1.0.0",
+    "shellton": "^5.0.0",
     "spectron": "^9.0.0",
     "tar": "^4.4.13",
     "tempy": "^0.3.0",

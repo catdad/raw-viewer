@@ -15,6 +15,7 @@ const { unknown } = require('./svg.js');
 
 const exiftool = require('../../lib/exiftool.js');
 const gprtools = require('../../lib/gprtools.js');
+const libheif = require('./libheif.js')(1);
 
 const ROTATION = {
   'Horizontal (normal)': 0,
@@ -93,7 +94,7 @@ async function readShortMeta(filepath) {
 
   const result = Object.assign(value, {
     filepath,
-    rotation: ROTATION[value.orientation] || 0
+    rotation: value.isHeic ? 0 : ROTATION[value.orientation] || 0
   });
 
   metacache.add(filepath, name, result);
@@ -150,6 +151,15 @@ async function readGpr(filepath) {
   });
 }
 
+async function readFileHeic(filepath) {
+  return await imagecache.cacheable(filepath, 'heif-render', async () => {
+    return await timing({
+      label: `read heif ${filepath}`,
+      func: () => libheif.jpg(filepath)
+    });
+  });
+}
+
 async function resizeLargeJpeg({ filepath, buffer, length }) {
   const before = buffer.length;
 
@@ -194,7 +204,7 @@ async function readJpegBufferFromMeta({ filepath, start, length }) {
   });
 }
 
-async function readJpegFromMeta({ filepath, start, length, url, isPsd }) {
+async function readJpegFromMeta({ filepath, start, length, url, isPsd, isHeic }) {
   if (url) {
     return url;
   }
@@ -205,9 +215,11 @@ async function readJpegFromMeta({ filepath, start, length, url, isPsd }) {
     func: async () => {
       let buffer = isPsd ?
         await readFilePsd(filepath) :
-        isPlainImage(filepath) ? await readFile(filepath) :
-          isGpr(filepath) ? await readGpr(filepath) :
-            await readJpegBufferFromMeta({ filepath, start, length });
+        isHeic ?
+          await readFileHeic(filepath) :
+          isPlainImage(filepath) ? await readFile(filepath) :
+            isGpr(filepath) ? await readGpr(filepath) :
+              await readJpegBufferFromMeta({ filepath, start, length });
 
       if (length && length > 9999999) {
         // this image is probably too big, something suspicious is happening
@@ -234,6 +246,8 @@ async function readThumbFromMeta(data) {
     func: async () => {
       if (data.isPsd) {
         buffer = await readFilePsd(data.filepath);
+      } else if (data.isHeic) {
+        buffer = await readFileHeic(data.filepath);
       } else if (isPlainImage(data.filepath)) {
         buffer = await readFile(data.filepath);
       } else if (isGpr(data.filepath)) {

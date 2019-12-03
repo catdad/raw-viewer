@@ -25,6 +25,8 @@ build: off
 artifacts:
   - path: 'dist\*.zip'
     name: WindowsZip
+  - path: 'dist\*.exe'
+    name: WindowsInstallers
 
 deploy:
   - provider: GitHub

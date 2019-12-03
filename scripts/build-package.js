@@ -11,16 +11,19 @@ const archiver = require('archiver');
 const argv = require('yargs-parser')(process.argv.slice(2));
 const version = argv.version || null;
 const tag = (typeof argv.tag === 'string') ? `v${argv.tag}` : null;
+const shellton = require('shellton');
 
 const pkg = require('../package.json');
-const { transferSh } = require('./lib.upload.js');
+const icon = require('./lib.icon.js');
+const { wsend: artifact } = require('./lib.upload.js');
 
 const platform = process.platform;
 
+const dist = path.resolve(root, 'dist');
 const dirs = {
-  win32: path.resolve(root, `dist/${pkg.productName}-win32-x64`),
-  darwin: path.resolve(root, `dist/${pkg.productName}-darwin-x64`),
-  linux: path.resolve(root, `dist/${pkg.productName}-linux-x64`),
+  win32: path.resolve(dist, `${pkg.productName}-win32-x64`),
+  darwin: path.resolve(dist, `${pkg.productName}-darwin-x64`),
+  linux: path.resolve(dist, `${pkg.productName}-linux-x64`),
 };
 
 const name = `Raw-Viewer-${tag || version || `v${pkg.version}-DEV`}`;
@@ -34,6 +37,7 @@ const wrapHook = hook => {
 };
 
 const ignore = [
+  'assets/**',
   'dist/**',
   'scripts/**',
   'temp/**',
@@ -42,6 +46,10 @@ const ignore = [
   './.*',
   'appveyor.yml'
 ];
+
+const shell = (...args) => new Promise((resolve, reject) => {
+  shellton(...args, err => err ? reject(err) : resolve());
+});
 
 const winZip = async () => {
   const filepath = path.resolve(`dist/${name}-Windows-portable.zip`);
@@ -95,18 +103,54 @@ const linuxTar = async () => {
   return filepath;
 };
 
+const build = async (args) => {
+  const prepackaged = `${dirs[platform]}${platform === 'linux' ? '/' : ''}`;
+
+  await shell({
+    task: `electron-builder --prepackaged "${prepackaged}" --publish never ${args}`,
+    cwd: root,
+    stdout: 'inherit',
+    stderr: 'inherit'
+  });
+};
+
 const upload = async (filename) => {
   try {
-    console.table(await transferSh(path.resolve(root, 'dist', filename)));
+    console.table(await artifact(path.resolve(root, 'dist', filename)));
   } catch (e) {
     console.log('upload failed with error:');
     console.log(e);
   }
 };
 
+const autoUpload = async () => {
+  const patterns = [
+    /MacOS-portable\.zip$/,
+    /setup\.dmg$/,
+    /Linux-portable\.tar\.gz$/,
+    /\.AppImage$/
+  ];
+
+  const dir = await fs.readdir(dist, { withFileTypes: true });
+  const files = dir
+    .filter(f => f.isFile())
+    .map(f => f.name)
+    .filter(f => !!patterns.find(p => !!p.test(f)));
+
+  console.log('uploading files:', files);
+
+  for (let file of files) {
+    await upload(path.resolve(dist, file));
+  }
+};
+
 console.time('done in');
 (async () => {
-  await fs.remove(dirs[platform]);
+  await fs.remove(dist);
+
+  console.time('create icons');
+  await icon.prepare();
+  console.timeEnd('create icons');
 
   console.time('package built in');
   await packager({
@@ -117,25 +161,34 @@ console.time('done in');
         dot: true
       });
     })],
-    out: 'dist'
+    out: 'dist',
+    icon: icon.path
   });
   console.timeEnd('package built in');
 
-  let filepath;
-
   console.time('package zipped in');
   if (platform === 'win32') {
-    filepath = await winZip();
+    await winZip();
   } else if (platform === 'darwin') {
-    filepath = await darwinZip();
+    await darwinZip();
   } else if (platform === 'linux') {
-    filepath = await linuxTar();
+    await linuxTar();
   }
   console.timeEnd('package zipped in');
 
-  if (argv.upload && filepath) {
+  console.time('compiled package in');
+  if (platform === 'win32') {
+    await build('--win');
+  } else if (platform === 'darwin') {
+    await build('--mac');
+  } else if (platform === 'linux') {
+    await build('--linux');
+  }
+  console.timeEnd('compiled package in');
+
+  if (argv.upload) {
     console.time('uploaded in');
-    await upload(filepath);
+    await autoUpload();
     console.timeEnd('uploaded in');
   }
 })().then(() => {
@@ -145,5 +198,6 @@ console.time('done in');
   console.timeEnd('done in');
   console.log('Build failed');
   console.error(err);
+  console.error(err.stack);
   process.exitCode = 1;
 });

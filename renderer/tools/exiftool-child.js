@@ -32,8 +32,19 @@ function isPlainImage(filepath) {
   return ['.jpeg', '.jpg', '.png'].includes(ext);
 }
 
+// this can be displayed nativly in Electron, but it is
+// a bit difficult to test, so convert it for now
+function isPlainConvertable(filepath) {
+  const ext = path.extname(filepath).toLowerCase();
+  return ['.webp'].includes(ext);
+}
+
 function isGpr(filepath) {
   return path.extname(filepath).toLowerCase() === '.gpr';
+}
+
+async function sharpToJpg(filepath) {
+  return await sharp(await readFile(filepath)).jpeg().toBuffer();
 }
 
 async function readFullMeta(filepath) {
@@ -200,16 +211,25 @@ async function readJpegFromMeta({ filepath, start, length, url, isPsd, isHeic })
   }
 
   return await timing({
+    label: `read jpeg from meta ${filepath}`,
     category: 'read-jpeg-from-meta',
     variable: extension(filepath),
     func: async () => {
-      let buffer = isPsd ?
-        await readFilePsd(filepath) :
-        isHeic ?
-          await readFileHeic(filepath) :
-          isPlainImage(filepath) ? await readFile(filepath) :
-            isGpr(filepath) ? await readGpr(filepath) :
-              await readJpegBufferFromMeta({ filepath, start, length });
+      let buffer;
+
+      if (isPsd) {
+        buffer = await readFilePsd(filepath);
+      } else if (isHeic) {
+        buffer = await readFileHeic(filepath);
+      } else if (isPlainImage(filepath)) {
+        buffer = await readFile(filepath);
+      } else if (isPlainConvertable(filepath)) {
+        buffer = await sharpToJpg(filepath);
+      } else if (isGpr(filepath)) {
+        await readGpr(filepath);
+      } else {
+        buffer = await readJpegBufferFromMeta({ filepath, start, length });
+      }
 
       if (length && length > 9999999) {
         // this image is probably too big, something suspicious is happening
@@ -240,6 +260,8 @@ async function readThumbFromMeta(data) {
         buffer = await readFileHeic(data.filepath);
       } else if (isPlainImage(data.filepath)) {
         buffer = await readFile(data.filepath);
+      } else if (isPlainConvertable(data.filepath)) {
+        buffer = await sharpToJpg(data.filepath);
       } else if (isGpr(data.filepath)) {
         buffer = await readGpr(data.filepath);
       } else if (data.thumbStart && data.thumbLength) {

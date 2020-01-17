@@ -7,7 +7,7 @@ const fetch = require('node-fetch');
 
 const { libheif, libheifDir } = require('../lib/third-party.js');
 
-const version = '0.0.0-nightly.20191126';
+const version = 'v1.6.1';
 
 const base = `https://github.com/catdad-experiments/libheif-emscripten/releases/download/${version}`;
 const lib = `${base}/libheif.js`;
@@ -23,7 +23,7 @@ const responseStream = async url => {
   return res.body;
 };
 
-require('./lib.run.js')(`libheif v${version}`, async () => {
+require('./lib.run.js')(`libheif ${version}`, async () => {
   await fs.ensureDir(libheifDir);
 
   await pipeline(await responseStream(lib), fs.createWriteStream(libheif));

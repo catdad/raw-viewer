@@ -10,7 +10,6 @@
     "fetch:exiftool": "node scripts/exiftool-install.js",
     "fetch:fonts": "node scripts/fonts-install.js",
     "fetch:gprtools": "node scripts/gprtools-install.js",
-    "fetch:libheif": "node scripts/libheif-install.js",
     "fetch:appicon": "node scripts/appicon-create.js",
     "postinstall": "npm-run-all --silent electron:rebuild fetch:*",
     "lint": "eslint main.js lib public renderer scripts test",

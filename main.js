@@ -4,6 +4,9 @@ try {
     showDevTools: false,
     devToolsMode: 'right'
   });
+
+  //  process.traceDeprecation = true;
+  //  process.traceProcessWarnings = true;
 } catch (err) {} // eslint-disable-line no-empty
 
 const path = require('path');

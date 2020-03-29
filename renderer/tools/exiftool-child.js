@@ -13,6 +13,7 @@ const metacache = require('./cache-meta.js');
 const imagecache = require('./cache-image.js');
 const { unknown } = require('./svg.js');
 
+const image = require('../../lib/image.js');
 const exiftool = require('../../lib/exiftool.js');
 const gprtools = require('../../lib/gprtools.js');
 const libheif = require('./libheif.js')(1);
@@ -41,10 +42,6 @@ function isPlainConvertable(filepath) {
 
 function isGpr(filepath) {
   return path.extname(filepath).toLowerCase() === '.gpr';
-}
-
-async function sharpToJpg(filepath) {
-  return await sharp(await readFile(filepath)).jpeg().toBuffer();
 }
 
 async function readFullMeta(filepath) {
@@ -234,7 +231,7 @@ async function readJpegFromMeta({ filepath, start, length, url, isPsd, isHeic })
       } else if (isPlainImage(filepath)) {
         buffer = await readFile(filepath);
       } else if (isPlainConvertable(filepath)) {
-        buffer = await sharpToJpg(filepath);
+        buffer = await image.pathToJpeg(filepath);
       } else if (isGpr(filepath)) {
         await readGpr(filepath);
       } else {
@@ -271,7 +268,7 @@ async function readThumbFromMeta(data) {
       } else if (isPlainImage(data.filepath)) {
         buffer = await readFile(data.filepath);
       } else if (isPlainConvertable(data.filepath)) {
-        buffer = await sharpToJpg(data.filepath);
+        buffer = await image.pathToJpeg(data.filepath);
       } else if (isGpr(data.filepath)) {
         buffer = await readGpr(data.filepath);
       } else if (data.thumbStart && data.thumbLength) {

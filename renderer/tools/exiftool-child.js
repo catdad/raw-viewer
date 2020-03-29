@@ -1,6 +1,5 @@
 const path = require('path');
 const fs = require('fs-extra');
-const sharp = require('sharp');
 const prettyBytes = require('pretty-bytes');
 const { readPsd } = require('ag-psd');
 
@@ -179,7 +178,7 @@ async function resizeLargeJpeg({ filepath, buffer, length }) {
       if (filebytes / 2 < length) {
         // this jpeg was more than twice the size of the original
         // raw file... something is off, so resize it... it's too big
-        return await sharp(buffer).toBuffer();
+        return await image.bufferToJpeg(buffer);
       }
 
       return buffer;
@@ -294,7 +293,7 @@ async function readThumbFromMeta(data) {
     label: `resize thumb ${data.filepath}`,
     category: 'resize-thumbnail',
     variable: extension(data.filepath),
-    func: async () => await sharp(buffer).resize(200).toBuffer()
+    func: async () => await image.resizeJpeg(buffer, 200)
   });
 
   return bufferToUrl(buffer);

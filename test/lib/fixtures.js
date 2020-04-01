@@ -16,7 +16,7 @@ const images = [{
 }, {
   name: '0003.dng',
   url: drive('17rnPIW4nk8DQnEFpXc2X_HdVodhholWX'),
-  hash: /^(anasB32a1aE|anasB32b1aF)$/
+  hash: /^(anasB32a1aE|anasB32b1aF|anasB32a1aF)$/
   // difference between sharp and canvas
 }, {
   name: '0004.webp',

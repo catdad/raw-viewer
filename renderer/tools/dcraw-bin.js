@@ -3,8 +3,9 @@ const { execFile } = require('child_process');
 
 const fs = require('fs-extra');
 const dcraw = require(`dcraw-vendored-${process.platform}`);
-const sharp = require('sharp');
+
 const log = require('../../lib/log.js')('dcraw-bin');
+const image = require('../../lib/image.js');
 
 log.info(`using dcraw at ${dcraw}`);
 
@@ -43,6 +44,6 @@ module.exports = async (filepath, { type = 'raw' } = {}) => {
   const tiff = await getTiff(filepath, size);
 
   return await log.timing(`convert tiff to jpeg ${filepath}`, async () => {
-    return await sharp(tiff).jpeg().toBuffer();
+    return await image.tiffToJpeg(tiff);
   });
 };

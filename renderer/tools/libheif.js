@@ -1,9 +1,9 @@
 const EventEmitter = require('events');
-const sharp = require('sharp');
 
 const name = 'libheif';
 const log = require('../../lib/log.js')(name);
 const timing = require('../../lib/timing.js')(name);
+const image = require('../../lib/image.js');
 
 // USAGE:
 // let workers = require('workers.js')(4);
@@ -125,9 +125,7 @@ module.exports = (count) => {
 
     return await timing({
       label: `render ${filepath}`,
-      func: async () => await sharp(Buffer.from(data), {
-        raw: { width, height, channels: 4 }
-      }).jpeg().toBuffer()
+      func: async () => await image.imageDataToJpeg(data, width, height)
     });
   }
 

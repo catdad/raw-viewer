@@ -88,6 +88,7 @@
     "sharp": "^0.23.3",
     "trash": "^5.2.0",
     "universal-analytics": "^0.4.20",
+    "utif": "^3.1.0",
     "uuid": "^3.3.2"
   },
   "devDependencies": {

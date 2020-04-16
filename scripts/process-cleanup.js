@@ -1,5 +1,8 @@
 /* eslint-disable no-console */
 
+// Note: none of this script is good practice, so try
+// not to copy it or anything.
+
 const path = require('path');
 const { spawnSync } = require('child_process');
 const root = path.resolve(__dirname, '..');

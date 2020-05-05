@@ -69,7 +69,13 @@
     }
   },
   "electronmon": {
-    "patterns": ["!test/**"]
+    "patterns": [
+      "!assets/**",
+      "!scripts/**",
+      "!temp/**",
+      "!test/**",
+      "!third-party/**"
+    ]
   },
   "dependencies": {
     "ag-psd": "^6.2.0",

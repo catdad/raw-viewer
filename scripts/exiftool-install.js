@@ -11,7 +11,7 @@ const tar = require('tar');
 
 const { exiftoolDir, platform } = require('../lib/third-party.js');
 
-const version = '11.93';
+const version = '11.98';
 
 const urls = {
   win: `http://downloads.sourceforge.net/project/exiftool/exiftool-${version}.zip`,

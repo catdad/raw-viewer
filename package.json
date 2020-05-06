@@ -18,8 +18,7 @@
     "citest": "xvfb-maybe npm test && npm run -s lint",
     "start": "electron .",
     "dev": "electronmon .",
-    "exif-kill": "taskkill /IM exiftool.exe /F",
-    "exif-find": "tasklist | findstr exiftool",
+    "pclean": "node scripts/process-cleanup.js",
     "package": "node scripts/build-package.js"
   },
   "repository": {

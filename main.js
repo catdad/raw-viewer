@@ -1,14 +1,3 @@
-try {
-  // provide F12, F5, and activates devtron
-  require('electron-debug')({
-    showDevTools: false,
-    devToolsMode: 'right'
-  });
-
-  //  process.traceDeprecation = true;
-  //  process.traceProcessWarnings = true;
-} catch (err) {} // eslint-disable-line no-empty
-
 const path = require('path');
 const url = require('url');
 const EventEmitter = require('events');

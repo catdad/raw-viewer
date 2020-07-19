@@ -27,7 +27,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: linux-artifacts
-          path: dist/*.(tar.gz|AppImage)
+          path: dist/*.{tar.gz,AppImage}
   macos:
     runs-on: macOS-10.14
     steps:
@@ -52,7 +52,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: macos-artifacts
-          path: dist/*.(zip|dmg)
+          path: dist/*.{zip,dmg}
   windows:
     runs-on: windows-2019
     steps:
@@ -77,4 +77,4 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: windows-artifacts
-          path: dist/*.(zip|exe)
+          path: dist/*.{zip,exe}

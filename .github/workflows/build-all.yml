@@ -1,6 +1,10 @@
-name: Node CI
+name: CI
 
-on: [push]
+on:
+  push:
+  pull_request:
+    branches: [ master ]
+
 env:
   CI: true
   FORCE_COLOR: 1
@@ -20,10 +24,12 @@ jobs:
           docker kill rv
           ls -la dist
       - name: artifacts
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v2
         with:
-          name: linux-package
-          path: dist/Raw-Viewer*.tar.gz
+          name: linux-artifacts
+          path:
+            - dist/Raw-Viewer*.tar.gz
+            - dist/*.AppImage
   macos:
     runs-on: macOS-10.14
     env:
@@ -48,10 +54,12 @@ jobs:
           npm run package -- --version ${{ github.sha }}
           ls -la dist
       - name: artifacts
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v2
         with:
-          name: macos-package
-          path: dist/Raw-Viewer*.zip
+          name: macos-artifacts
+          path:
+            - dist/Raw-Viewer*.zip
+            - dist/*.dmg
   windows:
     runs-on: windows-2019
     env:
@@ -76,7 +84,9 @@ jobs:
           npm run package -- --version ${{ github.sha }}
           dir dist
       - name: artifacts
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v2
         with:
-          name: windows-package
-          path: dist/Raw-Viewer*.zip
+          name: windows-artifacts
+          path: 
+            - dist/Raw-Viewer*.zip
+            - dist/*.exe

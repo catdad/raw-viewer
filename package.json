@@ -1,7 +1,6 @@
 {
   "name": "raw-viewer",
   "productName": "Raw Viewer",
-  "appId": "com.catdad.raw-viewer",
   "version": "1.0.0-beta10",
   "description": "raw-viewer",
   "main": "main.js",
@@ -32,6 +31,7 @@
   },
   "homepage": "https://github.com/catdad/raw-viewer#readme",
   "build": {
+    "appId": "com.catdad.raw-viewer",
     "mac": {
       "target": [
         "dmg"

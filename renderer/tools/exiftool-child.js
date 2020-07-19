@@ -1,6 +1,5 @@
 const path = require('path');
 const fs = require('fs-extra');
-const sharp = require('sharp');
 const prettyBytes = require('pretty-bytes');
 const { readPsd } = require('ag-psd');
 
@@ -13,6 +12,7 @@ const metacache = require('./cache-meta.js');
 const imagecache = require('./cache-image.js');
 const { unknown } = require('./svg.js');
 
+const image = require('../../lib/image.js');
 const exiftool = require('../../lib/exiftool.js');
 const gprtools = require('../../lib/gprtools.js');
 const libheif = require('./libheif.js')(1);
@@ -30,6 +30,13 @@ function extension(filepath) {
 function isPlainImage(filepath) {
   const ext = path.extname(filepath).toLowerCase();
   return ['.jpeg', '.jpg', '.png'].includes(ext);
+}
+
+// this can be displayed nativly in Electron, but it is
+// a bit difficult to test, so convert it for now
+function isPlainConvertable(filepath) {
+  const ext = path.extname(filepath).toLowerCase();
+  return ['.webp'].includes(ext);
 }
 
 function isGpr(filepath) {
@@ -171,7 +178,7 @@ async function resizeLargeJpeg({ filepath, buffer, length }) {
       if (filebytes / 2 < length) {
         // this jpeg was more than twice the size of the original
         // raw file... something is off, so resize it... it's too big
-        return await sharp(buffer).toBuffer();
+        return await image.bufferToJpeg(buffer);
       }
 
       return buffer;
@@ -210,16 +217,25 @@ async function readJpegFromMeta({ filepath, start, length, url, isPsd, isHeic })
   }
 
   return await timing({
+    label: `read jpeg from meta ${filepath}`,
     category: 'read-jpeg-from-meta',
     variable: extension(filepath),
     func: async () => {
-      let buffer = isPsd ?
-        await readFilePsd(filepath) :
-        isHeic ?
-          await readFileHeic(filepath) :
-          isPlainImage(filepath) ? await readFile(filepath) :
-            isGpr(filepath) ? await readGpr(filepath) :
-              await readJpegBufferFromMeta({ filepath, start, length });
+      let buffer;
+
+      if (isPsd) {
+        buffer = await readFilePsd(filepath);
+      } else if (isHeic) {
+        buffer = await readFileHeic(filepath);
+      } else if (isPlainImage(filepath)) {
+        buffer = await readFile(filepath);
+      } else if (isPlainConvertable(filepath)) {
+        buffer = await image.pathToJpeg(filepath);
+      } else if (isGpr(filepath)) {
+        await readGpr(filepath);
+      } else {
+        buffer = await readJpegBufferFromMeta({ filepath, start, length });
+      }
 
       if (length && length > 9999999) {
         // this image is probably too big, something suspicious is happening
@@ -250,6 +266,8 @@ async function readThumbFromMeta(data) {
         buffer = await readFileHeic(data.filepath);
       } else if (isPlainImage(data.filepath)) {
         buffer = await readFile(data.filepath);
+      } else if (isPlainConvertable(data.filepath)) {
+        buffer = await image.pathToJpeg(data.filepath);
       } else if (isGpr(data.filepath)) {
         buffer = await readGpr(data.filepath);
       } else if (data.thumbStart && data.thumbLength) {
@@ -275,7 +293,7 @@ async function readThumbFromMeta(data) {
     label: `resize thumb ${data.filepath}`,
     category: 'resize-thumbnail',
     variable: extension(data.filepath),
-    func: async () => await sharp(buffer).resize(200).toBuffer()
+    func: async () => await image.resizeJpeg(buffer, 200)
   });
 
   return bufferToUrl(buffer);

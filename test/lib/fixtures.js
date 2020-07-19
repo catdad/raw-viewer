@@ -16,7 +16,13 @@ const images = [{
 }, {
   name: '0003.dng',
   url: drive('17rnPIW4nk8DQnEFpXc2X_HdVodhholWX'),
-  hash: /^anasB32a1aE$/
+  hash: /^(anasB32a1aE|anasB32b1aF|anasB32a1aF)$/
+  // difference between sharp and canvas
+}, {
+  name: '0004.webp',
+  url: drive('1X5FS1YspuSkWxaM1zkZE7X2qVWWMdKui'),
+  hash: /^(awAQ20y52Eg|awCQ20y52Eg)$/
+  // difference between sharp and canvas
 }];
 
 module.exports = {

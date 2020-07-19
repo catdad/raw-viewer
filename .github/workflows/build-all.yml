@@ -14,7 +14,7 @@ jobs:
   linux:
     runs-on: ubuntu-18.04
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - name: docker build
         run: |
           docker build --build-arg TRAVIS_COMMIT=${{ github.sha }} -t raw-viewer-build . -f- < .build-linux.dockerfile
@@ -30,11 +30,8 @@ jobs:
           path: dist/*.(tar.gz|AppImage)
   macos:
     runs-on: macOS-10.14
-    env:
-      CI: true
-      FORCE_COLOR: 1
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - name: use node
         uses: actions/setup-node@v1
         with:
@@ -58,11 +55,8 @@ jobs:
           path: dist/*.(zip|dmg)
   windows:
     runs-on: windows-2019
-    env:
-      CI: true
-      FORCE_COLOR: 1
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - name: use node
         uses: actions/setup-node@v1
         with:

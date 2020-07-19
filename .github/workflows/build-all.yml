@@ -27,9 +27,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: linux-artifacts
-          path:
-            - dist/Raw-Viewer*.tar.gz
-            - dist/*.AppImage
+          path: dist/*.(tar.gz|AppImage)
   macos:
     runs-on: macOS-10.14
     env:
@@ -57,9 +55,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: macos-artifacts
-          path:
-            - dist/Raw-Viewer*.zip
-            - dist/*.dmg
+          path: dist/*.(zip|dmg)
   windows:
     runs-on: windows-2019
     env:
@@ -87,6 +83,4 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: windows-artifacts
-          path: 
-            - dist/Raw-Viewer*.zip
-            - dist/*.exe
+          path: dist/*.(zip|exe)

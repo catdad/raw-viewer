@@ -15,7 +15,7 @@
     "pretest": "node test/lib/downloader.js",
     "test": "mocha --timeout 30000 --slow 0 test/**.test.js",
     "citest": "xvfb-maybe npm test && npm run -s lint",
-    "start": "electron .",
+    "start": "electron-background .",
     "dev": "electronmon .",
     "pclean": "node scripts/process-cleanup.js",
     "package": "node scripts/build-package.js"
@@ -107,6 +107,7 @@
     "chalk": "^2.4.2",
     "del": "^5.1.0",
     "electron": "^8.4.0",
+    "electron-background": "^1.0.0",
     "electron-builder": "^22.6.1",
     "electron-packager": "^14.1.0",
     "electron-rebuild": "^1.10.1",

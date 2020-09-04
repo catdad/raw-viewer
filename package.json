@@ -11,7 +11,7 @@
     "fetch:gprtools": "node scripts/gprtools-install.js",
     "fetch:appicon": "node scripts/appicon-create.js",
     "postinstall": "npm-run-all --silent electron:rebuild fetch:*",
-    "lint": "eslint main.js lib public renderer scripts test",
+    "lint": "eslint main.js lib renderer scripts test",
     "pretest": "node test/lib/downloader.js",
     "test": "mocha --timeout 30000 --slow 0 test/**.test.js",
     "citest": "xvfb-maybe npm test && npm run -s lint",

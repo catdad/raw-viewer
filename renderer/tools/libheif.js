@@ -9,7 +9,7 @@ const workerQueue = (count) => {
   const workers = new Array(count).fill(null).map(() => {
     // create the workers
     return workerize((exports) => {
-      /*
+      /* see https://github.com/developit/workerize/issues/37
       export function jpg() {}
       */
       const path = require('path');

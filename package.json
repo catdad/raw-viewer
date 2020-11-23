@@ -1,7 +1,6 @@
 {
   "name": "raw-viewer",
   "productName": "Raw Viewer",
-  "appId": "com.catdad.raw-viewer",
   "version": "1.0.0-beta10",
   "description": "raw-viewer",
   "main": "main.js",
@@ -12,11 +11,11 @@
     "fetch:gprtools": "node scripts/gprtools-install.js",
     "fetch:appicon": "node scripts/appicon-create.js",
     "postinstall": "npm-run-all --silent electron:rebuild fetch:*",
-    "lint": "eslint main.js lib public renderer scripts test",
+    "lint": "eslint main.js lib renderer scripts test",
     "pretest": "node test/lib/downloader.js",
     "test": "mocha --timeout 30000 --slow 0 test/**.test.js",
     "citest": "xvfb-maybe npm test && npm run -s lint",
-    "start": "electron .",
+    "start": "electron-background .",
     "dev": "electronmon .",
     "pclean": "node scripts/process-cleanup.js",
     "package": "node scripts/build-package.js"
@@ -32,6 +31,7 @@
   },
   "homepage": "https://github.com/catdad/raw-viewer#readme",
   "build": {
+    "appId": "com.catdad.raw-viewer",
     "mac": {
       "target": [
         "dmg"
@@ -97,7 +97,8 @@
     "trash": "^5.2.0",
     "universal-analytics": "^0.4.20",
     "utif": "^3.1.0",
-    "uuid": "^3.3.2"
+    "uuid": "^3.3.2",
+    "workerize": "^0.1.8"
   },
   "devDependencies": {
     "@fiahfy/icns-convert": "0.0.6",
@@ -107,6 +108,7 @@
     "chalk": "^2.4.2",
     "del": "^5.1.0",
     "electron": "^8.4.0",
+    "electron-background": "^1.0.0",
     "electron-builder": "^22.6.1",
     "electron-packager": "^14.1.0",
     "electron-rebuild": "^1.10.1",

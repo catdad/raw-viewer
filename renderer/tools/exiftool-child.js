@@ -232,7 +232,7 @@ async function readJpegFromMeta({ filepath, start, length, url, isPsd, isHeic })
       } else if (isPlainConvertable(filepath)) {
         buffer = await image.pathToJpeg(filepath);
       } else if (isGpr(filepath)) {
-        await readGpr(filepath);
+        buffer = await readGpr(filepath);
       } else {
         buffer = await readJpegBufferFromMeta({ filepath, start, length });
       }

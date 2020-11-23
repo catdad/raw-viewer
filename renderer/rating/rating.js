@@ -1,6 +1,7 @@
 const name = 'rating';
 const exiftool = require('../tools/exiftool-child.js');
 const log = require('../../lib/log.js')(name);
+const timing = require('../../lib/timing.js')(name);
 const keys = require('../tools/keyboard.js');
 
 module.exports = ({ events }) => {
@@ -9,10 +10,10 @@ module.exports = ({ events }) => {
   function setRating(filepath, rating, toast = false) {
     log.info(`RATE ${rating} STARS for ${filepath}`);
 
-    log.timing(
-      `rating ${filepath}`,
-      async () => await exiftool.setRating(filepath, rating)
-    ).then(meta => {
+    timing({
+      label: `rating ${filepath}`,
+      func: async () => await exiftool.setRating(filepath, rating)
+    }).then(meta => {
       events.emit('image:rated', { filepath, rating, meta });
 
       if (toast) {

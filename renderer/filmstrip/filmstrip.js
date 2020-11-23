@@ -170,7 +170,6 @@ module.exports = ({ events }, opts) => {
           async () => await readMetaAndDataUrl({ filepath, type: 'thumb' })
         );
 
-        img.classList.add(`rotate-${rotation}`);
         img.src = url;
 
         return { url, rotation, meta };

@@ -211,7 +211,7 @@ async function readJpegBufferFromMeta({ filepath, start, length }) {
   });
 }
 
-async function readJpegFromMeta({ filepath, start, length, url, isPsd, isHeic }) {
+async function readJpegFromMeta({ filepath, start, length, url, isPsd, isHeic, rotation }) {
   if (url) {
     return url;
   }
@@ -242,6 +242,10 @@ async function readJpegFromMeta({ filepath, start, length, url, isPsd, isHeic })
         // ... it's probably a CR3 file, but I've seen it happen for other
         // formats as well
         buffer = await resizeLargeJpeg({ filepath, buffer, length });
+      }
+
+      if (rotation) {
+        buffer = await image.resizeJpeg(buffer, { rotation });
       }
 
       return bufferToUrl(buffer);
@@ -293,7 +297,7 @@ async function readThumbFromMeta(data) {
     label: `resize thumb ${data.filepath}`,
     category: 'resize-thumbnail',
     variable: extension(data.filepath),
-    func: async () => await image.resizeJpeg(buffer, 200)
+    func: async () => await image.resizeJpeg(buffer, { width: 200, rotation: data.rotation })
   });
 
   return bufferToUrl(buffer);

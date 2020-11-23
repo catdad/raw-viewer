@@ -102,6 +102,10 @@ jobs:
           mv linux-artifacts/* .
           rm -rf *artifacts
           ls -lR
+      - name: Remove files not ready for release
+        run: |
+          rm *.exe *.dmg *.AppImage
+          ls -lR
       - name: Create Release
         if: startsWith(github.ref, 'refs/tags/') && github.event_name != 'pull_request'
         uses: actions/github-script@v2

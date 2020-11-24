@@ -12,16 +12,19 @@ env:
 
 jobs:
   linux:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: docker build
+      - uses: actions/setup-node@v1
+        with:
+          node-version: ${{ env.NODE }}
+      - run: sudo apt-get install xvfb
+      - run: npm install
+      - name: Run npm test
+        run: xvfb-run --auto-servernum npm test
+      - name: build
         run: |
-          docker build --build-arg TRAVIS_COMMIT=${{ github.sha }} -t raw-viewer-build . -f- < .build-linux.dockerfile
-          docker images
-          docker run -d --rm --name rv raw-viewer-build  tail -f /dev/null
-          docker cp rv:/dist dist
-          docker kill rv
+          npm run package -- --version ${{ github.sha }}
           ls -la dist
       - uses: actions/upload-artifact@v2
         with:

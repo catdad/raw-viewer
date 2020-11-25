@@ -5,8 +5,6 @@ const chalk = require('chalk');
 const waitForThrowable = require('wait-for-throwable');
 const { launch } = require('puptron');
 
-//const why = require('why-is-node-running')
-
 const pkg = require('../../package.json');
 const configVar = `${pkg.name.toUpperCase().replace(/-/g, '_')}_CONFIG_PATH`;
 
@@ -91,11 +89,5 @@ module.exports = {
 
     await _browser.close();
     _browser = null;
-
-    console.log('closed');
-
-//    setTimeout(() => {
-//      why();
-//    }, 1000);
   }
 };

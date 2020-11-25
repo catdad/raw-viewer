@@ -1,7 +1,7 @@
 FROM ubuntu:18.04
 
-ARG TRAVIS_COMMIT
-ARG TRAVIS_TAG
+ARG REF
+ARG SHA
 
 COPY . /app
 
@@ -36,7 +36,7 @@ WORKDIR /app
 
 RUN npm ci --unsafe-perm
 RUN UNSAFE_CI=1 npm run citest
-RUN npm run package -- --version $TRAVIS_COMMIT --tag $TRAVIS_TAG --upload
+RUN npm run package -- --ref $REF --sha $SHA --upload
 
 FROM ubuntu:18.04
 

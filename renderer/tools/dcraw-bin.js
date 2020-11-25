@@ -5,6 +5,7 @@ const fs = require('fs-extra');
 const dcraw = require(`dcraw-vendored-${process.platform}`);
 
 const log = require('../../lib/log.js')('dcraw-bin');
+const timing = require('../../lib/timing.js')('dcraw-bin');
 const image = require('../../lib/image.js');
 
 log.info(`using dcraw at ${dcraw}`);
@@ -23,14 +24,16 @@ const exec = async (args, size) => {
 };
 
 const getTiff = async (filepath, size) => {
-  return await log.timing(`render tiff ${filepath}`, async () => {
-    return exec(['-w', '-W', '-T', '-c', filepath], size * 5);
+  return await timing({
+    label: `render tiff ${filepath}`,
+    func: async () => await exec(['-w', '-W', '-T', '-c', filepath], size * 5)
   });
 };
 
 const getJpegPreview = async (filepath, size) => {
-  return await log.timing(`extract jpeg preview ${filepath}`, async () => {
-    return exec(['-e', '-c', filepath], size);
+  return await timing({
+    label: `extract jpeg preview ${filepath}`,
+    func: async () => await exec(['-e', '-c', filepath], size)
   });
 };
 
@@ -43,7 +46,8 @@ module.exports = async (filepath, { type = 'raw' } = {}) => {
 
   const tiff = await getTiff(filepath, size);
 
-  return await log.timing(`convert tiff to jpeg ${filepath}`, async () => {
-    return await image.tiffToJpeg(tiff);
+  return await timing({
+    label: `convert tiff to jpeg ${filepath}`,
+    func: async () => await image.tiffToJpeg(tiff)
   });
 };

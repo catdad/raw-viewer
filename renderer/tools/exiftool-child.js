@@ -135,13 +135,16 @@ async function readFilePsd(filepath) {
     return await timing({
       label: `read psd ${filepath}`,
       func: async () => {
-        const file = await log.timing('psd read', () => fs.readFile(filepath));
-        const psd = await log.timing('psd parse', () => readPsd(file, {
-          skipLayerImageData: true
-        }));
+        const file = await timing({ label: 'psd read', func: () => fs.readFile(filepath) });
+        const psd = await timing({
+          label: 'psd parse',
+          func: () => readPsd(file, {
+            skipLayerImageData: true
+          })
+        });
         const canvas = psd.canvas;
-        const imgUrl = await log.timing('psd canvas', () => canvas.toDataURL('image/jpeg'));
-        const buffer = await log.timing('psd buffer', () => urlToBuffer(imgUrl));
+        const imgUrl = await timing({ label: 'psd canvas', func: () => canvas.toDataURL('image/jpeg') });
+        const buffer = await timing({ label: 'psd buffer', func: () => urlToBuffer(imgUrl) });
 
         return buffer;
       }

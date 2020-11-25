@@ -1,6 +1,6 @@
 const name = 'main';
 const log = require('../../lib/log.js')(name);
-const startup = log.timer('startup');
+const timing = require('../../lib/timing.js')(name);
 
 const path = require('path');
 const fs = require('fs-extra');
@@ -146,8 +146,10 @@ async function start(elem) {
 }
 
 module.exports = (elem) => {
-  start(elem).then(() => {
-    startup.done();
+  timing({
+    label: 'startup',
+    func: async () => await start(elem),
+  }).then(() => {
     log.info('initialized');
   }).catch(err => {
     events.emit('error', err);

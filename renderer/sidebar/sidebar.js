@@ -9,6 +9,7 @@ const { urlToBuffer } = require('../tools/bufferToUrl.js');
 const exiftool = require('../tools/exiftool-child.js');
 const dom = require('../tools/dom.js');
 const log = require('../../lib/log.js')(name);
+const timing = require('../../lib/timing.js')(name);
 const config = require('../../lib/config.js');
 const noOverlap = require('../tools/promise-overlap.js')();
 
@@ -97,30 +98,30 @@ module.exports = ({ events }) => {
     }
 
     if (imageUrl === filepath) {
-      await log.timing(
-        `copy jpeg to ${outfile}`,
-        async () => await fs.copy(filepath, outfile)
-      );
+      await timing({
+        label: `copy jpeg to ${outfile}`,
+        func: async () => await fs.copy(filepath, outfile)
+      });
       return;
     }
 
-    await log.timing(
-      `save jpeg preview to ${outfile}`,
-      async () => {
+    await timing({
+      label: `save jpeg preview to ${outfile}`,
+      func: async () => {
         const buffer = urlToBuffer(imageUrl);
 
         await fs.outputFile(outfile, buffer);
         await exiftool.copyMeta(filepath, outfile);
       }
-    );
+    });
   }
 
   const loadInfo = noOverlap(async ({ filepath, imageUrl }) => {
     const [ meta, renderFromRaw ] = await Promise.all([
-      log.timing(
-        `exif ${filepath}`,
-        async () => await exiftool.readFullMeta(filepath)
-      ),
+      timing({
+        label: `exif ${filepath}`,
+        func: async () => await exiftool.readFullMeta(filepath)
+      }),
       config.getProp('experiments.renderFromRaw')
     ]);
 

@@ -85,7 +85,9 @@ module.exports = {
       console.log(logs);
     }
 
-    console.log('about to close');
+    // this is needed in order to perform the exiftoon cleanup logic
+    const [page] = await _browser.pages();
+    await page.evaluate(() => window.close());
 
     await _browser.close();
     _browser = null;

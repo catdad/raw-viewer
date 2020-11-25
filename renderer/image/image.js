@@ -1,6 +1,6 @@
 const name = 'image';
 const style = true;
-const log = require('../../lib/log.js')(name);
+const timing = require('../../lib/timing.js')(name);
 
 const dom = require('../tools/dom.js');
 const keys = require('../tools/keyboard.js');
@@ -72,8 +72,9 @@ module.exports = ({ events }) => {
 
   const onLoad = noOverlap(async ({ imageUrl, rotation, filepath, disabled }) => {
     try {
-      await log.timing(`display image ${filepath}`, async () => {
-        await load({ imageUrl, rotation });
+      await timing({
+        label: `display image ${filepath}`,
+        func: async () => await load({ imageUrl, rotation }),
       });
 
       if (disabled) {
@@ -88,8 +89,9 @@ module.exports = ({ events }) => {
 
   const onUnload = noOverlap(async ({ hasFilteredImages }) => {
     try {
-      await log.timing('unload image', async () => {
-        await unload({ hasFilteredImages });
+      await timing({
+        label: 'unload image',
+        func: async () => await unload({ hasFilteredImages })
       });
       events.emit('meta:unload');
     } catch (err) {

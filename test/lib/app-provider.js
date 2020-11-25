@@ -86,8 +86,9 @@ module.exports = {
     }
 
     // this is needed in order to perform the exiftoon cleanup logic
-    const [page] = await _browser.pages();
-    await page.evaluate(() => window.close());
+    for (const page of (await _browser.pages())) {
+      await page.evaluate(() => window.close()).catch(() => {});
+    }
 
     await _browser.close();
     _browser = null;

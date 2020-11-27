@@ -9,13 +9,23 @@ const root = require('rootrequire');
 const packager = require('electron-packager');
 const archiver = require('archiver');
 const argv = require('yargs-parser')(process.argv.slice(2));
-const version = argv.version || null;
-const tag = (typeof argv.tag === 'string') ? `v${argv.tag}` : null;
 const shellton = require('shellton');
 
 const pkg = require('../package.json');
 const icon = require('./lib.icon.js');
 const { wsend: artifact } = require('./lib.upload.js');
+
+const version = (() => {
+  if (argv.ref && argv.ref.indexOf('/refs/tags/') === 0) {
+    return `v${argv.ref.replace('/refs/tags/', 0)}`;
+  }
+
+  if (argv.sha) {
+    return `v${pkg.version}-${argv.sha}`;
+  }
+
+  return `v${pkg.version}-DEV`;
+})();
 
 const platform = process.platform;
 
@@ -26,7 +36,7 @@ const dirs = {
   linux: path.resolve(dist, `${pkg.productName}-linux-x64`),
 };
 
-const name = `Raw-Viewer-${tag || version || `v${pkg.version}-DEV`}`;
+const name = `Raw-Viewer-${version}`;
 
 const wrapHook = hook => {
   return (buildPath, electronVersion, platform, arch, callback) => {

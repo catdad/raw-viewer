@@ -2,6 +2,7 @@ const name = 'filmstrip';
 const style = true;
 
 const log = require('../../lib/log.js')(name);
+const timing = require('../../lib/timing.js')(name);
 const dom = require('../tools/dom.js');
 const noOverlap = require('../tools/promise-overlap.js')();
 const dragDrop = require('../tools/ipc-draganddrop.js');
@@ -54,10 +55,10 @@ module.exports = ({ events }, opts) => {
     const filepath = thumb.x_filepath;
     const meta = thumb.x_meta;
 
-    const { url, rotation, disabled } = await log.timing(
-      `reading meta and full image ${filepath}`,
-      async () => await readMetaAndDataUrl({ filepath, meta, type: 'full' })
-    );
+    const { url, rotation, disabled } = await timing({
+      label: `reading meta and full image ${filepath}`,
+      func: async () => await readMetaAndDataUrl({ filepath, meta, type: 'full' })
+    });
 
     // do DOM reads before we update anything
     const parentBB = elem.getBoundingClientRect();
@@ -165,10 +166,10 @@ module.exports = ({ events }, opts) => {
       let reload = async () => {
         imgWrap.load = null;
 
-        let { url, rotation, meta } = await log.timing(
-          `render ${file}`,
-          async () => await readMetaAndDataUrl({ filepath, type: 'thumb' })
-        );
+        let { url, rotation, meta } = await timing({
+          label: `render ${file}`,
+          func: async () => await readMetaAndDataUrl({ filepath, type: 'thumb' })
+        });
 
         img.src = url;
 
@@ -228,7 +229,10 @@ module.exports = ({ events }, opts) => {
   });
 
   events.on('directory:discover', ({ files }) => {
-    log.timing('load thumbs', async () => await createThumbnails({ files }));
+    timing({
+      label: 'load thumbs',
+      func: async () => await createThumbnails({ files })
+    });
   });
 
   return { elem, style };

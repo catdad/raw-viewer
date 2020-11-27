@@ -8,6 +8,7 @@ const getWindow = electron.getCurrentWindow || electron.remote.getCurrentWindow;
 
 const config = require('../../lib/config.js');
 const log = require('../../lib/log.js')('cache-image');
+const timing = require('../../lib/timing.js')('cache-image');
 const noOverlap = require('./promise-overlap.js')();
 
 const dir = path.join(app.getPath('temp'), app.getName());
@@ -55,10 +56,10 @@ const cacheable = async (filepath, key, func) => {
   if (allowed) {
     location = await file(filepath, key);
 
-    result = await log.timing(
-      `reading cached ${key} ${filepath}`,
-      () => read(location)
-    );
+    result = await timing({
+      label: `reading cached ${key} ${filepath}`,
+      func: () => read(location)
+    });
 
     if (result) {
       return result;
@@ -71,11 +72,10 @@ const cacheable = async (filepath, key, func) => {
     return result;
   }
 
-  await log.timing(
-    `writing cached ${key} ${filepath}`,
-    () => write(location, result),
-    true
-  );
+  await timing({
+    label: `writing cached ${key} ${filepath}`,
+    func: () => write(location, result)
+  });
 
   return result;
 };

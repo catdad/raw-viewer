@@ -14,8 +14,8 @@ const { exiftoolDir, platform } = require('../lib/third-party.js');
 const version = '12.10';
 
 const urls = {
-  win: `http://downloads.sourceforge.net/project/exiftool/exiftool-${version}.zip`,
-  linux: `https://downloads.sourceforge.net/project/exiftool/Image-ExifTool-${version}.tar.gz`
+  win: `https://github.com/catdad-experiments/exiftool-release/releases/download/all/exiftool-${version}.zip`,
+  linux: `https://github.com/catdad-experiments/exiftool-release/releases/download/all/Image-ExifTool-${version}.tar.gz`
 };
 
 const responseStream = async url => {

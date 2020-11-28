@@ -20,8 +20,6 @@ module.exports = ({ name, elem, events }) => {
   let scale = 1;
   let width = 0;
   let height = 0;
-  let isRotated = false;
-  let rotateStyle = '';
   let zoomType = 'fit';
 
   const img = dom.elem('img');
@@ -70,14 +68,8 @@ module.exports = ({ name, elem, events }) => {
     const transformHeight = targetHeight > box.height ?
       int((targetHeight / 2) - (box.height / 2)) : 0;
 
-    if (isRotated) {
-      img.style.width = `${targetHeight}px`;
-      img.style.height = `${targetWidth}px`;
-      img.style.transform = rotateStyle;
-    }  else {
-      img.style.width = `${targetWidth}px`;
-      img.style.height = `${targetHeight}px`;
-    }
+    img.style.width = `${targetWidth}px`;
+    img.style.height = `${targetHeight}px`;
 
     container.style.width = `${targetWidth}px`;
     container.style.height = `${targetHeight}px`;
@@ -133,11 +125,9 @@ module.exports = ({ name, elem, events }) => {
     }
   }
 
-  async function load({ imageUrl, rotation }) {
+  async function load({ imageUrl }) {
     width = img.width;
     height = img.height;
-    rotateStyle = rotation === 0 ? '' : `rotate(${rotation}deg)`;
-    isRotated = rotation === 90 || rotation === 270;
 
     refreshBox();
 
@@ -156,13 +146,8 @@ module.exports = ({ name, elem, events }) => {
 
     container.appendChild(img);
 
-    if (isRotated) {
-      width = img.naturalHeight;
-      height = img.naturalWidth;
-    } else {
-      width = img.naturalWidth;
-      height = img.naturalHeight;
-    }
+    width = img.naturalWidth;
+    height = img.naturalHeight;
 
     if (zoomType === 'fit') {
       zoomToBestFit();

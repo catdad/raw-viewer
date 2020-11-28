@@ -1,117 +1,96 @@
 const path = require('path');
 
-const { Application } = require('spectron');
-const electronPath = require('electron');
+const { expect } = require('chai');
+const chalk = require('chalk');
+const waitForThrowable = require('wait-for-throwable');
+const { launch } = require('puptron');
 
-let app;
+const pkg = require('../../package.json');
+const configVar = `${pkg.name.toUpperCase().replace(/-/g, '_')}_CONFIG_PATH`;
 
-const sleep = time => new Promise(resolve => setTimeout(() => resolve(), time));
+function isInView(containerBB, elBB) {
+  return (!(
+    elBB.top >= containerBB.bottom ||
+    elBB.left >= containerBB.right ||
+    elBB.bottom <= containerBB.top ||
+    elBB.right <= containerBB.left
+  ));
+}
 
-const log = (...args) => console.log(...args); // eslint-disable-line no-console
+const utils = page => ({
+  click: async selector => await page.click(selector),
+  getRect: async selector => await page.evaluate(s => document.querySelector(s).getBoundingClientRect(), selector),
+  getText: async selector => {
+    return await page.evaluate(s => document.querySelector(s).innerText, selector);
+  },
+  getElementAttribute: async (element, name) => {
+    return await element.evaluate((el, name) => el.getAttribute(name), name);
+  },
+  waitForVisible: async selector => {
+    const { getRect } = utils(page);
+    const pageRect = await getRect('body');
 
-const args = process.env.UNSAFE_CI ?
-  ['--no-sandbox', '--disable-setuid-sandbox', '.'] :
-  ['.'];
+    await waitForThrowable(async () => {
+      const elemRect = await getRect(selector);
 
-const start = async (configPath = '') => {
-  app = new Application({
-    path: electronPath,
-    args: args,
-    env: {
-      'RAW_VIEWER_CONFIG_PATH': configPath
-    },
-    cwd: path.resolve(__dirname, '../..'),
-    waitTimeout: 5000
-  });
-
-  await app.start();
-
-  await app.client.waitUntilWindowLoaded();
-
-  return app;
-};
-
-const printLogs = async () => {
-  log('\n---- start failure logs ----\n');
-
-  try {
-    const mainLogs = await app.client.getMainProcessLogs();
-    log(mainLogs);
-    const clientLogs = await app.client.getRenderProcessLogs();
-    log(clientLogs);
-  } catch (e) {
-    log(e);
-  }
-
-  log('\n---- end failure logs ----\n');
-};
-
-const stop = async (logs) => {
-  if (app && app.isRunning()) {
-    if (logs) {
-      await printLogs();
-    }
-
-    await app.stop();
-    app = null;
-  }
-};
-
-const ensureApp = (func) => (...args) => {
-  if (!(app && app.isRunning())) {
-    throw new Error('the application is not running');
-  }
-
-  return func(...args);
-};
-
-const wrapWebdriver = (name) => ensureApp((...args) => app.client[name](...args));
-
-const waitForThrowable = ensureApp(async (func) => {
-  let result, error;
-
-  try {
-    await app.client.waitUntil(async () => {
-      try {
-        result = await func();
-      } catch (e) {
-        error = e;
-        return false;
+      if (!isInView(pageRect, elemRect)) {
+        throw new Error(`element "${selector}" is still not visible`);
       }
-
-      error = null;
-      return true;
     });
-  } catch (e) {
-    throw error || e;
+  },
+  waitForElementCount: async (selector, count = 1) => {
+    return await waitForThrowable(async () => {
+      const elements = await page.$$(selector);
+      const errStr = `expected ${count} of element "${selector}" but found ${elements.length}`;
+
+      expect(elements.length, errStr).to.equal(count);
+
+      return elements;
+    });
   }
-
-  return result;
 });
 
-const waitForElementCount = ensureApp(async (selector, count) => {
-  let elements;
-
-  await app.client.waitUntil(async () => {
-    elements = await app.client.$$(selector);
-    return elements.length === count;
-  }, 1000, `did not find ${count} of element "${selector}"`);
-
-  return elements;
-});
-
-const elementAttribute = ensureApp(async (element, attribute) => {
-  const { value } = await app.client.elementIdAttribute(element.ELEMENT, attribute);
-  return value;
-});
+let _browser;
 
 module.exports = {
-  start,
-  stop,
-  waitUntil: wrapWebdriver('waitUntil'),
-  waitForVisible: wrapWebdriver('waitForVisible'),
-  waitForThrowable,
-  waitForElementCount,
-  elementAttribute,
-  sleep
+  start: async (configPath = '') => {
+    _browser = await launch(['.'], {
+      cwd: path.resolve(__dirname, '../..'),
+      env: {
+        [configVar]: configPath
+      }
+    });
+
+    const [page] = await _browser.pages();
+
+    return {
+      page,
+      browser: _browser,
+      utils: utils(page)
+    };
+  },
+  stop: async (printLogs) => {
+    if (!_browser) {
+      return;
+    }
+
+    if (printLogs) {
+      const logs = _browser.getLogs().map(str => {
+        const clean = str.replace(/^\[[0-9:/.]+INFO:CONSOLE\([0-9]+\)\]\s{0,}/, '');
+
+        return clean === str ? chalk.yellow(str) : chalk.cyan(clean);
+      }).join('');
+
+      /* eslint-disable-next-line no-console */
+      console.log(logs);
+    }
+
+    // this is needed in order to perform the exiftoon cleanup logic
+    for (const page of (await _browser.pages())) {
+      await page.evaluate(() => window.close()).catch(() => {});
+    }
+
+    await _browser.close();
+    _browser = null;
+  }
 };

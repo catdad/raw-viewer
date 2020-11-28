@@ -9,12 +9,12 @@ const { images, path: fixturePath } = require('./lib/fixtures.js');
 const { urlToBuffer } = require('../renderer/tools/bufferToUrl.js');
 
 describe('[smoke tests]', () => {
-  async function cleanup() {
+  const cleanup = (alwaysIncludeLogs = false) => async function cleanup() {
     const includeLogs = this.currentTest.state === 'failed';
 
-    await stop(includeLogs);
+    await stop(alwaysIncludeLogs || includeLogs);
     await config.cleanAll();
-  }
+  };
 
   async function hashImage(dataUrl) {
     const original = urlToBuffer(dataUrl);
@@ -23,7 +23,8 @@ describe('[smoke tests]', () => {
     return img.hash();
   }
 
-  afterEach(cleanup);
+  beforeEach(cleanup(true));
+  afterEach(cleanup());
 
   it('opens to the drag and drop screen', async () => {
     const configPath = await config.create({});

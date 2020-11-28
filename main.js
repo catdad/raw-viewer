@@ -56,10 +56,14 @@ function onIpc(ev, data) {
 }
 
 function createWindow () {
+  log.info('initializing window pre-requisites');
+
   Promise.all([
     config.read(),
     exiftool.open()
   ]).then(() => {
+    log.info('creating window');
+
     Menu.setApplicationMenu(menu.create({
       events,
       experiments: config.getProp('experiments'),

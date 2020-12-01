@@ -58,7 +58,9 @@ module.exports = {
       cwd: path.resolve(__dirname, '../..'),
       env: {
         [configVar]: configPath
-      }
+      },
+      rendererInterval: 500,
+      rendererTimeout: 10 * 1000
     });
 
     const [page] = await _browser.pages();

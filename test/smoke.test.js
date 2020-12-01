@@ -9,12 +9,12 @@ const { images, path: fixturePath } = require('./lib/fixtures.js');
 const { urlToBuffer } = require('../renderer/tools/bufferToUrl.js');
 
 describe('[smoke tests]', () => {
-  async function cleanup() {
+  const cleanup = (alwaysIncludeLogs = false) => async function cleanup() {
     const includeLogs = this.currentTest.state === 'failed';
 
-    await stop(includeLogs);
+    await stop(alwaysIncludeLogs || includeLogs);
     await config.cleanAll();
-  }
+  };
 
   async function hashImage(dataUrl) {
     const original = urlToBuffer(dataUrl);
@@ -23,9 +23,30 @@ describe('[smoke tests]', () => {
     return img.hash();
   }
 
-  afterEach(cleanup);
+  beforeEach(cleanup(true));
+  afterEach(cleanup());
 
-  it('opens to the drag and drop screen', async () => {
+  const withStartupError = test => async () => {
+    /* eslint-disable no-console */
+    try {
+      await test();
+    } catch (err) {
+      console.log('test failed:', err);
+
+      if (err._raw) {
+        console.log('raw error:', err._raw);
+      }
+
+      if (err._logs) {
+        console.log('error logs:', err._logs);
+      }
+
+      throw err;
+    }
+    /* eslint-enable no-console */
+  };
+
+  it('opens to the drag and drop screen', withStartupError(async () => {
     const configPath = await config.create({});
     const { utils } = await start(configPath);
 
@@ -33,9 +54,9 @@ describe('[smoke tests]', () => {
 
     expect(await utils.getText('.dropzone .container'))
       .to.equal('drag a folder to open\n\nor click to select a folder');
-  });
+  }));
 
-  it('loads fixture images', async () => {
+  it('loads fixture images', withStartupError(async () => {
     expect(images.length).to.be.above(0);
 
     const configPath = await config.create({
@@ -68,5 +89,5 @@ describe('[smoke tests]', () => {
 
       expect(await hashImage(dataUrl)).to.match(hash, `hash for ${name} did not match`);
     }
-  });
+  }));
 });

@@ -5,6 +5,10 @@ const events = new EventEmitter();
 
 const { app, BrowserWindow, Menu, ipcMain, systemPreferences } = require('electron');
 
+if (process.platform === 'darwin') {
+  app.commandLine.appendArgument('--enable-features=Metal');
+}
+
 require('./lib/app-id.js')(app);
 const config = require('./lib/config.js');
 const menu = require('./lib/menu.js');
@@ -56,10 +60,14 @@ function onIpc(ev, data) {
 }
 
 function createWindow () {
+  log.info('initializing window pre-requisites');
+
   Promise.all([
     config.read(),
     exiftool.open()
   ]).then(() => {
+    log.info('creating window');
+
     Menu.setApplicationMenu(menu.create({
       events,
       experiments: config.getProp('experiments'),

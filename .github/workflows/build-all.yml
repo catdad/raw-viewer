@@ -22,6 +22,7 @@ jobs:
       - run: npm install
       - name: Run npm test
         run: xvfb-run --auto-servernum npm test
+        timeout-minutes: 5
       - name: build
         run: |
           npm run package -- --sha ${{ github.sha }} --ref ${{ github.ref }}
@@ -50,6 +51,7 @@ jobs:
         run: npm install
       - name: test
         run: npm test
+        timeout-minutes: 5
       - name: build
         run: |
           npm run package -- --sha ${{ github.sha }} --ref ${{ github.ref }}
@@ -78,6 +80,7 @@ jobs:
         run: npm install
       - name: test
         run: npm test
+        timeout-minutes: 5
       - name: build
         run: |
           npm run package -- --sha ${{ github.sha }} --ref ${{ github.ref }}

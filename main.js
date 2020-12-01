@@ -5,6 +5,10 @@ const events = new EventEmitter();
 
 const { app, BrowserWindow, Menu, ipcMain, systemPreferences } = require('electron');
 
+if (process.platform === 'darwin') {
+  app.commandLine.appendArgument('--enable-features=Metal');
+}
+
 require('./lib/app-id.js')(app);
 const config = require('./lib/config.js');
 const menu = require('./lib/menu.js');

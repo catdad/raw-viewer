@@ -9,6 +9,11 @@ if (process.platform === 'darwin') {
   app.commandLine.appendArgument('--enable-features=Metal');
 }
 
+if (process.env.CI) {
+  app.commandLine.appendArgument('--disable-gpu');
+  app.commandLine.appendArgument('--disable-software-rasterizer');
+}
+
 require('./lib/app-id.js')(app);
 const config = require('./lib/config.js');
 const menu = require('./lib/menu.js');

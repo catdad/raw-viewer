@@ -29,6 +29,7 @@ describe('[smoke tests]', () => {
     // see https://github.com/electron/electron/issues/20944
     if (process.platform === 'darwin') {
       this.retries(3);
+      this.timeout(this.timeout() * 4);
     }
   });
 

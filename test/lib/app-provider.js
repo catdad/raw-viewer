@@ -57,7 +57,8 @@ module.exports = {
     _browser = await launch(['.'], {
       cwd: path.resolve(__dirname, '../..'),
       env: {
-        [configVar]: configPath
+        [configVar]: configPath,
+        CI: true
       },
       rendererInterval: 500,
       rendererTimeout: 10 * 1000

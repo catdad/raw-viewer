@@ -52,6 +52,8 @@ jobs:
       - name: test
         run: npm test
         timeout-minutes: 5
+        env:
+          VERBOSE: 1
       - name: build
         run: |
           npm run package -- --sha ${{ github.sha }} --ref ${{ github.ref }}

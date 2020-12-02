@@ -23,6 +23,15 @@ describe('[smoke tests]', () => {
     return img.hash();
   }
 
+  before(function () {
+    // MacOS Catalina can fail since OpenGL is disabled and
+    // it doesn't seem Electron supports Metal
+    // see https://github.com/electron/electron/issues/20944
+    if (process.platform === 'darwin') {
+      this.retries(3);
+    }
+  });
+
   beforeEach(cleanup(true));
   afterEach(cleanup());
 

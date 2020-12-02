@@ -77,7 +77,7 @@ module.exports = {
       return;
     }
 
-    if (printLogs) {
+    if (printLogs || process.env.VERBOSE) {
       const logs = _browser.getLogs().map(str => {
         const clean = str.replace(/^\[[0-9:/.]+INFO:CONSOLE\([0-9]+\)\]\s{0,}/, '');
 

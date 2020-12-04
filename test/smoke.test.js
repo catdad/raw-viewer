@@ -1,37 +1,20 @@
 const { expect } = require('chai');
 const Jimp = require('jimp');
+const waitForThrowable = require('wait-for-throwable');
 
-const {
-  start, stop,
-  waitForVisible, waitForElementCount, waitForThrowable,
-  elementAttribute
-} = require('./lib/app-provider.js');
+const { start, stop } = require('./lib/app-provider.js');
 const config = require('./lib/config-provider.js');
 const { images, path: fixturePath } = require('./lib/fixtures.js');
 
 const { urlToBuffer } = require('../renderer/tools/bufferToUrl.js');
 
 describe('[smoke tests]', () => {
-  const all = async (...promises) => {
-    let err;
-
-    await Promise.all(promises.map(p => p.catch(e => {
-      err = e;
-    })));
-
-    if (err) {
-      throw err;
-    }
-  };
-
-  async function cleanup() {
+  const cleanup = (alwaysIncludeLogs = false) => async function cleanup() {
     const includeLogs = this.currentTest.state === 'failed';
 
-    await all(
-      stop(includeLogs),
-      config.cleanAll()
-    );
-  }
+    await stop(alwaysIncludeLogs || includeLogs);
+    await config.cleanAll();
+  };
 
   async function hashImage(dataUrl) {
     const original = urlToBuffer(dataUrl);
@@ -40,20 +23,50 @@ describe('[smoke tests]', () => {
     return img.hash();
   }
 
-  beforeEach(cleanup);
-  afterEach(cleanup);
-
-  it('opens to the drag and drop screen', async () => {
-    const configPath = await config.create({});
-    const app = await start(configPath);
-
-    await waitForVisible('.dropzone');
-
-    expect(await app.client.getText('.dropzone .container'))
-      .to.equal('drag a folder to open\nor click to select a folder');
+  before(function () {
+    // MacOS Catalina can fail since OpenGL is disabled and
+    // it doesn't seem Electron supports Metal
+    // see https://github.com/electron/electron/issues/20944
+    if (process.platform === 'darwin') {
+      this.retries(3);
+      this.timeout(this.timeout() * 4);
+    }
   });
 
-  it('loads fixture images', async () => {
+  beforeEach(cleanup(true));
+  afterEach(cleanup());
+
+  const withStartupError = test => async () => {
+    /* eslint-disable no-console */
+    try {
+      await test();
+    } catch (err) {
+      console.log('test failed:', err);
+
+      if (err._raw) {
+        console.log('raw error:', err._raw);
+      }
+
+      if (err._logs) {
+        console.log('error logs:', err._logs);
+      }
+
+      throw err;
+    }
+    /* eslint-enable no-console */
+  };
+
+  it('opens to the drag and drop screen', withStartupError(async () => {
+    const configPath = await config.create({});
+    const { utils } = await start(configPath);
+
+    await utils.waitForVisible('.dropzone');
+
+    expect(await utils.getText('.dropzone .container'))
+      .to.equal('drag a folder to open\n\nor click to select a folder');
+  }));
+
+  it('loads fixture images', withStartupError(async () => {
     expect(images.length).to.be.above(0);
 
     const configPath = await config.create({
@@ -61,27 +74,30 @@ describe('[smoke tests]', () => {
         lastDirectory: fixturePath()
       }
     });
-    await start(configPath);
+    const { utils } = await start(configPath);
 
-    const elements = await waitForElementCount('.filmstrip .thumbnail', images.length);
+    const elements = await utils.waitForElementCount('.filmstrip .thumbnail', images.length);
 
     for (let i in images) {
       const { name, hash } = images[i];
 
       const element = elements[i];
 
-      const filename = await elementAttribute(element, 'data-filename');
+      const filename = await utils.getElementAttribute(element, 'data-filename');
       expect(filename).to.equal(name);
 
-      const [ img ] = await waitForElementCount(`.filmstrip .thumbnail:nth-child(${+i + 1}) img`, 1);
+      const [ img ] = await utils.waitForElementCount(`.filmstrip .thumbnail:nth-child(${+i + 1}) img`, 1);
+
       const dataUrl = await waitForThrowable(async () => {
-        const dataUrl = await elementAttribute(img, 'src');
+        const dataUrl = await utils.getElementAttribute(img, 'src');
+
         expect(dataUrl).to.be.a('string', `${name} did not render to a string`);
         expect(`${dataUrl.slice(0, 40)}...`).to.match(/^data/, `${name} did not render to a data url`);
+
         return dataUrl;
       });
 
       expect(await hashImage(dataUrl)).to.match(hash, `hash for ${name} did not match`);
     }
-  });
+  }));
 });

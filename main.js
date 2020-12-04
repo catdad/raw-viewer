@@ -56,10 +56,14 @@ function onIpc(ev, data) {
 }
 
 function createWindow () {
+  log.info('initializing window pre-requisites');
+
   Promise.all([
     config.read(),
     exiftool.open()
   ]).then(() => {
+    log.info('creating window');
+
     Menu.setApplicationMenu(menu.create({
       events,
       experiments: config.getProp('experiments'),
@@ -168,9 +172,12 @@ function createWindow () {
 
 function onClose(e) {
   log.info('raw-viewer is closing, cleaning up');
-  e.preventDefault();
 
-  exiftool.close().then(() => {
+  if (e) {
+    e.preventDefault();
+  }
+
+  return exiftool.close().then(() => {
     log.info('exiftool closed successfully');
     app.quit();
   }).catch((err) => {
@@ -188,13 +195,17 @@ app.on('ready', createWindow);
 
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
-  // On OS X it is common for applications and their menu bar
-  // to stay active until the user quits explicitly with Cmd + Q
-  if (process.platform === 'darwin' || stayAlive) {
-    events.removeAllListeners();
-  } else {
-    app.quit();
-  }
+  log.info('all raw-viewer windows are closed');
+
+  onClose().then(() => {
+    // On OS X it is common for applications and their menu bar
+    // to stay active until the user quits explicitly with Cmd + Q
+    if (process.platform === 'darwin' || stayAlive) {
+      events.removeAllListeners();
+    } else {
+      app.quit();
+    }
+  });
 });
 
 app.on('activate', () => {

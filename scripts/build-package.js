@@ -14,6 +14,7 @@ const shellton = require('shellton');
 const pkg = require('../package.json');
 const icon = require('./lib.icon.js');
 const { wsend: artifact } = require('./lib.upload.js');
+const iconPath = require('../lib/icon.js')('build');
 
 const version = (() => {
   if (argv.ref && argv.ref.indexOf('/refs/tags/') === 0) {
@@ -159,7 +160,7 @@ console.time('done in');
   await fs.remove(dist);
 
   console.time('create icons');
-  await icon.prepare();
+  await icon.render();
   console.timeEnd('create icons');
 
   console.time('package built in');
@@ -172,7 +173,7 @@ console.time('done in');
       });
     })],
     out: 'dist',
-    icon: icon.path
+    icon: iconPath
   });
   console.timeEnd('package built in');
 

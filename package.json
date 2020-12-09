@@ -36,11 +36,11 @@
       "target": [
         "dmg"
       ],
-      "icon": "dist/icon.icns",
+      "icon": "icons/icon.icns",
       "darkModeSupport": true
     },
     "dmg": {
-      "icon": "dist/icon.icns",
+      "icon": "icons/icon.icns",
       "artifactName": "${name}-v${version}-setup.${ext}"
     },
     "win": {
@@ -48,7 +48,7 @@
         "nsis",
         "portable"
       ],
-      "icon": "dist/icon.ico"
+      "icon": "icons/icon.ico"
     },
     "nsis": {
       "artifactName": "${name}-v${version}-setup.${ext}"

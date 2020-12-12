@@ -12,6 +12,7 @@ const exiftool = require('./lib/exiftool.js');
 const log = require('./lib/log.js')('main');
 const debounce = require('./lib/debounce.js');
 const analytics = require('./lib/analytics.js');
+const icon = require('./lib/icon.js')();
 
 log.info(`electron node version: ${process.version}`);
 
@@ -80,7 +81,8 @@ function createWindow () {
         nodeIntegrationInWorker: true,
         enableRemoteModule: true
       },
-      frame: process.platform === 'darwin' ? true : !config.getProp('experiments.framelessWindow')
+      frame: process.platform === 'darwin' ? true : !config.getProp('experiments.framelessWindow'),
+      icon
     };
 
     if (process.platform === 'darwin' && config.getProp('experiments.framelessWindow')) {

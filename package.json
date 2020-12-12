@@ -36,11 +36,11 @@
       "target": [
         "dmg"
       ],
-      "icon": "dist/icon.icns",
+      "icon": "icons/icon.icns",
       "darkModeSupport": true
     },
     "dmg": {
-      "icon": "dist/icon.icns",
+      "icon": "icons/icon.icns",
       "artifactName": "${name}-v${version}-setup.${ext}"
     },
     "win": {
@@ -48,7 +48,7 @@
         "nsis",
         "portable"
       ],
-      "icon": "dist/icon.ico"
+      "icon": "icons/icon.ico"
     },
     "nsis": {
       "artifactName": "${name}-v${version}-setup.${ext}"
@@ -103,9 +103,7 @@
     "workerize": "^0.1.8"
   },
   "devDependencies": {
-    "@fiahfy/icns-convert": "0.0.6",
     "archiver": "^3.0.0",
-    "canvas": "^2.6.0",
     "chai": "^4.2.0",
     "chalk": "^2.4.2",
     "del": "^5.1.0",
@@ -121,10 +119,10 @@
     "jimp": "^0.16.1",
     "mocha": "^8.2.1",
     "npm-run-all": "^4.1.5",
-    "png-to-ico": "^2.0.6",
     "puptron": "0.0.4",
     "rootrequire": "^1.0.0",
     "shellton": "^5.0.0",
+    "svg-app-icon": "^1.1.0",
     "tar": "^6.0.1",
     "tempy": "^0.5.0",
     "unzipper": "^0.10.5",

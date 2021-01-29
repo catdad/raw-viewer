@@ -78,6 +78,7 @@
   },
   "dependencies": {
     "ag-psd": "^6.2.0",
+    "chalk": "^2.4.2",
     "dcraw": "^1.0.3",
     "dcraw-vendored-darwin": "9.28.1",
     "dcraw-vendored-linux": "9.28.1",
@@ -105,7 +106,6 @@
   "devDependencies": {
     "archiver": "^3.0.0",
     "chai": "^4.2.0",
-    "chalk": "^2.4.2",
     "del": "^5.1.0",
     "electron": "^10.3.1",
     "electron-background": "^1.0.0",

@@ -78,6 +78,7 @@
   },
   "dependencies": {
     "ag-psd": "^6.2.0",
+    "chalk": "^2.4.2",
     "dcraw": "^1.0.3",
     "dcraw-vendored-darwin": "9.28.1",
     "dcraw-vendored-linux": "9.28.1",
@@ -95,7 +96,7 @@
     "p-throttle": "^3.1.0",
     "pretty-bytes": "^5.2.0",
     "semver": "^6.1.0",
-    "sharp": "^0.26.3",
+    "sharp": "^0.27.1",
     "trash": "^5.2.0",
     "universal-analytics": "^0.4.20",
     "utif": "^3.1.0",
@@ -105,9 +106,8 @@
   "devDependencies": {
     "archiver": "^3.0.0",
     "chai": "^4.2.0",
-    "chalk": "^2.4.2",
     "del": "^5.1.0",
-    "electron": "^10.2.0",
+    "electron": "^10.3.1",
     "electron-background": "^1.0.0",
     "electron-builder": "^22.6.1",
     "electron-packager": "^14.1.0",

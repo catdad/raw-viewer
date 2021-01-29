@@ -107,7 +107,7 @@
     "chai": "^4.2.0",
     "chalk": "^2.4.2",
     "del": "^5.1.0",
-    "electron": "^10.1.6",
+    "electron": "^10.2.0",
     "electron-background": "^1.0.0",
     "electron-builder": "^22.6.1",
     "electron-packager": "^14.1.0",

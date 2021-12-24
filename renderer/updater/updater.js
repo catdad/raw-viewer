@@ -23,6 +23,39 @@ const get = async (url) => {
   return await res.json();
 };
 
+/*
+ * > semver.gt('1.1.1-beta3', '1.1.1-beta10')
+ * true
+ * > semver.gt('1.1.1-beta.3', '1.1.1-beta.10')
+ * false
+ */
+const cleanVersion = str => {
+  const { major, minor, patch, prerelease: [pre] } = semver.parse(str);
+  let clean = `${major}.${minor}.${patch}`;
+
+  if (pre) {
+    clean += `-${pre.replace(/([0-9]+)/, '.$1')}`;
+  }
+
+  return clean;
+};
+
+const getUpdateStatus = async () => {
+  const result = { updateAvailable: false };
+  const status = await get('https://api.github.com/repos/catdad/raw-viewer/releases/latest');
+  const current = cleanVersion(appVersion);
+  const latest = cleanVersion(status.tag_name);
+  const hasUpdate = semver.gt(latest, current);
+
+  if (hasUpdate) {
+    result.updateAvailable = true;
+    result.tagName = status.tag_name;
+    result.url = status.html_url;
+  }
+  
+  return result;
+}
+
 module.exports = ({ events }) => {
   const elem = dom.div(name);
   const head = dom.div('head');
@@ -50,15 +83,15 @@ module.exports = ({ events }) => {
     const body = dom.div('body');
 
     try {
-      const latest = await get('https://api.github.com/repos/catdad/raw-viewer/releases/latest');
+      const status = await getUpdateStatus();
 
       const icon = dom.div('icon');
       body.appendChild(icon);
 
-      if (semver.gt(latest.tag_name, appVersion)) {
+      if (status.updateAvailable) {
         icon.appendChild(dom.text('🎁'));
-        body.appendChild(dom.p(`There is an update to Raw Viewer ${latest.tag_name}`));
-        body.appendChild(dom.link('Download', latest.html_url));
+        body.appendChild(dom.p(`There is an update to Raw Viewer ${status.tagName}`));
+        body.appendChild(dom.link('Download', status.url));
       } else {
         icon.appendChild(dom.text('🚀'));
         body.appendChild(dom.p('You are already using the latest version of Raw Viewer.'));

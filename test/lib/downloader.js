@@ -8,6 +8,12 @@ const { images, file } = require('./fixtures.js');
 require('../../scripts/lib.run.js')('images', async () => {
   for (let image of images) {
     const { url, name } = image;
+    const output = file(name);
+
+    if (await fs.exists(output)) {
+      return;
+    }
+
     const res = await fetch(url);
 
     if (!res.ok) {

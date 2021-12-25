@@ -107,7 +107,7 @@
     "archiver": "^3.0.0",
     "chai": "^4.2.0",
     "del": "^5.1.0",
-    "electron": "^11.5.0",
+    "electron": "^12.2.3",
     "electron-background": "^1.0.0",
     "electron-builder": "^22.14.5",
     "electron-packager": "^14.1.0",

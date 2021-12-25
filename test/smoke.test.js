@@ -61,7 +61,7 @@ describe('[smoke tests]', () => {
   // so we will just retry starting the app uptil it works so that the rest
   // of the tests don't flaky-fail... usually it opens on the first or second
   // try, but give it 5 anyway just to be super safe
-  it('opens the application', withStartupError(async () => {
+  it.skip('opens the application', withStartupError(async () => {
     const configPath = await config.create({});
     await start(configPath);
   })).retries(5);

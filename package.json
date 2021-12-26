@@ -112,7 +112,7 @@
     "electron-builder": "^22.14.5",
     "electron-packager": "^14.1.0",
     "electron-rebuild": "^3.2.5",
-    "electronmon": "^1.1.2",
+    "electronmon": "^2.0.2",
     "eslint": "^5.16.0",
     "figures": "^3.1.0",
     "form-data": "^2.5.1",

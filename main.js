@@ -62,7 +62,7 @@ function createWindow () {
   Promise.all([
     config.read(),
     exiftool.open()
-  ]).then(() => {
+  ]).then(function createNewWindowAfterInit() {
     log.info('creating window');
 
     Menu.setApplicationMenu(menu.create({
@@ -155,15 +155,16 @@ function createWindow () {
     });
 
     events.on('reset', () => {
-      stayAlive = true;
+      log.info('reset event received');
 
-      log.info('reopening main window');
-      mainWindow.once('close', () => {
-        createWindow();
-      });
+      stayAlive = true;
 
       mainWindow.close();
       mainWindow = null;
+
+      events.removeAllListeners();
+
+      createNewWindowAfterInit();
     });
 
     analytics.event('version', app.getVersion());
@@ -198,6 +199,10 @@ app.on('ready', createWindow);
 
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
+  if (stayAlive) {
+    return;
+  }
+
   log.info('all raw-viewer windows are closed');
 
   onClose().then(() => {

@@ -61,7 +61,7 @@ module.exports = {
         CI: true
       },
       rendererInterval: 500,
-      rendererTimeout: 10 * 1000
+      rendererTimeout: 20 * 1000
     });
 
     const [page] = await _browser.pages();

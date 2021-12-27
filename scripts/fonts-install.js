@@ -1,5 +1,3 @@
-/* eslint-disable no-console */
-
 const { promisify } = require('util');
 const stream = require('stream');
 const pipeline = promisify(stream.pipeline);

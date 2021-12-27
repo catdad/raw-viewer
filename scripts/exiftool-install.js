@@ -1,12 +1,10 @@
-/* eslint-disable no-console */
-
 const { promisify } = require('util');
 const stream = require('stream');
 const pipeline = promisify(stream.pipeline);
 const path = require('path');
 const fs = require('fs-extra');
 const fetch = require('node-fetch');
-const unzip = require('unzipper');
+const unzipper = require('unzipper');
 const tar = require('tar');
 
 const { exiftoolDir, platform } = require('../lib/third-party.js');
@@ -28,26 +26,43 @@ const responseStream = async url => {
   return res.body;
 };
 
-const unzipPromise = async (stream, outdir) => {
+const unzip = async (stream, outdir) => {
   let error;
 
-  await new Promise((resolve, reject) => {
-    pipeline(stream, unzip.Parse().on('entry', entry => {
-      const name = entry.path;
+  await pipeline(stream, unzipper.Parse().on('entry', entry => {
+    const name = entry.path;
 
-      if (name !== 'exiftool(-k).exe') {
-        return entry.autodrain();
-      }
+    if (name !== 'exiftool(-k).exe') {
+      return entry.autodrain();
+    }
 
-      pipeline(entry, fs.createWriteStream(path.resolve(outdir, 'exiftool.exe')))
-        .then(() => {})
-        .catch(err => { error = err; });
-    })).then(() => resolve()).catch(err => reject(err));
-  });
+    pipeline(entry, fs.createWriteStream(path.resolve(outdir, 'exiftool.exe')))
+      .then(() => {})
+      .catch(err => { error = err; });
+  }));
 
   if (error) {
     throw error;
   }
+};
+
+const untar = async (stream, outdir) => {
+  await pipeline(stream, tar.extract({
+    cwd: outdir,
+    strip: 1,
+    preserveOwner: false,
+    filter: path => {
+      if (path.indexOf(`Image-ExifTool-${version}/exiftool`) === 0) {
+        return true;
+      }
+
+      if (path.indexOf(`Image-ExifTool-${version}/lib`) === 0) {
+        return true;
+      }
+
+      return false;
+    }
+  }));
 };
 
 require('./lib.run.js')(`exiftool v${version}`, async () => {
@@ -56,23 +71,8 @@ require('./lib.run.js')(`exiftool v${version}`, async () => {
   const archive = await responseStream(urls[platform]);
 
   if (platform === 'win') {
-    await unzipPromise(archive, exiftoolDir);
+    await unzip(archive, exiftoolDir);
   } else {
-    await pipeline(archive, tar.extract({
-      cwd: exiftoolDir,
-      strip: 1,
-      preserveOwner: false,
-      filter: path => {
-        if (path.indexOf(`Image-ExifTool-${version}/exiftool`) === 0) {
-          return true;
-        }
-
-        if (path.indexOf(`Image-ExifTool-${version}/lib`) === 0) {
-          return true;
-        }
-
-        return false;
-      }
-    }));
+    await untar(archive, exiftoolDir);
   }
 });

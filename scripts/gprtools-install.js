@@ -1,5 +1,3 @@
-/* eslint-disable no-console */
-
 const { promisify } = require('util');
 const stream = require('stream');
 const pipeline = promisify(stream.pipeline);
@@ -40,4 +38,3 @@ require('./lib.run.js')(`gpr_tools v${version}`, async () => {
 
   await pipeline(body, fs.createWriteStream(gprtools, opts));
 });
-

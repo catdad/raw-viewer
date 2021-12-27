@@ -56,6 +56,26 @@ describe('[smoke tests]', () => {
     /* eslint-enable no-console */
   };
 
+  // sometimes in CI, starting Electron on Windows is a bit finicky this seems
+  // to be an Electron problem and I don't have time to debug it so we will just
+  // retry starting the app uptil it works so that the rest of the tests don't
+  // flaky-fail... usually it opens on the first or second try
+  it('opens the application', withStartupError(async () => {
+    const configPath = await config.create({});
+
+    const prime = async () => {
+      const { utils } = await start(configPath);
+      await utils.waitForVisible('body');
+    };
+    
+    try {
+      await prime();
+    } catch(e) {
+      await stop();
+      await prime();
+    }
+  }));
+
   it('opens to the drag and drop screen', withStartupError(async () => {
     const configPath = await config.create({});
     const { utils } = await start(configPath);

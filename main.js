@@ -38,16 +38,6 @@ if (systemPreferences.subscribeNotification) {
 
 function onIpc(ev, data) {
   switch (true) {
-    case data.type === 'config-set':
-      config.setProp(data.key, data.value);
-      break;
-    case data.type === 'config-get':
-      mainWindow.webContents.send('message', {
-        type: 'config-read',
-        key: data.key,
-        value: config.getProp(data.key)
-      });
-      break;
     case data.type === 'dragstart':
       ev.sender.startDrag({
         file: data.filepath,

@@ -61,14 +61,13 @@ const notifyForUpdate = async () => {
   if (result.updateAvailable) {
     log.info(`an update to version ${result.tagName} is available`);
 
-    new Notification(`Version ${result.tagName}`, {
-      body: `${appName} version ${result.tagName} is available`,
+    new Notification(`Version ${result.tagName} available`, {
+      body: `${appName} has a new update, download it by clicking on this notification`,
       icon,
       silent: true
     }).onclick = () => {
       shell.openExternal(result.url);
     };
-
   } else {
     log.info('already running latest version');
   }

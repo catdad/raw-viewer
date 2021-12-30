@@ -10,7 +10,7 @@
 [github-release.link]: https://github.com/catdad/raw-viewer/releases
 [github-version.svg]: https://img.shields.io/github/release/catdad/raw-viewer.svg
 
-RAW viewer is a desktop app which allows you to quickly cull your photos. You can view, rate, manage, and delete all your RAW photos straight out of camera without requiring conversion or importing, allowing you to get to editing your best photos as fast as possible. This application focuses on ease of use and speed, removing all the lag your culling workflow.
+RAW Viewer is a desktop app which allows you to quickly cull your photos. You can view, rate, manage, and delete all your RAW photos straight out of camera without requiring conversion or importing, allowing you to get to editing your best photos as fast as possible. This application focuses on ease of use and speed, removing all the lag your culling workflow.
 
 All ratings are saved directly to the RAW file, so when you are done culling, you can import the remaining photos into Lightroom (or any other software) and all the ratings will show up.
 
@@ -32,9 +32,9 @@ This is a self-contained portable app. Unzip the download and run `Raw Viewer`.
 
 The first time you run it, it will fail to verify the app and show a message saying "Raw Viewer can't be opened because it is from an unidentified developer". If this happens, open _System Preferences_ > _Security & Privacy_. There, you will see a message at the bottom saying "Raw Viewer was blocked from opening because it is not from an identified developer" with an "Open Anyway" button next to it. Click that button and now you will able to run the app. You will only need to do this once on your computer.
 
-If you are a developer and know more about how to sign the application, please let me knowat issue [#191](https://github.com/catdad/raw-viewer/issues/191).
+If you are a developer and know more about how to sign the application or wish to sponsor this effort, please let me know at issue [#191](https://github.com/catdad/raw-viewer/issues/191).
 
-If you no longer with to use this app, you can just delete the folder where you unzipped it -- but don't worry, all your photos as well as their ratings will stay right where you left them.
+If you no longer wish to use this app, you can just delete the folder where you unzipped it -- but don't worry, all your photos as well as their ratings will stay right where you left them.
 
 # Linux
 

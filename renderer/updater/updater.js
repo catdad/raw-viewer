@@ -1,10 +1,12 @@
 const semver = require('semver');
 const fetch = require('node-fetch');
+const { shell } = require('electron');
 
 const name = 'updater';
 const style = true;
 const log = require('../../lib/log.js')(name);
 const analytics = require('../../lib/analytics.js');
+const icon = require('../../lib/icon.js')();
 
 const pkg = require('../../package.json');
 const dom = require('../tools/dom.js');
@@ -52,9 +54,9 @@ const getUpdateStatus = async () => {
     result.tagName = status.tag_name;
     result.url = status.html_url;
   }
-  
+
   return result;
-}
+};
 
 module.exports = ({ events }) => {
   const elem = dom.div(name);
@@ -118,6 +120,28 @@ module.exports = ({ events }) => {
       log.error('check for update error', err);
       events.emit('error', new Error('failed to check for updates'));
     });
+  });
+
+  log.info('checking for updates...');
+
+  getUpdateStatus().then(result => {
+    if (result.updateAvailable) {
+      log.info(`an update to version ${result.tagName} is available`);
+
+      new Notification(`Version ${result.tagName}`, {
+        body: `Raw Viewer version ${result.tagName} is available`,
+        icon,
+        silent: true
+      }).onclick = () => {
+        shell.openExternal(result.url);
+      };
+
+    } else {
+      log.info('already running latest version');
+    }
+    log.info('UPDATE STATUS!!', result);
+  }).catch(err => {
+    log.error('failed to get initial update status', err);
   });
 
   return { style };

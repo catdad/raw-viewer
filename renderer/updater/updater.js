@@ -1,15 +1,15 @@
 const semver = require('semver');
 const fetch = require('node-fetch');
+const { shell } = require('electron');
 
 const name = 'updater';
 const style = true;
 const log = require('../../lib/log.js')(name);
 const analytics = require('../../lib/analytics.js');
+const icon = require('../../lib/icon.js')();
+const { appName, appVersion } = require('../../lib/is.js');
 
-const pkg = require('../../package.json');
 const dom = require('../tools/dom.js');
-const appName = pkg.productName || pkg.name;
-const appVersion = pkg.version;
 
 const get = async (url) => {
   const res = await fetch(url, {
@@ -52,16 +52,33 @@ const getUpdateStatus = async () => {
     result.tagName = status.tag_name;
     result.url = status.html_url;
   }
-  
+
   return result;
-}
+};
+
+const notifyForUpdate = async () => {
+  const result = await getUpdateStatus();
+  if (result.updateAvailable) {
+    log.info(`an update to version ${result.tagName} is available`);
+
+    new Notification(`Version ${result.tagName} available`, {
+      body: `${appName} has a new update, download it by clicking on this notification`,
+      icon,
+      silent: true
+    }).onclick = () => {
+      shell.openExternal(result.url);
+    };
+  } else {
+    log.info('already running latest version');
+  }
+};
 
 module.exports = ({ events }) => {
   const elem = dom.div(name);
   const head = dom.div('head');
   const foot = dom.div('foot');
 
-  const title = dom.h1(`${appName} v${pkg.version}`);
+  const title = dom.h1(`${appName} v${appVersion}`);
   head.appendChild(title);
 
   dom.children(
@@ -118,6 +135,10 @@ module.exports = ({ events }) => {
       log.error('check for update error', err);
       events.emit('error', new Error('failed to check for updates'));
     });
+  });
+
+  notifyForUpdate().catch(err => {
+    log.error('failed to get initial update status', err);
   });
 
   return { style };

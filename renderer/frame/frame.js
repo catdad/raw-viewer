@@ -1,4 +1,4 @@
-const { BrowserWindow } = require('electron').remote;
+const { BrowserWindow } = require('@electron/remote');
 
 const name = 'frame';
 const style = true;

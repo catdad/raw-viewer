@@ -2,9 +2,7 @@ const crypto = require('crypto');
 const path = require('path');
 
 const fs = require('fs-extra');
-const electron = require('electron');
-const app = electron.app || electron.remote.app;
-const getWindow = electron.getCurrentWindow || electron.remote.getCurrentWindow;
+const { app, getCurrentWindow: getWindow } = require('@electron/remote');
 
 const config = require('../../lib/config.js');
 const log = require('../../lib/log.js')('cache-image');

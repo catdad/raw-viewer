@@ -3,6 +3,9 @@ const url = require('url');
 const EventEmitter = require('events');
 const events = new EventEmitter();
 
+const remote = require('@electron/remote/main');
+remote.initialize();
+
 const { app, BrowserWindow, Menu, ipcMain, systemPreferences } = require('electron');
 
 require('./lib/app-id.js')(app);
@@ -86,6 +89,8 @@ function createWindow () {
 
     // Create the browser window.
     mainWindow = new BrowserWindow(windowOptions);
+
+    remote.enable(mainWindow.webContents);
 
     stayAlive = false;
 

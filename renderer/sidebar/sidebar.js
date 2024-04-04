@@ -1,6 +1,6 @@
 const path = require('path');
 const fs = require('fs-extra');
-const { dialog } = require('electron').remote;
+const { dialog } = require('@electron/remote');
 
 const name = 'sidebar';
 const style = true;

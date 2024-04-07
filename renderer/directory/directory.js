@@ -2,7 +2,7 @@ const name = 'directory';
 
 const path = require('path');
 const fs = require('fs-extra');
-const { dialog } = require('electron').remote;
+const { dialog } = require('@electron/remote');
 const exiftool = require('../tools/exiftool-child.js');
 const collection = require('../tools/collection.js');
 const analytics = require('../../lib/analytics.js');

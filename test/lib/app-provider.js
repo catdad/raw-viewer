@@ -88,12 +88,17 @@ module.exports = {
       console.log(logs);
     }
 
-    // this is needed in order to perform the exiftoon cleanup logic
-    for (const page of (await _browser.pages())) {
-      await page.evaluate(() => window.close()).catch(() => {});
+    // this is needed in order to perform the exiftool cleanup logic
+    const pages = await _browser.pages();
+
+    if (pages.length) {
+      for (const page of pages) {
+        await page.evaluate(() => window.close()).catch(() => {});
+      }
+    } else {
+      await _browser.close();
     }
 
-    await _browser.close();
     _browser = null;
   }
 };
